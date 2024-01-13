@@ -23,7 +23,7 @@ page_sidebar(
     selectInput(
       "chemical",
       "PAH",
-      choices = pahwq:::molar_absorption$chemical,
+      choices = tools::toTitleCase(pahwq:::molar_absorption$chemical),
       selected = "Anthracene"
     ),
     accordion(
@@ -133,8 +133,7 @@ page_sidebar(
           value = NULL
         )
       )
-    ),
-    value_box(title = "Test", value = textOutput("kdreftxt"))
+    )
   ),
   layout_columns(
     fill = FALSE,
@@ -151,6 +150,10 @@ page_sidebar(
     nav_panel(
       "tuv results",
       card(tableOutput("irrad_tbl"))
+    ),
+    nav_panel(
+      "tuv run parameters",
+      card(htmlOutput("tuv_params"))
     )
   )
 )

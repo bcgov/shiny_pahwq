@@ -12,12 +12,8 @@ function(input, output, session) {
     tauaer = NULL
   )
 
-  # observeEvent(input$doc, {
-  #   tuv_inputs$doc <- if (!isTruthy(input$doc)) NULL else input$doc
-  # })
-
-  doc <- reactive({
-    if (!isTruthy(input$doc)) NULL else input$doc
+  observeEvent(input$doc, {
+    tuv_inputs$doc <- if (!isTruthy(input$doc)) NULL else input$doc
   })
 
   observeEvent(input$kd_ref, {
@@ -44,7 +40,7 @@ function(input, output, session) {
       elev_km = req(input$elev_km),
       date = req(input$date),
       tzone = req(input$tzone),
-      DOC = doc(), # tuv_inputs$doc,
+      DOC = tuv_inputs$doc,
       Kd_ref = tuv_inputs$kd_ref,
       Kd_wvl = tuv_inputs$kd_wvl,
       tstart = input$tstart,
@@ -58,6 +54,12 @@ function(input, output, session) {
     )
   })
 
+  output$tuv_params <- renderUI({
+    params <- tuv_run_params(irrad())
+    HTML(paste(
+      paste0("<b>", names(params), "</b>"),
+      params, sep = ": ", collapse = "<br/>"))
+  })
 
   pabs <- reactive(p_abs(irrad(), req(input$chemical)))
 
@@ -107,7 +109,5 @@ function(input, output, session) {
   })
 
   #### Testing area
-
-  kdreftxt <- renderText(as.character(input$kd_ref))
 
 }
