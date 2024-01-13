@@ -1,0 +1,12 @@
+name: shinypah
+title: shinypah
+username: ateucher
+account: ateucher
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10916685
+bundleId: 8138472
+url: https://ateucher.shinyapps.io/shinypah/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
