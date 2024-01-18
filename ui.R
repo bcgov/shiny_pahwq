@@ -26,8 +26,10 @@ page_sidebar(
     selectInput(
       "chemical",
       "PAH",
-      choices = tools::toTitleCase(pahwq:::molar_absorption$chemical),
-      selected = "Anthracene"
+      choices = c(
+        "Choose a chemical" = "",
+        tools::toTitleCase(sort(unique(pahwq:::molar_absorption$chemical)))
+      )
     ),
     accordion(
       accordion_panel(
@@ -147,8 +149,9 @@ page_sidebar(
   navset_tab(
     nav_panel(
       "map",
-         card("Click to select the location, or set the Latitude and Longitude in the left panel",
-              leafletOutput("map"))
+         card(
+           card_header("Click to select the location, or set the Latitude and Longitude in the left panel"),
+              card_body(leafletOutput("map")))
     ),
     nav_panel(
       "tuv results",
