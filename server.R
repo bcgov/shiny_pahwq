@@ -106,8 +106,8 @@ function(input, output, session) {
 
   # Update the map when the lat and lon change
   observe({
-    lng <- input$lon
-    lat <- input$lat
+    lng <- req(input$lon)
+    lat <- req(input$lat)
 
     # isolate zoom so that it doesn't update the reactive scope when it's changed
     # i.e., it doesn't make this observer keep reacting when it's changed - within
