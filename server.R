@@ -10,10 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-library(shiny)
-library(pahwq)
-library(leaflet)
-
 function(input, output, session) {
 
   tuv_inputs <- reactiveValues(
@@ -49,7 +45,7 @@ function(input, output, session) {
       depth_m = req(input$depth_m),
       lat = req(input$lat),
       lon = req(input$lon),
-      elev_km = req(input$elev_km),
+      elev_m = req(input$elev_m),
       date = req(input$date),
       tzone = req(input$tzone),
       DOC = tuv_inputs$doc,

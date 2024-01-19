@@ -10,12 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-library(shiny)
-library(bslib)
-library(bsicons)
-library(fontawesome)
-library(leaflet)
-
 page_sidebar(
   theme = bs_theme(bootswatch = "cerulean"),
   # Test TUV
@@ -28,7 +22,7 @@ page_sidebar(
       "PAH",
       choices = c(
         "Choose a chemical" = "",
-        tools::toTitleCase(sort(unique(pahwq:::molar_absorption$chemical)))
+        chemical_list()
       )
     ),
     accordion(
@@ -49,11 +43,11 @@ page_sidebar(
           max = 180
         ),
         numericInput(
-          "elev_km",
-          "Elevation (km)",
-          value = 0.342,
-          min = -2,
-          max = 10
+          "elev_m",
+          "Elevation (m)",
+          value = 342,
+          min = -100,
+          max = 10000
         ),
         dateInput(
           "date",
