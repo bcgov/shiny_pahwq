@@ -63,9 +63,11 @@ page_sidebar(
       ),
       accordion_panel(
         "Water Parameters",
+        em("Input DOC here or Kd(ref) in the TUV parameters section below"),
+        br(),
         numericInput(
           "doc",
-          "DOC",
+          HTML("DOC (g/m<sup>3</sup>)"),
           value = NA_real_,
           min = 0.2,
           max = 23
@@ -80,24 +82,24 @@ page_sidebar(
         "Other TUV parameters",
         numericInput(
           "kd_ref",
-          "Kd(ref)",
+          HTML("K<sub>d</sub>(ref) (m<sup>-1</sup>)"),
           value = NA_real_
         ),
         numericInput(
           "kd_wvl",
-          "Kd(ref) wavelength (nm)",
+          HTML("K<sub>d</sub>(ref) wavelength (nm)"),
           value = 305
         ),
         numericInput(
           "tstart",
-          "Start time",
+          "Start time (h)",
           value = 0,
           min = 0,
           max = 23
         ),
         numericInput(
           "tstop",
-          "Stop time",
+          "Stop time (h)",
           value = 23,
           min = 0,
           max = 23
@@ -109,18 +111,20 @@ page_sidebar(
         ),
         numericInput(
           "wvl_start",
-          "Start Wavelength",
+          "Start Wavelength (nm)",
           value = 280,
           min = 0,
           max = 700
         ),
         numericInput(
           "wvl_end",
-          "End Wavelength",
+          "End Wavelength (nm)",
           value = 420,
           min = 0,
           max = 700
         ),
+        em("Ozone column and aerosol optical depth are calculated from climatology, but can be overridden here"),
+        br(),
         numericInput(
           "o3_tc",
           "Ozone Column (DU)",
@@ -129,16 +133,18 @@ page_sidebar(
         numericInput(
           "tauaer",
           "Aerosol Optical Depth",
-          value = NULL
+          value = NULL,
+          min = 0.1,
+          max = 1
         )
       )
     )
   ),
   layout_columns(
     fill = FALSE,
-    value_box(title = "P~abs~", value = textOutput("pabs"), showcase = bs_icon("sun")),
-    value_box(title = "NLC50", value = textOutput("nlc50"), showcase = bs_icon("bug-fill")),
-    value_box(title = "PLC50", value = textOutput("plc50"), showcase = bs_icon("bug"))
+    value_box(title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")), value = textOutput("pabs"), showcase = bs_icon("sun")),
+    value_box(title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("nlc50"), showcase = bs_icon("bug-fill")),
+    value_box(title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("plc50"), showcase = bs_icon("bug"))
   ),
   navset_tab(
     nav_panel(
