@@ -31,21 +31,21 @@ page_sidebar(
         numericInput(
           "lat",
           "Latitude (decimal degrees)",
-          value = 49.601632,
+          value = NA_real_,
           min = -70,
           max = 70
         ),
         numericInput(
           "lon",
           "Longitude (decimal degrees)",
-          value = -119.605862,
+          value = NA_real_,
           min = -180,
           max = 180
         ),
         numericInput(
           "elev_m",
           "Elevation (m)",
-          value = 342,
+          value = NA_real_,
           min = -100,
           max = 10000
         ),
@@ -66,7 +66,7 @@ page_sidebar(
         numericInput(
           "doc",
           "DOC",
-          value = 5,
+          value = NA_real_,
           min = 0.2,
           max = 23
         ),
@@ -81,7 +81,7 @@ page_sidebar(
         numericInput(
           "kd_ref",
           "Kd(ref)",
-          value = NA
+          value = NA_real_
         ),
         numericInput(
           "kd_wvl",
@@ -145,7 +145,7 @@ page_sidebar(
       "map",
          card(
            card_header("Click to select the location, or set the Latitude and Longitude in the left panel"),
-              card_body(leafletOutput("map")))
+              card_body(leafletOutput("map", height = 600, width = 600)))
     ),
     nav_panel(
       "tuv results",

@@ -48,7 +48,7 @@ function(input, output, session) {
       elev_m = req(input$elev_m),
       date = req(input$date),
       tzone = req(input$tzone),
-      DOC = tuv_inputs$doc,
+      DOC = req(tuv_inputs$doc),
       Kd_ref = tuv_inputs$kd_ref,
       Kd_wvl = tuv_inputs$kd_wvl,
       tstart = req(input$tstart),
@@ -85,7 +85,8 @@ function(input, output, session) {
 
   output$map <- renderLeaflet({
     leaflet() |>
-      addTiles()
+      addTiles() |>
+      setView(lng = -125.8178, lat = 54.1585, zoom = 5)
   })
 
   # This updates the lat and lon input fields if the user clicks on the map
