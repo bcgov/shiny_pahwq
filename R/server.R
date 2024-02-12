@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-function(input, output, session) {
+server <- function(input, output, session) {
 
   tuv_inputs <- reactiveValues(
     doc = NULL,
@@ -83,10 +83,10 @@ function(input, output, session) {
     round(plc50(pabs(), pah = req(input$chemical)), 2)
   })
 
-  output$map <- renderLeaflet({
-    leaflet() |>
-      addTiles() |>
-      setView(lng = -125.8178, lat = 54.1585, zoom = 5)
+  output$map <- leaflet::renderLeaflet({
+    leaflet::leaflet() |>
+      leaflet::addTiles() |>
+      leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5)
   })
 
   # This updates the lat and lon input fields if the user clicks on the map
@@ -111,10 +111,10 @@ function(input, output, session) {
     # this context it's read-only
     zoomed <- isolate(zoom())
 
-    leafletProxy("map") |>
-      clearMarkers() |>
-      addMarkers(lng = lng, lat = lat) |>
-      setView(lng = lng, lat = lat, zoom = zoomed)
+    leaflet::leafletProxy("map") |>
+      leaflet::clearMarkers() |>
+      leaflet::addMarkers(lng = lng, lat = lat) |>
+      leaflet::setView(lng = lng, lat = lat, zoom = zoomed)
   })
 
   #### Testing area
