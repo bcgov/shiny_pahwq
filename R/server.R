@@ -95,6 +95,14 @@ server <- function(input, output, session) {
     updateNumericInput(inputId = "lon", value = input$map_click$lng)
   })
 
+  observeEvent(
+    c(input$lat, input$lon),
+    updateNumericInput(
+      inputId = "elev_m",
+      value = get_elevation(req(input$lon), req(input$lat))
+    )
+  )
+
   # A default value of zoom, and then store the new value when the user changes it.
   # This is then used to maintain the zoom level when the user updates the location
   # either by clicking on the map or updating the lat and lon input fields

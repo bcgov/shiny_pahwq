@@ -29,6 +29,8 @@ ui <- function() {
       accordion(
         accordion_panel(
           "Location and Date",
+          em("Get Latitude and Longitude by clicking on the map, or enter here"),
+          br(),
           numericInput(
             "lat",
             "Latitude (decimal degrees)",
@@ -43,6 +45,8 @@ ui <- function() {
             min = -180,
             max = 180
           ),
+          em("Elevation is looked up based on latitude and longitude, but can be overridden here."),
+          br(),
           numericInput(
             "elev_m",
             "Elevation (m)",
