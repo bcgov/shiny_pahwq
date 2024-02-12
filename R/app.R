@@ -16,10 +16,7 @@
 #' @import pahwq
 ## usethis namespace: end
 
-library(shiny)
-
-run_pahwq_app <- function(...) {
-  ui <- ui()
-  server <- server
-  shinyApp(ui, server, ...)
+#' @export
+run_app <- function(...) {
+  shinyApp(ui = ui, server = server, ...)
 }

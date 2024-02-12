@@ -10,5 +10,5 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-pkgload::load_all(".")
-pahwq_shiny::run_pahwq_app()
+pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
+pahwq_shiny::run_app()
