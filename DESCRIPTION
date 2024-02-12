@@ -19,3 +19,5 @@ Imports:
     pahwq,
     pkgload,
     shiny
+Remotes: 
+    bcgov/pahwq
