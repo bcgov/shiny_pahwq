@@ -17,4 +17,5 @@ Imports:
     fontawesome,
     leaflet,
     pahwq,
+    pkgload,
     shiny
