@@ -69,19 +69,23 @@ server <- function(input, output, session) {
       params, sep = ": ", collapse = "<br/>"))
   })
 
-  pabs <- reactive(p_abs(irrad(), req(input$chemical)))
+  value_box_values <- reactiveValues(
+    nlc50 = "No chemical selected",
+    pabs = "No chemical selected",
+    plc50 = "No chemical selected"
+  )
+
+  observeEvent(req(input$chemical), {
+    value_box_values$nlc50 <- round(nlc50(input$chemical), 2)
+    value_box_values$pabs <- p_abs(irrad(), input$chemical)
+    value_box_values$plc50 <- round(plc50(value_box_values$pabs, pah = input$chemical), 2)
+  })
+
+  output$nlc50 <- renderText(value_box_values$nlc50)
+  output$pabs <- renderText(value_box_values$pabs)
+  output$plc50 <- renderText(value_box_values$plc50)
 
   output$irrad_tbl <- renderTable(irrad())
-
-  output$pabs <- renderText(round(pabs(), 2))
-
-  output$nlc50 <- renderText({
-    round(nlc50(req(input$chemical)), 2)
-  })
-
-  output$plc50 <- renderText({
-    round(plc50(pabs(), pah = req(input$chemical)), 2)
-  })
 
   output$map <- leaflet::renderLeaflet({
     leaflet::leaflet() |>

@@ -148,8 +148,8 @@ ui <- function() {
     ),
     layout_columns(
       fill = FALSE,
-      value_box(title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")), value = textOutput("pabs"), showcase = bsicons::bs_icon("sun")),
       value_box(title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("nlc50"), showcase = bsicons::bs_icon("bug-fill")),
+      value_box(title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")), value = textOutput("pabs"), showcase = bsicons::bs_icon("sun")),
       value_box(title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("plc50"), showcase = bsicons::bs_icon("bug"))
     ),
     navset_tab(
