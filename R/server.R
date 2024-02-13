@@ -69,19 +69,24 @@ server <- function(input, output, session) {
       params, sep = ": ", collapse = "<br/>"))
   })
 
+  nlc50_val <- reactiveVal("No chemical selected")
+
   value_box_values <- reactiveValues(
-    nlc50 = "No chemical selected",
     pabs = "No chemical selected",
     plc50 = "No chemical selected"
   )
 
-  observeEvent(req(input$chemical), {
-    value_box_values$nlc50 <- round(nlc50(input$chemical), 2)
-    value_box_values$pabs <- p_abs(irrad(), input$chemical)
-    value_box_values$plc50 <- round(plc50(value_box_values$pabs, pah = input$chemical), 2)
+  observeEvent(input$chemical, {
+    nlc50_val(round(nlc50(req(input$chemical)), 2))
+    no_tuv_txt <- "Enter parameters on the left to run the TUV model"
+    value_box_values$pabs <- if (!isTruthy(irrad())) no_tuv_txt else p_abs(irrad(), req(input$chemical))
   })
 
-  output$nlc50 <- renderText(value_box_values$nlc50)
+  # observeEvent(req(irrad()), {
+  #   value_box_values$plc50 <- round(plc50(value_box_values$pabs, pah = input$chemical), 2)
+  # })
+
+  output$nlc50 <- renderText(nlc50_val())
   output$pabs <- renderText(value_box_values$pabs)
   output$plc50 <- renderText(value_box_values$plc50)
 
