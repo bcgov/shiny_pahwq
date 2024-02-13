@@ -96,12 +96,16 @@ server <- function(input, output, session) {
   })
 
   observeEvent(
-    c(input$lat, input$lon),
-    updateNumericInput(
-      inputId = "elev_m",
-      value = get_elevation(req(input$lon), req(input$lat))
-    )
-  )
+    c(input$lat, input$lon), {
+      elev_val <- tryCatch(
+        get_elevation(req(input$lon), req(input$lat)),
+        error = function(e) return(NA_real_)
+      )
+      updateNumericInput(
+        inputId = "elev_m",
+        value = elev_val
+      )
+    })
 
   # A default value of zoom, and then store the new value when the user changes it.
   # This is then used to maintain the zoom level when the user updates the location

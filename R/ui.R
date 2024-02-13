@@ -37,11 +37,13 @@ ui <- function() {
             min = -180,
             max = 180
           ),
-          em("Elevation is looked up based on latitude and longitude, but can be overridden here."),
-          br(),
           numericInput(
             "elev_m",
-            "Elevation (m)",
+            label = tooltip(
+              trigger = list("Elevation (m)", bsicons::bs_icon("info-circle")),
+              "Elevation in Canada and the USA is looked up based on latitude
+              and longitude, but can be entered manually here."
+            ),
             value = NA_real_,
             min = -100,
             max = 10000
