@@ -144,7 +144,7 @@ ui <- function() {
         "PAH",
         selectInput(
           "chemical",
-          "Select a chemical to calculate the NLC50, Pabs, and PLC50",
+          "Select a chemical for which to calculate the NLC50, Pabs, and PLC50",
           choices = c(
             "Choose a chemical" = "",
             chemical_list()
