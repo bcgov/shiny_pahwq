@@ -169,6 +169,11 @@ ui <- function() {
         "TUV Run Parameters",
         br(),
         card(htmlOutput("tuv_params"))
+      ),
+      nav_panel(
+        "Multi-Chemical Toxicity",
+        uiOutput("multi_tox_download_btn"),
+        card(tableOutput("multi_tox"))
       )
     )
   )

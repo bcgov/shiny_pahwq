@@ -127,7 +127,7 @@ server <- function(input, output, session) {
 
   output$tuv_download_btn <- renderUI({
     req(irrad())
-    downloadButton("tuv_download", "Download TUV resultst to csv", class = "btn-primary m-2")
+    downloadButton("tuv_download", "Download TUV results to csv", class = "btn-primary m-2")
   })
 
   output$tuv_download <- downloadHandler(
@@ -139,6 +139,29 @@ server <- function(input, output, session) {
     }
   )
 
+  multi_tox <- reactive({
+    tuv_res <- req(irrad())
+    chems <- chemical_list()
+    plc50_multi(tuv_res, chems)
+  })
+
+  output$multi_tox <- renderTable({
+    req(multi_tox())
+  })
+
+  output$multi_tox_download_btn <- renderUI({
+    req(multi_tox())
+    downloadButton("multi_tox_download", "Download results to csv", class = "btn-primary m-2")
+  })
+
+  output$multi_tox_download <- downloadHandler(
+    filename = function() {
+      paste0("plc50-multi-results_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(multi_tox(), file, row.names = FALSE, na = "")
+    }
+  )
   #### Testing area
 
 }
