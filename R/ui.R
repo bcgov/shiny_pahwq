@@ -18,14 +18,6 @@ ui <- function() {
 
     # Sidebar with a slider input for DOC
     sidebar = sidebar(
-      selectInput(
-        "chemical",
-        "PAH",
-        choices = c(
-          "Choose a chemical" = "",
-          chemical_list()
-        )
-      ),
       accordion(
         accordion_panel(
           "Location and Date",
@@ -148,6 +140,17 @@ ui <- function() {
     ),
     layout_columns(
       fill = FALSE,
+      card(
+        "PAH",
+        selectInput(
+          "chemical",
+          "Select a chemical for which to calculate the NLC50, Pabs, and PLC50",
+          choices = c(
+            "Choose a chemical" = "",
+            chemical_list()
+          )
+        )
+      ),
       value_box(title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("nlc50"), showcase = bsicons::bs_icon("bug-fill")),
       value_box(title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")), value = textOutput("pabs"), showcase = bsicons::bs_icon("sun")),
       value_box(title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("plc50"), showcase = bsicons::bs_icon("bug"))
