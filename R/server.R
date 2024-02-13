@@ -125,6 +125,20 @@ server <- function(input, output, session) {
       leaflet::setView(lng = lng, lat = lat, zoom = zoomed)
   })
 
+  output$tuv_download_btn <- renderUI({
+    req(irrad())
+    downloadButton("tuv_download", "Download TUV resultst to csv", class = "btn-primary m-2")
+  })
+
+  output$tuv_download <- downloadHandler(
+    filename = function() {
+      paste0("tuv-results_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(irrad(), file, row.names = FALSE, na = "")
+    }
+  )
+
   #### Testing area
 
 }

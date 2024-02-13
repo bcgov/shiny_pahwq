@@ -12,7 +12,7 @@
 
 ui <- function() {
   page_sidebar(
-    theme = bs_theme(bootswatch = "cerulean"),
+    theme = bs_theme(version = 5, bootswatch = "cerulean"),
     # Test TUV
     title = "Water Quality Calculator for Photoxic PAHs",
 
@@ -142,7 +142,8 @@ ui <- function() {
             min = 0.1,
             max = 1
           )
-        )
+        ),
+        open = c("Location and Date", "Water Parameters")
       )
     ),
     layout_columns(
@@ -153,17 +154,20 @@ ui <- function() {
     ),
     navset_tab(
       nav_panel(
-        "map",
+        "Map",
+        br(),
+        p("Click to select the location, or set the Latitude and Longitude in the left panel"),
         card(
-          card_header("Click to select the location, or set the Latitude and Longitude in the left panel"),
           card_body(leaflet::leafletOutput("map", height = 600, width = 600)))
       ),
       nav_panel(
-        "tuv results",
+        "TUV Results",
+        uiOutput("tuv_download_btn"),
         card(tableOutput("irrad_tbl"))
       ),
       nav_panel(
-        "tuv run parameters",
+        "TUV Run Parameters",
+        br(),
         card(htmlOutput("tuv_params"))
       )
     )
