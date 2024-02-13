@@ -135,7 +135,7 @@ server <- function(input, output, session) {
       paste0("tuv-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(irrad(), file)
+      write.csv(irrad(), file, row.names = FALSE, na = "")
     }
   )
 
