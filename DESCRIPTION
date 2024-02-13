@@ -15,6 +15,7 @@ Imports:
     bsicons,
     bslib,
     fontawesome,
+    htmlwidgets,
     leaflet,
     pahwq,
     pkgload,

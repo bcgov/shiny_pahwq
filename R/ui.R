@@ -12,6 +12,11 @@
 
 ui <- function() {
   page_sidebar(
+    tags$head(tags$style("
+    .select-overflowable {
+      overflow: visible !important;
+    }
+  ")),
     theme = bs_theme(version = 5, bootswatch = "cerulean"),
     # Test TUV
     title = "Water Quality Calculator for Photoxic PAHs",
@@ -122,7 +127,7 @@ ui <- function() {
             min = 0,
             max = 700
           ),
-          em("Ozone column and aerosol optical depth are calculated from climatology, but can be overridden here"),
+          em("Ozone column and aerosol optical depth are calculated from climatology, but can be entered manually here"),
           br(),
           numericInput(
             "o3_tc",
@@ -151,17 +156,40 @@ ui <- function() {
             "Choose a chemical" = "",
             chemical_list()
           )
+        ),
+        class = "select-overflowable",
+        wrapper = function(...) card_body(..., class = "select-overflowable")
+      ),
+      value_box(
+        title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")),
+        value = textOutput("nlc50"),
+        showcase = tooltip(
+          bsicons::bs_icon("bug-fill"),
+          "You must select a chemical"
         )
       ),
-      value_box(title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("nlc50"), showcase = bsicons::bs_icon("bug-fill")),
-      value_box(title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")), value = textOutput("pabs"), showcase = bsicons::bs_icon("sun")),
-      value_box(title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")), value = textOutput("plc50"), showcase = bsicons::bs_icon("bug"))
+      value_box(
+        title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")),
+        value = textOutput("pabs"),
+        showcase = tooltip(
+          bsicons::bs_icon("sun"),
+          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+        )
+      ),
+      value_box(
+        title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")),
+        value = textOutput("plc50"),
+        showcase = tooltip(
+          bsicons::bs_icon("bug"),
+          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+        )
+      )
     ),
     navset_tab(
       nav_panel(
         "Map",
         br(),
-        p("Click to select the location, or set the Latitude and Longitude in the left panel"),
+        p("Click the map to select the location, or set Latitude, Longitude and elevation in the left panel"),
         card(
           card_body(leaflet::leafletOutput("map", height = 600, width = 600)))
       ),

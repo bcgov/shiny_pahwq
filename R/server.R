@@ -84,9 +84,17 @@ server <- function(input, output, session) {
   })
 
   output$map <- leaflet::renderLeaflet({
-    leaflet::leaflet() |>
-      leaflet::addTiles() |>
-      leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5)
+    leaflet::leaflet(options = leaflet::leafletOptions(zoomControl = FALSE)) |>
+      leaflet::addProviderTiles(leaflet::providers$OpenStreetMap, group = 'OpenStreetMap') |>
+      leaflet::addProviderTiles(leaflet::providers$OpenTopoMap, group = 'OpenTopoMap') |>
+      leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery, group = 'ESRI Imagery') |>
+      leaflet::addLayersControl(baseGroups = c('OpenStreetMap', 'OpenTopoMap', 'ESRI Imagery'),
+                                position = "bottomleft") |>
+      leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5) |>
+      htmlwidgets::onRender(
+        "function(el, x) {
+          L.control.zoom({position:'topright'}).addTo(this);
+        }")
   })
 
   # This updates the lat and lon input fields if the user clicks on the map
