@@ -142,7 +142,8 @@ ui <- function() {
             min = 0.1,
             max = 1
           )
-        )
+        ),
+        open = c("Location and Date", "Water Parameters")
       )
     ),
     layout_columns(
