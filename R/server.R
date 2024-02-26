@@ -177,4 +177,12 @@ server <- function(input, output, session) {
   )
   #### Testing area
 
+  sens <- eventReactive(input$run_sens_button, {
+    run_sens(input)
+  })
+
+  output$sens_plot <- ggiraph::renderGirafe({
+    sens()
+  })
+
 }
