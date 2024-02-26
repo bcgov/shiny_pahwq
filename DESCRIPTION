@@ -19,6 +19,9 @@ Imports:
     leaflet,
     pahwq,
     pkgload,
-    shiny
+    shiny,
+    withr,
+    glue,
+    ggiraph
 Remotes: 
     bcgov/pahwq
