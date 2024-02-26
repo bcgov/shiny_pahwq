@@ -1,0 +1,50 @@
+chem_input <- function(id){
+  selectInput(
+    id,
+    "Select a chemical for which to calculate the NLC50, Pabs, and PLC50",
+    choices = c(
+      "Choose a chemical" = "",
+      chemical_list()
+    )
+  )
+}
+
+doc_input <- function(id, label_prefix = NULL) {
+  numericInput(
+    id,
+    HTML(add_prefix("DOC (g/m<sup>3</sup>)", label_prefix)),
+    value = NA_real_,
+    min = 0.2,
+    max = 23
+  )
+}
+
+depth_input <- function(id, label_prefix = NULL) {
+  numericInput(
+    id,
+    add_prefix("Water Depth (m)", label_prefix),
+    value = 0.25
+  )
+}
+
+kd_input <- function(id, label_prefix = NULL) {
+  numericInput(
+    id,
+    HTML(add_prefix("K<sub>d</sub>(ref) (m<sup>-1</sup>)", label_prefix)),
+    value = NA_real_
+  )
+}
+
+add_prefix <- function(x, prefix) {
+  glue::glue(paste0("{prefix}", x), .transformer = null_transformer())
+}
+
+null_transformer <- function(str = "") {
+  function(text, envir) {
+    out <- glue::identity_transformer(text, envir)
+    if (is.null(out)) {
+      return(str)
+    }
+    paste0(out, " ")
+  }
+}

@@ -69,26 +69,12 @@ ui <- function() {
           "Water Parameters",
           em("Input DOC here or Kd(ref) in the TUV parameters section below"),
           br(),
-          numericInput(
-            "doc",
-            HTML("DOC (g/m<sup>3</sup>)"),
-            value = NA_real_,
-            min = 0.2,
-            max = 23
-          ),
-          numericInput(
-            "depth_m",
-            "Water Depth (m)",
-            value = 0.25
-          )
+          doc_input("doc"),
+          depth_input("depth_m")
         ),
         accordion_panel(
           "Other TUV parameters",
-          numericInput(
-            "kd_ref",
-            HTML("K<sub>d</sub>(ref) (m<sup>-1</sup>)"),
-            value = NA_real_
-          ),
+          kd_input("kd_ref"),
           numericInput(
             "kd_wvl",
             HTML("K<sub>d</sub>(ref) wavelength (nm)"),
@@ -149,14 +135,7 @@ ui <- function() {
       fill = FALSE,
       card(
         "PAH",
-        selectInput(
-          "chemical",
-          "Select a chemical for which to calculate the NLC50, Pabs, and PLC50",
-          choices = c(
-            "Choose a chemical" = "",
-            chemical_list()
-          )
-        ),
+        chem_input("chemical"),
         class = "select-overflowable",
         wrapper = function(...) card_body(..., class = "select-overflowable")
       ),
@@ -207,6 +186,37 @@ ui <- function() {
         "Multi-Chemical Toxicity",
         uiOutput("multi_tox_download_btn"),
         card(tableOutput("multi_tox"))
+      ),
+      nav_panel(
+        "DOC and Depth Sensitivity",
+        card(
+          card_body(
+            chem_input("sens_chemical"),
+            numericInput(
+              "sens_year",
+              "Year",
+              value = as.integer(format(Sys.Date(), "%Y")),
+              min = 1900,
+              max = as.integer(format(Sys.Date(), "%Y"))
+            ),
+            selectInput(
+              "sens_months",
+              "Months",
+              choices = month.name,
+              multiple = TRUE
+            ),
+            doc_input("sens_doc_min", "Min"),
+            doc_input("sens_doc_max", "Max"),
+            depth_input("sens_depth_min", "Min"),
+            depth_input("sens_depth_max", "Max"),
+            kd_input("sens_kd_ref_min", "Min"),
+            kd_input("sens_kd_ref_max", "Max")
+          )
+        ),
+        actionButton("run_sens_button", "Run")
+      ),
+      card(
+        ggiraph::girafeOutput("sens_plot")
       )
     )
   )
