@@ -41,6 +41,7 @@ server <- function(input, output, session) {
   })
 
   irrad <- reactive({
+    local_tuv_dir()
     tuv(
       depth_m = req(input$depth_m),
       lat = req(input$lat),
