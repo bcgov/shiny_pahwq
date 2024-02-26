@@ -22,6 +22,7 @@ Imports:
     shiny,
     withr,
     glue,
-    ggiraph
+    ggiraph,
+    shinycssloaders
 Remotes: 
     bcgov/pahwq

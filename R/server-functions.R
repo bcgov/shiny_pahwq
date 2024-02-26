@@ -4,12 +4,13 @@ run_sens <- function(input) {
     format = "%Y-%B-%d"
   )
 
-  doc <- seq(req(input$sens_doc_min), req(input$sens_doc_max), length.out = 2)
-  depth <- seq(req(input$sens_depth_min), req(input$sens_depth_max), length.out = 2)
+  doc <- seq(req(input$sens_doc_min), req(input$sens_doc_max), length.out = input$doc_steps)
+  depth <- seq(req(input$sens_depth_min), req(input$sens_depth_max), length.out = input$depth_steps)
+  # kd <- seq(req(input$sens_kd_min), req(input$sens_kd_max), length.out = input$kd_steps)
 
   local_tuv_dir()
   out <- sens_kd_depth(
-    pah = req(input$sens_chemical),
+    pah = req(input$chemical),
     lat = req(input$lat),
     lon = req(input$lon),
     elev_m = req(input$elev_m),
@@ -28,6 +29,12 @@ run_sens <- function(input) {
   # o3_tc = tuv_inputs$o3_tc,
   # tauaer = tuv_inputs$tauaer,
 
-  plot_sens_kd_depth(out, interactive = TRUE)
+  plot_sens_kd_depth(
+    out,
+    interactive = TRUE,
+    options = list(
+      ggiraph::opts_selection(type = "none")
+    )
+  )
 
 }
