@@ -206,19 +206,6 @@ ui <- function() {
               multiple = TRUE
             ),
             sliderInput(
-              "sens_doc",
-              "DOC Range",
-              min = 0.2,
-              max = 23,
-              value = c(5,10)
-            ),
-            sliderInput(
-              "doc_steps",
-              "Number of DOC increments",
-              min = 1, max = 10,
-              value = 5
-            ),
-            sliderInput(
               "sens_depth",
               "Depth Range",
               min = 0, max = 2,
@@ -231,14 +218,13 @@ ui <- function() {
               min = 1, max = 10,
               value = 5
             ),
-            kd_input("sens_kd_min", "Min"),
-            kd_input("sens_kd_max", "Max"),
-            sliderInput(
-              "kd_steps",
-              "Number of Kd increments",
-              min = 1, max = 10,
-              value = 5
+            radioButtons(
+              "doc_or_kd",
+              "Choose Y axis variable",
+              choices = c("DOC" = "doc", "Kd(ref)" = "kd"),
+              selected = "doc"
             ),
+            uiOutput("attenuation_selector"),
           )
         ),
         card(

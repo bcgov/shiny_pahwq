@@ -175,6 +175,37 @@ server <- function(input, output, session) {
   )
   #### Testing area
 
+  output$attenuation_selector <- renderUI({
+    if (input$doc_or_kd == "doc") {
+      tagList(
+        sliderInput(
+          "sens_doc",
+          "DOC Range",
+          min = 0.2,
+          max = 23,
+          value = c(5,10)
+        ),
+        sliderInput(
+          "doc_steps",
+          "Number of DOC increments",
+          min = 1, max = 10,
+          value = 5
+        )
+      )
+    } else {
+      tagList(
+        kd_input("sens_kd_min", "Min"),
+        kd_input("sens_kd_max", "Max"),
+        sliderInput(
+          "kd_steps",
+          "Number of Kd increments",
+          min = 1, max = 10,
+          value = 5
+        )
+      )
+    }
+  })
+
   sens <- eventReactive(input$run_sens_button, {
     run_sens(input)
   })

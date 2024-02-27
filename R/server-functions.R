@@ -4,9 +4,15 @@ run_sens <- function(input) {
     format = "%Y-%B-%d"
   )
 
-  doc <- seq(input$sens_doc[1], input$sens_doc[2], length.out = input$doc_steps)
+  if (input$doc_or_kd == "doc") {
+    doc <- seq(input$sens_doc[1], input$sens_doc[2], length.out = input$doc_steps)
+    kd <- NULL
+  } else {
+    kd <- seq(req(input$sens_kd_min), req(input$sens_kd_max), length.out = input$kd_steps)
+    doc <- NULL
+  }
+
   depth <- seq(input$sens_depth[1], input$sens_depth[2], length.out = input$depth_steps)
-  # kd <- seq(req(input$sens_kd_min), req(input$sens_kd_max), length.out = input$kd_steps)
 
   local_tuv_dir()
   out <- sens_kd_depth(
@@ -16,7 +22,7 @@ run_sens <- function(input) {
     elev_m = req(input$elev_m),
     date = dates,
     DOC = doc,
-    Kd_ref = NULL,
+    Kd_ref = kd,
     depth_m = depth
   )
   # tzone = req(input$tzone),
