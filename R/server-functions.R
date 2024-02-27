@@ -38,3 +38,7 @@ run_sens <- function(input) {
   )
 
 }
+
+x_or_null <- function(x) {
+    if (!isTruthy(x)) NULL else x
+}
