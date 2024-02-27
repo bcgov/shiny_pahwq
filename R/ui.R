@@ -190,7 +190,8 @@ ui <- function() {
     nav_panel(
       "DOC and Depth Sensitivity",
       br(),
-      p("Select a location (on the Map tab or the Latitude/Longitude/Elevation fields on the left), and a chemical above."),
+      p("Select a chemical above, and a location using the Map tab or the Latitude/Longitude/Elevation fields on the left."),
+      p("Choose a range of depths and DOC or Kd(ref), and click 'Run'. All other TUV parameters (e.g., Ozone Column and Aerosol Optical Depth) will be used as set in the left sidebar."),
       layout_columns(
         card(
           card_body(
