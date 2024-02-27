@@ -12,35 +12,34 @@
 
 server <- function(input, output, session) {
 
-  tuv_inputs <- reactiveValues(
-    doc = NULL,
-    kd_ref = NULL,
-    kd_wvl = NULL,
-    o3_tc = NULL,
-    tauaer = NULL
-  )
+  doc_reactive <- reactive(x_or_null(input$doc))
 
-  observeEvent(input$doc, {
-    tuv_inputs$doc <- if (!isTruthy(input$doc)) NULL else input$doc
+  kd_reactive <- reactive({
+    if (!isTruthy(input$kd_ref)) {
+      NULL
+    } else {
+      validate(
+        need(input$kd_wvl, label = "Kd_wvl")
+      )
+      input$kd_ref
+    }
   })
 
-  observeEvent(input$kd_ref, {
-    tuv_inputs$kd_ref <- if (!isTruthy(input$kd_ref)) NULL else input$kd_ref
-  })
+  kd_wvl_reactive <- reactive(x_or_null(input$kd_wvl))
 
-  observeEvent(input$kd_wvl, {
-    tuv_inputs$kd_wvl <- if (!isTruthy(input$kd_wvl)) NULL else input$kd_wvl
-  })
+  o3_tc_reactive <- reactive(x_or_null(input$o3_tc))
 
-  observeEvent(input$o3_tc, {
-    tuv_inputs$o3_tc <- if (!isTruthy(input$o3_tc)) NULL else input$o3_tc
-  })
-
-  observeEvent(input$tauaer, {
-    tuv_inputs$tauaer <- if (!isTruthy(input$tauaer)) NULL else input$tauaer
-  })
+  tauaer_reactive <- reactive(x_or_null(input$tauaer))
 
   irrad <- reactive({
+    local_tuv_dir()
+
+    req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
+
+    if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
+      validate("Only one of DOC or Kd(ref) may be chosen")
+    }
+
     tuv(
       depth_m = req(input$depth_m),
       lat = req(input$lat),
@@ -48,16 +47,16 @@ server <- function(input, output, session) {
       elev_m = req(input$elev_m),
       date = req(input$date),
       tzone = req(input$tzone),
-      DOC = req(tuv_inputs$doc),
-      Kd_ref = tuv_inputs$kd_ref,
-      Kd_wvl = tuv_inputs$kd_wvl,
+      DOC = doc_reactive(),
+      Kd_ref = kd_reactive(),
+      Kd_wvl = kd_wvl_reactive(),
       tstart = req(input$tstart),
       tstop = req(input$tstop),
       tsteps = req(input$tsteps),
       wvl_start = req(input$wvl_start),
       wvl_end = req(input$wvl_end),
-      o3_tc = tuv_inputs$o3_tc,
-      tauaer = tuv_inputs$tauaer,
+      o3_tc = o3_tc_reactive(),
+      tauaer = tauaer_reactive(),
       quiet = TRUE
     )
   })
@@ -147,7 +146,7 @@ server <- function(input, output, session) {
       paste0("tuv-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(irrad(), file, row.names = FALSE, na = "")
+      utils::write.csv(irrad(), file, row.names = FALSE, na = "")
     }
   )
 
@@ -171,9 +170,53 @@ server <- function(input, output, session) {
       paste0("plc50-multi-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(multi_tox(), file, row.names = FALSE, na = "")
+      utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
     }
   )
   #### Testing area
+
+  output$attenuation_selector <- renderUI({
+    if (input$doc_or_kd == "doc") {
+      tagList(
+        sliderInput(
+          "sens_doc",
+          "DOC Range",
+          min = 0.2,
+          max = 23,
+          value = c(5,10)
+        ),
+        sliderInput(
+          "doc_steps",
+          "Number of DOC increments",
+          min = 1, max = 10,
+          value = 5
+        )
+      )
+    } else {
+      tagList(
+        sliderInput(
+          "sens_kd",
+          "Kd(305) Range",
+          min = 0,
+          max = 150,
+          value = c(5,50)
+        ),
+        sliderInput(
+          "kd_steps",
+          "Number of Kd increments",
+          min = 1, max = 10,
+          value = 5
+        )
+      )
+    }
+  })
+
+  sens <- eventReactive(input$run_sens_button, {
+    run_sens(input)
+  })
+
+  output$sens_plot <- ggiraph::renderGirafe({
+    sens()
+  })
 
 }

@@ -15,8 +15,8 @@
 #' @import bslib
 #' @import pahwq
 ## usethis namespace: end
+NULL
 
-#' @export
 run_app <- function(...) {
   shinyApp(ui = ui, server = server, ...)
 }

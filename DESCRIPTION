@@ -1,4 +1,4 @@
-Package: pahwq_shiny
+Package: pahwq.shiny
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: c(
@@ -14,11 +14,14 @@ RoxygenNote: 7.3.1
 Imports: 
     bsicons,
     bslib,
-    fontawesome,
     htmlwidgets,
     leaflet,
     pahwq,
     pkgload,
-    shiny
+    shiny,
+    withr,
+    glue,
+    ggiraph,
+    shinycssloaders
 Remotes: 
     bcgov/pahwq
