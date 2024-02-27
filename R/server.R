@@ -146,7 +146,7 @@ server <- function(input, output, session) {
       paste0("tuv-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(irrad(), file, row.names = FALSE, na = "")
+      utils::write.csv(irrad(), file, row.names = FALSE, na = "")
     }
   )
 
@@ -170,7 +170,7 @@ server <- function(input, output, session) {
       paste0("plc50-multi-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(multi_tox(), file, row.names = FALSE, na = "")
+      utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
     }
   )
   #### Testing area
