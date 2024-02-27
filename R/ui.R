@@ -232,7 +232,7 @@ ui <- function() {
         card(
           actionButton("run_sens_button", "Run"),
           shinycssloaders::withSpinner(
-            ggiraph::girafeOutput("sens_plot"),
+            ggiraph::girafeOutput("sens_plot", width = "90%", height = "90%"),
             type = 5,
             color = "darkgray"
           )
