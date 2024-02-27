@@ -4,8 +4,8 @@ run_sens <- function(input) {
     format = "%Y-%B-%d"
   )
 
-  doc <- seq(req(input$sens_doc_min), req(input$sens_doc_max), length.out = input$doc_steps)
-  depth <- seq(req(input$sens_depth_min), req(input$sens_depth_max), length.out = input$depth_steps)
+  doc <- seq(input$sens_doc[1], input$sens_doc[2], length.out = input$doc_steps)
+  depth <- seq(input$sens_depth[1], input$sens_depth[2], length.out = input$depth_steps)
   # kd <- seq(req(input$sens_kd_min), req(input$sens_kd_max), length.out = input$kd_steps)
 
   local_tuv_dir()

@@ -205,19 +205,29 @@ ui <- function() {
               choices = month.name,
               multiple = TRUE
             ),
-            doc_input("sens_doc_min", "Min"),
-            doc_input("sens_doc_max", "Max"),
+            sliderInput(
+              "sens_doc",
+              "DOC Range",
+              min = 0.2,
+              max = 23,
+              value = c(5,10)
+            ),
             sliderInput(
               "doc_steps",
-              "Number of DOC steps",
+              "Number of DOC increments",
               min = 1, max = 10,
               value = 5
             ),
-            depth_input("sens_depth_min", "Min"),
-            depth_input("sens_depth_max", "Max"),
+            sliderInput(
+              "sens_depth",
+              "Depth Range",
+              min = 0, max = 2,
+              value = c(0.25,1),
+              step = 0.05
+            ),
             sliderInput(
               "depth_steps",
-              "Number of depth steps",
+              "Number of depth increments",
               min = 1, max = 10,
               value = 5
             ),
@@ -225,7 +235,7 @@ ui <- function() {
             kd_input("sens_kd_max", "Max"),
             sliderInput(
               "kd_steps",
-              "Number of Kd steps",
+              "Number of Kd increments",
               min = 1, max = 10,
               value = 5
             ),
