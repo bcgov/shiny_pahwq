@@ -8,7 +8,7 @@ run_sens <- function(input) {
     doc <- seq(input$sens_doc[1], input$sens_doc[2], length.out = input$doc_steps)
     kd <- NULL
   } else {
-    kd <- seq(req(input$sens_kd_min), req(input$sens_kd_max), length.out = input$kd_steps)
+    kd <- seq(input$sens_kd[1], input$sens_kd[2], length.out = input$kd_steps)
     doc <- NULL
   }
 

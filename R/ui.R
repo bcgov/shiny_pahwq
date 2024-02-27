@@ -189,6 +189,8 @@ ui <- function() {
     ),
     nav_panel(
       "DOC and Depth Sensitivity",
+      br(),
+      p("Select a location (on the Map tab or the Latitude/Longitude/Elevation fields on the left), and a chemical above."),
       layout_columns(
         card(
           card_body(

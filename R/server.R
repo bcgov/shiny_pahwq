@@ -194,8 +194,13 @@ server <- function(input, output, session) {
       )
     } else {
       tagList(
-        kd_input("sens_kd_min", "Min"),
-        kd_input("sens_kd_max", "Max"),
+        sliderInput(
+          "sens_kd",
+          "Kd(305) Range",
+          min = 0,
+          max = 150,
+          value = c(5,50)
+        ),
         sliderInput(
           "kd_steps",
           "Number of Kd increments",
