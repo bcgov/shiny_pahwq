@@ -11,4 +11,4 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
-pahwq_shiny:::run_app()
+pahwq.shiny:::run_app()
