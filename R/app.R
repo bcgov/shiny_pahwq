@@ -18,5 +18,6 @@
 NULL
 
 run_app <- function(...) {
+  addResourcePath("www", system.file("www/", package = "pahwq.shiny"))
   shinyApp(ui = ui, server = server, ...)
 }
