@@ -1,0 +1,11 @@
+/* Get a fancy font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Change text to imported font */
+body * {
+  font-family: "Open Sans", sans-serif;
+}
+
+.select-overflowable {
+  overflow: visible !important;
+}
