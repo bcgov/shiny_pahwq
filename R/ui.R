@@ -17,8 +17,16 @@ ui <- function() {
       tags$link(
         rel = "stylesheet", type = "text/css", href = "www/style.css")
     ),
-    # Test TUV
-    title = "Water Quality Calculator for Photoxic PAHs",
+    title = h1(
+      class = "bslib-page-title",
+      img(
+        class = "img-logo",
+        src = "www/BCID_V_rgb_rev.png",
+        height = 80,
+        width = 80
+      ), "Water Quality Calculator for Photoxic PAHs"
+    ),
+    # title = "Water Quality Calculator for Photoxic PAHs",
 
     # Sidebar with a slider input for DOC
     sidebar = sidebar(

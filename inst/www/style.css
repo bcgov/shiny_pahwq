@@ -9,3 +9,9 @@ body * {
 .select-overflowable {
   overflow: visible !important;
 }
+
+.img-logo {
+  margin-top: -16px;
+  margin-bottom: -16px;
+  margin-left: -16px;
+}
