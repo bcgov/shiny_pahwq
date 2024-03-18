@@ -217,7 +217,7 @@ ui <- function() {
               ),
               sliderInput(
                 "sens_depth",
-                "Depth Range",
+                "Depth Range (m)",
                 min = 0, max = 2,
                 value = c(0.25,1),
                 step = 0.05

@@ -180,7 +180,7 @@ server <- function(input, output, session) {
       tagList(
         sliderInput(
           "sens_doc",
-          "DOC Range",
+          HTML("DOC Range (g/m<sup>3</sup>)"),
           min = 0.2,
           max = 23,
           value = c(5,10)

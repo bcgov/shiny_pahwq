@@ -45,7 +45,8 @@ run_sens <- function(input) {
     out,
     interactive = TRUE,
     options = list(
-      ggiraph::opts_selection(type = "none")
+      ggiraph::opts_selection(type = "none"),
+      ggiraph::opts_sizing(width = 1, rescale = TRUE)
     )
   )
 
