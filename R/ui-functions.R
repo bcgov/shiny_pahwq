@@ -30,7 +30,10 @@ depth_input <- function(id, label_prefix = NULL) {
 kd_input <- function(id, label_prefix = NULL) {
   numericInput(
     id,
-    HTML(add_prefix("K<sub>d</sub>(ref) (m<sup>-1</sup>)", label_prefix)),
+    input_tooltip(
+      HTML(add_prefix("K<sub>d</sub>(ref) (m<sup>-1</sup>)", label_prefix)),
+      "Light attenuation coefficient at reference wavelength. Can be set directly, or calculated from DOC."
+    ),
     value = NA_real_
   )
 }
@@ -47,4 +50,15 @@ null_transformer <- function(str = "") {
     }
     paste0(out, " ")
   }
+}
+
+input_tooltip <- function(label, tooltip) {
+  shiny::span(
+    label,
+    bslib::tooltip(
+      bsicons::bs_icon("question-circle"),
+      tooltip,
+      placement = "right"
+    )
+  )
 }

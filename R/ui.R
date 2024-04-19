@@ -16,252 +16,283 @@ ui <- function() {
     tags$head(
       tags$link(
         rel = "stylesheet", type = "text/css", href = "www/style.css")
-    ),
-    title = h1(
-      class = "bslib-page-title",
-      img(
-        class = "img-logo",
-        src = "www/BCID_V_rgb_rev.png",
-        height = 80,
-        width = 80
-      ), "Water Quality Calculator for Photoxic PAHs"
-    ),
-    # title = "Water Quality Calculator for Photoxic PAHs",
-
-    # Sidebar with a slider input for DOC
-    sidebar = sidebar(
-      accordion(
-        accordion_panel(
-          "Location and Date",
-          em("Get Latitude and Longitude by clicking on the map, or enter here"),
-          br(),
-          numericInput(
-            "lat",
-            "Latitude (decimal degrees)",
-            value = NA_real_,
-            min = -70,
-            max = 70
-          ),
-          numericInput(
-            "lon",
-            "Longitude (decimal degrees)",
-            value = NA_real_,
-            min = -180,
-            max = 180
-          ),
-          numericInput(
-            "elev_m",
-            label = tooltip(
-              trigger = list("Elevation (m)", bsicons::bs_icon("info-circle")),
-              "Elevation in Canada and the USA is looked up based on latitude
-              and longitude, but can be entered manually here."
+      ),
+      title = h1(
+        class = "bslib-page-title",
+        img(
+          class = "img-logo",
+          src = "www/BCID_V_rgb_rev.png",
+          height = 80,
+          width = 80
+        ), "Water Quality Calculator for Photoxic PAHs"
+      ),
+      # title = "Water Quality Calculator for Photoxic PAHs",
+      
+      # Sidebar with a slider input for DOC
+      sidebar = sidebar(
+        accordion(
+          accordion_panel(
+            "Location and Date",
+            em("Get Latitude and Longitude by clicking on the map, or enter here"),
+            br(),
+            numericInput(
+              "lat",
+              "Latitude (decimal degrees)",
+              value = NA_real_,
+              min = -70,
+              max = 70
             ),
-            value = NA_real_,
-            min = -100,
-            max = 10000
-          ),
-          dateInput(
-            "date",
-            "Date"
-          ),
-          numericInput(
-            "tzone",
-            "Timezone (hrs)",
-            value = -8,
-            min = -14,
-            max = 12
-          )
-        ),
-        accordion_panel(
-          "Water Parameters",
-          em("Input DOC here or Kd(ref) in the TUV parameters section below"),
-          br(),
-          doc_input("doc"),
-          depth_input("depth_m")
-        ),
-        accordion_panel(
-          "Other TUV parameters",
-          kd_input("kd_ref"),
-          numericInput(
-            "kd_wvl",
-            HTML("K<sub>d</sub>(ref) wavelength (nm)"),
-            value = 305
-          ),
-          numericInput(
-            "tstart",
-            "Start time (h)",
-            value = 0,
-            min = 0,
-            max = 23
-          ),
-          numericInput(
-            "tstop",
-            "Stop time (h)",
-            value = 23,
-            min = 0,
-            max = 23
-          ),
-          sliderInput(
-            "tsteps",
-            span("Time steps",
-            tooltip(
-              bsicons::bs_icon("question-circle"),
-              "Number of time intervals between Start time and Stop time at which irradiance is calculated.",
-              placement = "right"
-            )),
-            min = 1, 
-            max = 24,
-            value = 24,
-            step = 1
-          ),
-          numericInput(
-            "wvl_start",
-            "Start Wavelength (nm)",
-            value = 280,
-            min = 0,
-            max = 700
-          ),
-          numericInput(
-            "wvl_end",
-            "End Wavelength (nm)",
-            value = 420,
-            min = 0,
-            max = 700
-          ),
-          em("Ozone column and aerosol optical depth are calculated from climatology, but can be entered manually here"),
-          br(),
-          numericInput(
-            "o3_tc",
-            "Ozone Column (DU)",
-            value = NULL
-          ),
-          numericInput(
-            "tauaer",
-            "Aerosol Optical Depth",
-            value = NULL,
-            min = 0.1,
-            max = 1
-          )
-        ),
-        open = c("Location and Date", "Water Parameters")
-      )
-    ),
-    layout_columns(
-      fill = FALSE,
-      card(
-        "PAH",
-        chem_input("chemical"),
-        class = "select-overflowable",
-        wrapper = function(...) card_body(..., class = "select-overflowable")
-      ),
-      value_box(
-        title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")),
-        value = textOutput("nlc50"),
-        showcase = tooltip(
-          bsicons::bs_icon("bug-fill"),
-          "You must select a chemical"
-        )
-      ),
-      value_box(
-        title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")),
-        value = textOutput("pabs"),
-        showcase = tooltip(
-          bsicons::bs_icon("sun"),
-          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
-        )
-      ),
-      value_box(
-        title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")),
-        value = textOutput("plc50"),
-        showcase = tooltip(
-          bsicons::bs_icon("bug"),
-          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
-        )
-      )
-    ),
-    navset_tab(
-      nav_panel(
-        "Map",
-        br(),
-        p("Click the map to select the location, or set Latitude, Longitude and elevation in the left panel"),
-        card(
-          card_body(leaflet::leafletOutput("map", height = 600, width = 600)))
-      ),
-      nav_panel(
-        "TUV Results",
-        uiOutput("tuv_download_btn"),
-        card(tableOutput("irrad_tbl"))
-      ),
-      nav_panel(
-        "TUV Run Parameters",
-        br(),
-        card(htmlOutput("tuv_params"))
-      ),
-      nav_panel(
-        "Multi-Chemical Toxicity",
-        uiOutput("multi_tox_download_btn"),
-        card(tableOutput("multi_tox"))
-      ),
-      nav_panel(
-        "DOC and Depth Sensitivity",
-        br(),
-        p("Select a chemical above, and a location using the Map tab or the Latitude/Longitude/Elevation fields on the left."),
-        p("Choose a range of depths and DOC or Kd(ref), and click 'Run'. All other TUV parameters (e.g., Ozone Column and Aerosol Optical Depth) will be used as set in the left sidebar."),
-        layout_columns(
-          card(
-            card_body(
-              numericInput(
-                "sens_year",
-                "Year",
-                value = as.integer(format(Sys.Date(), "%Y")),
-                min = 1900,
-                max = as.integer(format(Sys.Date(), "%Y"))
+            numericInput(
+              "lon",
+              "Longitude (decimal degrees)",
+              value = NA_real_,
+              min = -180,
+              max = 180
+            ),
+            numericInput(
+              "elev_m",
+              input_tooltip(
+                "Elevation (m)",
+                "Elevation in Canada and the USA is looked up based on latitude
+                and longitude, but can be entered manually here."
               ),
-              selectInput(
-                "sens_months",
-                "Months",
-                choices = month.name,
-                multiple = TRUE
+              value = NA_real_,
+              min = -100,
+              max = 10000
+            ),
+            dateInput(
+              "date",
+              "Date"
+            ),
+            numericInput(
+              "tzone",
+              input_tooltip(
+                "Timezone (hrs)",
+                "timezone offset from UTC, in hours. Default 0"
               ),
-              sliderInput(
-                "sens_depth",
-                "Depth Range (m)",
-                min = 0, max = 2,
-                value = c(0.25,1),
-                step = 0.05
-              ),
-              sliderInput(
-                "depth_steps",
-                "Number of depth increments",
-                min = 1, max = 10,
-                value = 5
-              ),
-              radioButtons(
-                "doc_or_kd",
-                "Choose Y axis variable",
-                choices = c("DOC" = "doc", "Kd(ref)" = "kd"),
-                selected = "doc"
-              ),
-              uiOutput("attenuation_selector"),
+              value = -8,
+              min = -14,
+              max = 12
             )
           ),
-          card(
-            actionButton("run_sens_button", "Run"),
-            shinycssloaders::withSpinner(
-              ggiraph::girafeOutput("sens_plot", width = "90%", height = "90%"),
-              type = 5,
-              color = "darkgray"
+          accordion_panel(
+            "Water Parameters",
+            em("Input DOC here or Kd(ref) in the TUV parameters section below"),
+            br(),
+            doc_input("doc"),
+            depth_input("depth_m")
+          ),
+          accordion_panel(
+            "Other TUV parameters",
+            kd_input("kd_ref"),
+            numericInput(
+              "kd_wvl",
+              input_tooltip(
+                HTML("K<sub>d</sub>(ref) wavelength (nm)"),
+                "The reference wavelength at which `Kd_ref` was obtained, in nm.
+                Default 305. Only used if Kd_ref is set."
+              ),
+              value = 305
+            ),
+            numericInput(
+              "tstart",
+              input_tooltip(
+                "Start time (h)",
+                "Start time of the calculation, in hours (between 0 and 24)"
+              ),
+              value = 0,
+              min = 0,
+              max = 23
+            ),
+            numericInput(
+              "tstop",
+              input_tooltip(
+                "Stop time (h)",
+                "Stop time of the calculation, in hours (between 0 and 24)"
+              ),
+              value = 23,
+              min = 0,
+              max = 23
+            ),
+            sliderInput(
+              "tsteps",
+              input_tooltip(
+                "Time steps",
+                "Number of time intervals between Start time and Stop time at 
+                which irradiance is calculated."
+              ),
+              min = 1, 
+              max = 24,
+              value = 24,
+              step = 1
+            ),
+            numericInput(
+              "wvl_start",
+              input_tooltip(
+                "Start Wavelength (nm)",
+                "Shortest wavelength at which to calculate irradiance"
+              ),
+              value = 280,
+              min = 0,
+              max = 700
+            ),
+            numericInput(
+              "wvl_end",
+              input_tooltip(
+                "End Wavelength (nm)",
+                "Longest wavelength at which to calculate irradiance"
+              ),
+              value = 420,
+              min = 0,
+              max = 700
+            ),
+            em("Ozone column and aerosol optical depth are calculated from 
+              climatology, but can be entered manually here"),
+            br(),
+            numericInput(
+              "o3_tc",
+              input_tooltip(
+                "Ozone Column (DU)",
+                "The ozone column, in Dobson Units. If NULL, it is looked up
+                based on latitude and month, based on historic climatology. If 
+                there is no historic value for the given month and location, a 
+                default value of 300 is used."
+              ),
+              value = NULL
+            ),
+            numericInput(
+              "tauaer",
+              input_tooltip(
+                "Aerosol Optical Depth",
+                "The aerosol optical depth (tau) at 550 nm. If NULL, it is
+                looked up based on latitude, longitude, and month, based on historic
+                climatology. If there is no historic value for the given month and
+                location, a default value of 0.235 is used."
+              ),
+              value = NULL,
+              min = 0.1,
+              max = 1
             )
           ),
-          col_widths = c(3,9)
+          open = c("Location and Date", "Water Parameters")
         )
-      ), 
-      nav_panel(
-        "About",
+      ),
+      layout_columns(
+        fill = FALSE,
         card(
-          
+          "PAH",
+          chem_input("chemical"),
+          class = "select-overflowable",
+          wrapper = function(...) card_body(..., class = "select-overflowable")
+        ),
+        value_box(
+          title = p(HTML("NLC50<br/><small>(&mu;g/L)</small>")),
+          value = textOutput("nlc50"),
+          showcase = tooltip(
+            bsicons::bs_icon("bug-fill"),
+            "You must select a chemical"
+          )
+        ),
+        value_box(
+          title = p(HTML("P<sub>abs</sub><br/><small>(mol photons/mol PAH)</small>")),
+          value = textOutput("pabs"),
+          showcase = tooltip(
+            bsicons::bs_icon("sun"),
+            "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+          )
+        ),
+        value_box(
+          title = p(HTML("PLC50<br/><small>(&mu;g/L)</small>")),
+          value = textOutput("plc50"),
+          showcase = tooltip(
+            bsicons::bs_icon("bug"),
+            "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+          )
+        )
+      ),
+      navset_tab(
+        nav_panel(
+          "Map",
+          br(),
+          p("Click the map to select the location, or set Latitude, Longitude and elevation in the left panel"),
+          card(
+            card_body(leaflet::leafletOutput("map", height = 600, width = 600)))
+          ),
+          nav_panel(
+            "TUV Results",
+            uiOutput("tuv_download_btn"),
+            card(tableOutput("irrad_tbl"))
+          ),
+          nav_panel(
+            "TUV Run Parameters",
+            br(),
+            card(htmlOutput("tuv_params"))
+          ),
+          nav_panel(
+            "Multi-Chemical Toxicity",
+            uiOutput("multi_tox_download_btn"),
+            card(tableOutput("multi_tox"))
+          ),
+          nav_panel(
+            "DOC and Depth Sensitivity",
+            br(),
+            p("Select a chemical above, and a location using the Map tab or the Latitude/Longitude/Elevation fields on the left."),
+            p("Choose a range of depths and DOC or Kd(ref), and click 'Run'. All other TUV parameters (e.g., Ozone Column and Aerosol Optical Depth) will be used as set in the left sidebar."),
+            layout_columns(
+              card(
+                card_body(
+                  numericInput(
+                    "sens_year",
+                    "Year",
+                    value = as.integer(format(Sys.Date(), "%Y")),
+                    min = 1900,
+                    max = as.integer(format(Sys.Date(), "%Y"))
+                  ),
+                  selectInput(
+                    "sens_months",
+                    "Months",
+                    choices = month.name,
+                    multiple = TRUE
+                  ),
+                  sliderInput(
+                    "sens_depth",
+                    "Depth Range (m)",
+                    min = 0, max = 2,
+                    value = c(0.25,1),
+                    step = 0.05
+                  ),
+                  sliderInput(
+                    "depth_steps",
+                    "Number of depth increments",
+                    min = 1, max = 10,
+                    value = 5
+                  ),
+                  radioButtons(
+                    "doc_or_kd",
+                    "Choose Y axis variable",
+                    choices = c("DOC" = "doc", "Kd(ref)" = "kd"),
+                    selected = "doc"
+                  ),
+                  uiOutput("attenuation_selector"),
+                )
+              ),
+              card(
+                actionButton("run_sens_button", "Run"),
+                shinycssloaders::withSpinner(
+                  ggiraph::girafeOutput("sens_plot", width = "90%", height = "90%"),
+                  type = 5,
+                  color = "darkgray"
+                )
+              ),
+              col_widths = c(3,9)
+            )
+          ), 
+          nav_panel(
+            "About",
+            card(
+              
+            )
+          )
         )
       )
-    )
-  )
-}
+    }
