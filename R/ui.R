@@ -101,10 +101,18 @@ ui <- function() {
             min = 0,
             max = 23
           ),
-          numericInput(
+          sliderInput(
             "tsteps",
-            "Time steps",
-            value = 24
+            span("Time steps",
+            tooltip(
+              bsicons::bs_icon("question-circle"),
+              "Number of time intervals between Start time and Stop time at which irradiance is calculated.",
+              placement = "right"
+            )),
+            min = 1, 
+            max = 24,
+            value = 24,
+            step = 1
           ),
           numericInput(
             "wvl_start",
@@ -246,6 +254,12 @@ ui <- function() {
             )
           ),
           col_widths = c(3,9)
+        )
+      ), 
+      nav_panel(
+        "About",
+        card(
+          
         )
       )
     )
