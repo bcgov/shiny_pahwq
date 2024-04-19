@@ -231,7 +231,7 @@ ui <- function() {
           nav_panel(
             "Multi-Chemical Toxicity",
             uiOutput("multi_tox_download_btn"),
-            card(tableOutput("multi_tox"))
+            card(DT::DTOutput("multi_tox"))
           ),
           nav_panel(
             "DOC and Depth Sensitivity",

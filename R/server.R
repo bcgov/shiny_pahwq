@@ -156,8 +156,10 @@ server <- function(input, output, session) {
     plc50_multi(tuv_res, chems)
   })
 
-  output$multi_tox <- renderTable({
-    req(multi_tox())
+  output$multi_tox <- DT::renderDT({
+    DT::datatable(req(multi_tox())) |> 
+      DT::formatRound(columns = c("nlc50", "plc50"), digits = 3) |> 
+      DT::formatRound(columns = "pabs", digits = 5)
   })
 
   output$multi_tox_download_btn <- renderUI({
