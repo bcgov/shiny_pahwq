@@ -68,7 +68,7 @@ server <- function(input, output, session) {
       params, sep = ": ", collapse = "<br/>"))
   })
 
-  pabs <- reactive(p_abs(irrad(), req(input$chemical)))
+  pabs <- reactive(p_abs(irrad(), req(input$chemical), time_multiplier = req(input$multiplier)))
 
   output$irrad_tbl <- renderTable(irrad())
 

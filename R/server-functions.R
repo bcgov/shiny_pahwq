@@ -27,6 +27,7 @@ run_sens <- function(input) {
     lon = req(input$lon),
     elev_m = req(input$elev_m),
     date = dates,
+    time_multiplier = req(input$multiplier),
     DOC = doc,
     Kd_ref = kd,
     depth_m = depth,

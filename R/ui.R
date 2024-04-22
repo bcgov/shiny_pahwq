@@ -126,6 +126,19 @@ ui <- function() {
               value = 24,
               step = 1
             ),
+            sliderInput(
+              "multiplier",
+              input_tooltip(
+                "TUV results multiplier",
+                "Multiplier for calculating Pabs from TUV results. The standard 
+                is for a 48 exposure, so for a 24 hour TUV run, multiply
+                the calculated irradiance by 2. This is the default."
+              ),
+              min = 1,
+              max = 10,
+              value = 2,
+              step = 1
+            ),
             numericInput(
               "wvl_start",
               input_tooltip(
@@ -153,7 +166,7 @@ ui <- function() {
               "o3_tc",
               input_tooltip(
                 "Ozone Column (DU)",
-                "The ozone column, in Dobson Units. If NULL, it is looked up
+                "The ozone column, in Dobson Units. If empty, it is looked up
                 based on latitude and month, based on historic climatology. If 
                 there is no historic value for the given month and location, a 
                 default value of 300 is used."
@@ -164,7 +177,7 @@ ui <- function() {
               "tauaer",
               input_tooltip(
                 "Aerosol Optical Depth",
-                "The aerosol optical depth (tau) at 550 nm. If NULL, it is
+                "The aerosol optical depth (tau) at 550 nm. If empty, it is
                 looked up based on latitude, longitude, and month, based on historic
                 climatology. If there is no historic value for the given month and
                 location, a default value of 0.235 is used."
