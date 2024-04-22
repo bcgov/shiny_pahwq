@@ -175,7 +175,6 @@ server <- function(input, output, session) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
     }
   )
-  #### Testing area
 
   output$attenuation_selector <- renderUI({
     if (input$doc_or_kd == "doc") {
