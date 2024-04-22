@@ -68,19 +68,28 @@ server <- function(input, output, session) {
       params, sep = ": ", collapse = "<br/>"))
   })
 
-  pabs <- reactive(p_abs(irrad(), req(input$chemical)))
+  nlc50_val <- reactiveVal("No chemical selected")
+
+  value_box_values <- reactiveValues(
+    pabs = "No chemical selected",
+    plc50 = "No chemical selected"
+  )
+
+  observeEvent(input$chemical, {
+    nlc50_val(round(nlc50(req(input$chemical)), 2))
+    no_tuv_txt <- "Enter parameters on the left to run the TUV model"
+    value_box_values$pabs <- if (!isTruthy(irrad())) no_tuv_txt else p_abs(irrad(), req(input$chemical))
+  })
+
+  # observeEvent(req(irrad()), {
+  #   value_box_values$plc50 <- round(plc50(value_box_values$pabs, pah = input$chemical), 2)
+  # })
+
+  output$nlc50 <- renderText(nlc50_val())
+  output$pabs <- renderText(value_box_values$pabs)
+  output$plc50 <- renderText(value_box_values$plc50)
 
   output$irrad_tbl <- renderTable(irrad())
-
-  output$pabs <- renderText(round(pabs(), 2))
-
-  output$nlc50 <- renderText({
-    round(nlc50(req(input$chemical)), 2)
-  })
-
-  output$plc50 <- renderText({
-    round(plc50(pabs(), pah = req(input$chemical)), 2)
-  })
 
   output$map <- leaflet::renderLeaflet({
     leaflet::leaflet(options = leaflet::leafletOptions(zoomControl = FALSE)) |>
