@@ -153,7 +153,7 @@ server <- function(input, output, session) {
   multi_tox <- reactive({
     tuv_res <- req(irrad())
     chems <- chemical_list()
-    plc50_multi(tuv_res, chems)
+    plc50_multi(tuv_res, chems, time_multiplier = req(input$multiplier))
   })
 
   output$multi_tox <- DT::renderDT({
