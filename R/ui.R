@@ -24,9 +24,9 @@ ui <- function() {
           src = "www/BCID_V_rgb_rev.png",
           height = 80,
           width = 80
-        ), "Water Quality Calculator for Photoxic PAHs"
+        ), "Water Quality Calculator for Phototoxic PAHs"
       ),
-      # title = "Water Quality Calculator for Photoxic PAHs",
+      # title = "Water Quality Calculator for Phototoxic PAHs",
       
       # Sidebar with a slider input for DOC
       sidebar = sidebar(
@@ -155,12 +155,12 @@ ui <- function() {
                 "End Wavelength (nm)",
                 "Longest wavelength at which to calculate irradiance"
               ),
-              value = 420,
+              value = 700,
               min = 0,
               max = 700
             ),
             em("Ozone column and aerosol optical depth are calculated from 
-              climatology, but can be entered manually here"),
+            climatology, but can be entered manually here"),
             br(),
             numericInput(
               "o3_tc",
@@ -301,11 +301,117 @@ ui <- function() {
             )
           ), 
           nav_panel(
-            "About",
+            "Help/About",
             card(
+              withMathJax(),
+              p(HTML(
+                "This app implements the <a href='https://doi.org/10.1002/etc.3601'>
+                Phototoxic Target Lipid Model</a> (PTLM) for 
+                the calculation of Canadian Water Quality Guidelines for Polycyclic 
+                Aromatic Hydrocarbons (PAH)."
+              )),
               
+              p(HTML(
+                "It relies on the <a href='https://bcgov.github.io/pahwq'>pahwq</a> 
+                R package, which uses the <a href='https://github.com/NCAR/TUV'>
+                Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
+                to calculate the light penetration through water of a given depth 
+                at a given location and date, with a specified attennuation coeffcienct. This
+                coefficient can be calculated from a Dissolved Organic Carbon concentration. 
+                The light exposure is then used (along with the PAH-specific molar 
+                  absorption across a range of wavelengths), to calculate the light 
+                  absorption (Pabs) of the given PAH at that location. This is then 
+                  used to determine the PLC50 of the PAH under those conditions."
+                )),
+                
+                p(
+                  "By default, the app will run the TUV model for 24 hours on the
+                  given day, with one irradiance calculation per hour at each wavelength.
+                  When calculating Pabs, total light absorption by the given
+                  chemical is multiplied by 2 as the standard exposure is 48h for
+                  determining NLC50 and PLC50."
+                ),
+                
+                h3("Inputs"),
+                h4("Location and Date"),
+                p(
+                  "These determine the location and date for which the TUV model 
+                  is run to determine irradiance."
+                ),
+                p(HTML(
+                  "Location is determined by entering latitude, longitude, and 
+                  elevation, or by clicking a location on the map.
+                  When clicking a location on a map, elevation is looked up using 
+                  Natural Resource Canada's <a href='https://natural-resources.canada.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/elevation-api/17328'>
+                  Elevation API</a>, and if outside of Canada, using the 
+                  <a href='https://epqs.nationalmap.gov/v1/docs'>USGS Elevation 
+                  Point Query Service</a>.
+                  "
+                )),
+                
+                h4("Water parameters"),
+                
+                p(HTML(
+                  "These determine the light attenuation through the water at a given depth. Light attenuation 
+                  at each wavelength (\\(k_d(\\lambda)\\)) is determined 
+                  from the attenuation coefficient at a reference wavelength (305nm), which is calculated from 
+                  Dissolved Organic Carbon (DOC) concentration using the following 
+                  equation from Morris et al (1995):"
+                )),
+                p(HTML(
+                  "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 2.76\\text{ and }b_{305} = 1.23$$"
+                )),
+                
+                p(HTML("You can supply an absoruption coeffecient (\\(k_d(\\lambda)\\)) 
+                and reference wavelength directly instead of calculating it from DOC
+                in the 'Other TUV Parameters section:")),
+                
+                h4("Other TUV parameters"),
+                p(
+                  "Ozone column and aerosol optical depth are looked up from 
+                  historic climatology based on the date and location entered."
+                ),
+                
+                h5("Ozone column (DU)"),
+                p(
+                  "The app uses monthly ozone column data from 1980-1991 from 
+                  Fortuin and Kelder (1998), which is bundled with the TUV model. 
+                  Based on latitude and longitude and month, the ozone column value 
+                  is looked up and supplied to the TUV model. It can be supplied 
+                  manually to override this behaviour"
+                ),
+                
+                h5("Aerosol optical depth"),
+                p(
+                  "The app uses average monthly aerosol optical depth data from 
+                  2002 to 2023, obtained from NASA MODIS/Aqua satellite data, 
+                  aggregated to 1 degree latutide and longitude resolution. If no
+                  value is available for a given month, latitude, and longitude,
+                  a default value of 0.235 is used.
+                  It can be supplied manually to override this behaviour"
+                ),
+                
+                h3("References"),
+                
+                  p(
+                    "Morris, D.P., H. Zagarese, C.E. Williamson, E.G. Balseiro, 
+                    B.R. Hargreaves, B. Modenutti, R. Moeller, and C. Queimalinos. 
+                    1995. The attenuation of solar UV radiation in lakes and the 
+                    role of dissolved organic carbon. Limnology and Oceanography, 4
+                    0, 1381-1391. doi:", 
+                    a("10.4319/lo.1995.40.8.1381.", 
+                    href = "https://10.4319/lo.1995.40.8.1381")
+                  ),
+                  p(
+                    "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone 
+                    climatology based on ozonesonde and satellite measurements, 
+                    J. Geophys. Res., 103(D24), 31709–31734, doi:",
+                    a("10.1029/1998JD200008.", 
+                    href = "https://10.1029/1998JD200008")
+                  )
+                  
+                  
+                )
+              ))
             )
-          )
-        )
-      )
-    }
+          }
