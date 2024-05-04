@@ -316,7 +316,7 @@ ui <- function() {
                 R package, which uses the <a href='https://github.com/NCAR/TUV'>
                 Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
                 to calculate the light penetration through water of a given depth 
-                at a given location and date, with a specified attennuation coeffcienct. This
+                at a given location and date, with a specified attenuation coefficient. This
                 coefficient can be calculated from a Dissolved Organic Carbon concentration. 
                 The light exposure is then used (along with the PAH-specific molar 
                   absorption across a range of wavelengths), to calculate the light 
@@ -362,7 +362,7 @@ ui <- function() {
                   "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 2.76\\text{ and }b_{305} = 1.23$$"
                 )),
                 
-                p(HTML("You can supply an absoruption coeffecient (\\(k_d(\\lambda)\\)) 
+                p(HTML("You can supply an absorption coefficient (\\(k_d(\\lambda)\\)) 
                 and reference wavelength directly instead of calculating it from DOC
                 in the 'Other TUV Parameters section:")),
                 
@@ -385,7 +385,7 @@ ui <- function() {
                 p(
                   "The app uses average monthly aerosol optical depth data from 
                   2002 to 2023, obtained from NASA MODIS/Aqua satellite data, 
-                  aggregated to 1 degree latutide and longitude resolution. If no
+                  aggregated to 1 degree latitude and longitude resolution. If no
                   value is available for a given month, latitude, and longitude,
                   a default value of 0.235 is used.
                   It can be supplied manually to override this behaviour"
@@ -400,14 +400,14 @@ ui <- function() {
                     role of dissolved organic carbon. Limnology and Oceanography, 4
                     0, 1381-1391. doi:", 
                     a("10.4319/lo.1995.40.8.1381.", 
-                    href = "https://10.4319/lo.1995.40.8.1381")
+                    href = "https://doi.org/10.4319/lo.1995.40.8.1381")
                   ),
                   p(
                     "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone 
                     climatology based on ozonesonde and satellite measurements, 
                     J. Geophys. Res., 103(D24), 31709–31734, doi:",
                     a("10.1029/1998JD200008.", 
-                    href = "https://10.1029/1998JD200008")
+                    href = "https://doi.org/10.1029/1998JD200008")
                   )
                   
                   
