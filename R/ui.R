@@ -405,7 +405,7 @@ ui <- function() {
                   p(
                     "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone 
                     climatology based on ozonesonde and satellite measurements, 
-                    J. Geophys. Res., 103(D24), 31709–31734, doi:",
+                    J. Geophys. Res., 103(D24), 31709-31734, doi:",
                     a("10.1029/1998JD200008.", 
                     href = "https://doi.org/10.1029/1998JD200008")
                   )
