@@ -199,7 +199,7 @@ ui <- function() {
           wrapper = function(...) card_body(..., class = "select-overflowable")
         ),
         value_box(
-          title = p(HTML("Freshwater short-term NLC50<sub>(5)</sub>")),
+          title = htmlOutput("narc_bench_title"),
           value = htmlOutput("narc_bench"),
           showcase = tooltip(
             bsicons::bs_icon("bug-fill"),
@@ -215,7 +215,7 @@ ui <- function() {
           )
         ),
         value_box(
-          title = p(HTML("Freshwater short-term PLC50<sub>(5)</sub>")),
+          title = htmlOutput("photo_bench_title"),
           value = htmlOutput("photo_bench"),
           showcase = tooltip(
             bsicons::bs_icon("bug"),

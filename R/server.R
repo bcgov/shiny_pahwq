@@ -99,19 +99,31 @@ server <- function(input, output, session) {
     )
   })
 
+  output$narc_bench_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> short-term NLC50<sub>(5)</sub></p>",
+      aq_env = tools::toTitleCase(input$aq_env)
+    )
+  })
+
   output$narc_bench <- renderText({
-    paste(
-      "<p>",
-      round(narcotic_benchmark(req(input$chemical)), 2),
-      "&mu;g/L</p>"
+    glue::glue(
+      "<p>{narc_bench} &mu;g/L</p>",
+      narc_bench = round(narcotic_benchmark(req(input$chemical)), 2)
+    )
+  })
+
+  output$photo_bench_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> short-term PLC50<sub>(5)</sub></p>",
+      aq_env = tools::toTitleCase(input$aq_env)
     )
   })
 
   output$photo_bench <- renderText({
-    paste(
-      "<p>",
-      round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2),
-      "&mu;g/L</p>"
+    glue::glue(
+      "<p>{photo_bench} &mu;g/L</p>",
+      photo_bench = round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2)
     )
   })
 
