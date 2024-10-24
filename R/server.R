@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 server <- function(input, output, session) {
-
   doc_reactive <- reactive(x_or_null(input$doc))
 
   kd_reactive <- reactive({
@@ -65,35 +64,69 @@ server <- function(input, output, session) {
     params <- tuv_run_params(irrad())
     HTML(paste(
       paste0("<b>", names(params), "</b>"),
-      params, sep = ": ", collapse = "<br/>"))
+      params,
+      sep = ": ", collapse = "<br/>"
+    ))
   })
 
-  pabs <- reactive(p_abs(irrad(), req(input$chemical), time_multiplier = req(input$multiplier)))
+  pabs <- reactive(
+    p_abs(
+      irrad(),
+      req(input$chemical),
+      time_multiplier = req(input$multiplier)
+    )
+  )
 
   output$irrad_tbl <- renderTable(irrad())
 
-  output$pabs <- renderText(round(pabs(), 2))
-
-  output$nlc50 <- renderText({
-    round(nlc50(req(input$chemical)), 2)
+  output$pabs <- renderText({
+    paste(
+      "<p>",
+      round(pabs(), 2),
+      '</br><span class="small">mol photons/mol PAH</span></p>'
+    )
   })
 
-  output$plc50 <- renderText({
-    round(plc50(pabs(), pah = req(input$chemical)), 2)
+  output$narc_bench <- renderText({
+    paste(
+      "<p>",
+      round(narcotic_benchmark(req(input$chemical)), 2),
+      "&mu;g/L</p>"
+    )
+  })
+
+  output$photo_bench <- renderText({
+    paste(
+      "<p>",
+      round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2),
+      "&mu;g/L</p>"
+    )
   })
 
   output$map <- leaflet::renderLeaflet({
     leaflet::leaflet(options = leaflet::leafletOptions(zoomControl = FALSE)) |>
-      leaflet::addProviderTiles(leaflet::providers$OpenStreetMap, group = 'OpenStreetMap') |>
-      leaflet::addProviderTiles(leaflet::providers$OpenTopoMap, group = 'OpenTopoMap') |>
-      leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery, group = 'ESRI Imagery') |>
-      leaflet::addLayersControl(baseGroups = c('OpenStreetMap', 'OpenTopoMap', 'ESRI Imagery'),
-                                position = "bottomleft") |>
+      leaflet::addProviderTiles(
+        leaflet::providers$OpenStreetMap,
+        group = "OpenStreetMap"
+      ) |>
+      leaflet::addProviderTiles(
+        leaflet::providers$OpenTopoMap,
+        group = "OpenTopoMap"
+      ) |>
+      leaflet::addProviderTiles(
+        leaflet::providers$Esri.WorldImagery,
+        group = "ESRI Imagery"
+      ) |>
+      leaflet::addLayersControl(
+        baseGroups = c("OpenStreetMap", "OpenTopoMap", "ESRI Imagery"),
+        position = "bottomleft"
+      ) |>
       leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5) |>
       htmlwidgets::onRender(
         "function(el, x) {
           L.control.zoom({position:'topright'}).addTo(this);
-        }")
+        }"
+      )
   })
 
   # This updates the lat and lon input fields if the user clicks on the map
@@ -103,20 +136,25 @@ server <- function(input, output, session) {
   })
 
   observeEvent(
-    c(input$lat, input$lon), {
+    c(input$lat, input$lon),
+    {
       elev_val <- tryCatch(
         get_elevation(req(input$lon), req(input$lat)),
-        error = function(e) return(NA_real_)
+        error = function(e) {
+          return(NA_real_)
+        }
       )
       updateNumericInput(
         inputId = "elev_m",
         value = elev_val
       )
-    })
+    }
+  )
 
-  # A default value of zoom, and then store the new value when the user changes it.
-  # This is then used to maintain the zoom level when the user updates the location
-  # either by clicking on the map or updating the lat and lon input fields
+  # A default value of zoom, and then store the new value when the user changes
+  # it. This is then used to maintain the zoom level when the user updates the
+  # location either by clicking on the map or updating the lat and lon input
+  # fields
   zoom <- reactiveVal(5)
   observeEvent(input$map_zoom, zoom(input$map_zoom))
 
@@ -125,9 +163,9 @@ server <- function(input, output, session) {
     lng <- req(input$lon)
     lat <- req(input$lat)
 
-    # isolate zoom so that it doesn't update the reactive scope when it's changed
-    # i.e., it doesn't make this observer keep reacting when it's changed - within
-    # this context it's read-only
+    # isolate zoom so that it doesn't update the reactive scope when it's
+    # changed i.e., it doesn't make this observer keep reacting when it's
+    # changed - within this context it's read-only
     zoomed <- isolate(zoom())
 
     leaflet::leafletProxy("map") |>
@@ -138,7 +176,11 @@ server <- function(input, output, session) {
 
   output$tuv_download_btn <- renderUI({
     req(irrad())
-    downloadButton("tuv_download", "Download TUV results to csv", class = "btn-primary m-2")
+    downloadButton(
+      "tuv_download",
+      "Download TUV results to csv",
+      class = "btn-primary m-2"
+    )
   })
 
   output$tuv_download <- downloadHandler(
@@ -153,23 +195,27 @@ server <- function(input, output, session) {
   multi_tox <- reactive({
     tuv_res <- req(irrad())
     chems <- chemical_list()
-    plc50_multi(tuv_res, chems, time_multiplier = req(input$multiplier))
+    pb_multi(tuv_res, chems, time_multiplier = req(input$multiplier))
   })
 
   output$multi_tox <- DT::renderDT({
-    DT::datatable(req(multi_tox())) |> 
-      DT::formatRound(columns = c("nlc50", "plc50"), digits = 3) |> 
+    DT::datatable(req(multi_tox())) |>
+      DT::formatRound(columns = c("narc_bench", "photo_bench"), digits = 3) |>
       DT::formatRound(columns = "pabs", digits = 5)
   })
 
   output$multi_tox_download_btn <- renderUI({
     req(multi_tox())
-    downloadButton("multi_tox_download", "Download results to csv", class = "btn-primary m-2")
+    downloadButton(
+      "multi_tox_download",
+      "Download results to csv",
+      class = "btn-primary m-2"
+    )
   })
 
   output$multi_tox_download <- downloadHandler(
     filename = function() {
-      paste0("plc50-multi-results_", Sys.Date(), ".csv")
+      paste0("phototoxic-benchmark-multi-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
@@ -184,7 +230,7 @@ server <- function(input, output, session) {
           HTML("DOC Range (g/m<sup>3</sup>)"),
           min = 0.2,
           max = 23,
-          value = c(5,10)
+          value = c(5, 10)
         ),
         sliderInput(
           "doc_steps",
@@ -200,7 +246,7 @@ server <- function(input, output, session) {
           "Kd(305) Range",
           min = 0,
           max = 150,
-          value = c(5,50)
+          value = c(5, 50)
         ),
         sliderInput(
           "kd_steps",
@@ -219,5 +265,4 @@ server <- function(input, output, session) {
   output$sens_plot <- ggiraph::renderGirafe({
     sens()
   })
-
 }

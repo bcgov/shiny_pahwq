@@ -19,3 +19,15 @@ body * {
 #sens_plot {
   width: 100% !important;
 }
+
+span.small {
+  font-size: 0.7em;
+}
+
+/* .bslib-value-box .value-box-value#narc_bench, .value-box-value#pabs, .value-box-value#photo_bench {
+  font-size: calc(0.8rem + .9vw);
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: 500;
+  line-height: 01.2;
+} */
