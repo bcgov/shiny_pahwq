@@ -33,10 +33,21 @@ server <- function(input, output, session) {
   irrad <- reactive({
     local_tuv_dir()
 
-    req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
+    if (input$aq_env == "marine") {
+      doc_reactive <- reactive(NULL)
+      kd_reactive <- reactive(NULL)
+      kd_wvl_reactive <- reactive(NULL)
+      showNotification(
+        "DOC, Kd, and Kd wavelength are ignored for marine calculations",
+        duration = 10,
+        type = "warning"
+      )
+    } else {
+      req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
 
-    if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
-      validate("Only one of DOC or Kd(ref) may be chosen")
+      if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
+        validate("Only one of DOC or Kd(ref) may be chosen")
+      }
     }
 
     tuv(
@@ -47,6 +58,7 @@ server <- function(input, output, session) {
       date = req(input$date),
       tzone = req(input$tzone),
       DOC = doc_reactive(),
+      aq_env = req(input$aq_env),
       Kd_ref = kd_reactive(),
       Kd_wvl = kd_wvl_reactive(),
       tstart = req(input$tstart),
