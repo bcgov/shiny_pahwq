@@ -72,14 +72,28 @@ server <- function(input, output, session) {
 
   output$irrad_tbl <- renderTable(irrad())
 
-  output$pabs <- renderText(round(pabs(), 2))
+  output$pabs <- renderText({
+    paste(
+      "<p>",
+      round(pabs(), 2),
+      '</br><span class="small">mol photons/mol PAH</span></p>'
+    )
+})
 
-  output$nlc50 <- renderText({
-    round(nlc50(req(input$chemical)), 2)
+  output$narc_bench <- renderText({
+    paste(
+      "<p>",
+      round(narcotic_benchmark(req(input$chemical)), 2),
+      '&mu;g/L</p>'
+    )
   })
 
-  output$plc50 <- renderText({
-    round(plc50(pabs(), pah = req(input$chemical)), 2)
+  output$photo_bench <- renderText({
+    paste(
+      "<p>",
+      round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2),
+      '&mu;g/L</p>'
+    )
   })
 
   output$map <- leaflet::renderLeaflet({
@@ -153,12 +167,12 @@ server <- function(input, output, session) {
   multi_tox <- reactive({
     tuv_res <- req(irrad())
     chems <- chemical_list()
-    plc50_multi(tuv_res, chems, time_multiplier = req(input$multiplier))
+    pb_multi(tuv_res, chems, time_multiplier = req(input$multiplier))
   })
 
   output$multi_tox <- DT::renderDT({
-    DT::datatable(req(multi_tox())) |> 
-      DT::formatRound(columns = c("nlc50", "plc50"), digits = 3) |> 
+    DT::datatable(req(multi_tox())) |>
+      DT::formatRound(columns = c("narc_bench", "photo_bench"), digits = 3) |>
       DT::formatRound(columns = "pabs", digits = 5)
   })
 
@@ -169,7 +183,7 @@ server <- function(input, output, session) {
 
   output$multi_tox_download <- downloadHandler(
     filename = function() {
-      paste0("plc50-multi-results_", Sys.Date(), ".csv")
+      paste0("phototoxic-benchmark-multi-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")

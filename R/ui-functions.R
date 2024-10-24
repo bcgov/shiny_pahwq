@@ -1,7 +1,7 @@
 chem_input <- function(id){
   selectInput(
     id,
-    "Select a chemical for which to calculate the NLC50, Pabs, and PLC50",
+    "Select a chemical for which to calculate the narcotic benchmark, Pabs, and phototoxic benchmark",
     choices = c(
       "Choose a chemical" = "",
       chemical_list()
