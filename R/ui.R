@@ -193,8 +193,8 @@ ui <- function() {
       layout_columns(
         fill = FALSE,
         card(
-          "PAH",
           chem_input("chemical"),
+          aq_env_input("aq_env"),
           class = "select-overflowable",
           wrapper = function(...) card_body(..., class = "select-overflowable")
         ),
