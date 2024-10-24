@@ -1,11 +1,20 @@
 chem_input <- function(id){
   selectInput(
     id,
-    "Select a chemical for which to calculate the narcotic benchmark, Pabs, and phototoxic benchmark",
+    "Select a chemical:",
     choices = c(
       "Choose a chemical" = "",
       chemical_list()
     )
+  )
+}
+
+aq_env_input <- function(id) {
+  radioButtons(
+    id,
+    "Aquatic environment:",
+    choices = c("Freshwater" = "freshwater", "Marine" = "marine"),
+    inline = TRUE
   )
 }
 

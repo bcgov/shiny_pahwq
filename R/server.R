@@ -33,10 +33,21 @@ server <- function(input, output, session) {
   irrad <- reactive({
     local_tuv_dir()
 
-    req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
+    if (input$aq_env == "marine") {
+      doc_reactive <- reactive(NULL)
+      kd_reactive <- reactive(NULL)
+      kd_wvl_reactive <- reactive(NULL)
+      showNotification(
+        "DOC, Kd, and Kd wavelength are ignored for marine calculations",
+        duration = 10,
+        type = "warning"
+      )
+    } else {
+      req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
 
-    if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
-      validate("Only one of DOC or Kd(ref) may be chosen")
+      if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
+        validate("Only one of DOC or Kd(ref) may be chosen")
+      }
     }
 
     tuv(
@@ -47,6 +58,7 @@ server <- function(input, output, session) {
       date = req(input$date),
       tzone = req(input$tzone),
       DOC = doc_reactive(),
+      aq_env = req(input$aq_env),
       Kd_ref = kd_reactive(),
       Kd_wvl = kd_wvl_reactive(),
       tstart = req(input$tstart),
@@ -87,19 +99,31 @@ server <- function(input, output, session) {
     )
   })
 
+  output$narc_bench_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> short-term NLC50<sub>(5)</sub></p>",
+      aq_env = tools::toTitleCase(input$aq_env)
+    )
+  })
+
   output$narc_bench <- renderText({
-    paste(
-      "<p>",
-      round(narcotic_benchmark(req(input$chemical)), 2),
-      "&mu;g/L</p>"
+    glue::glue(
+      "<p>{narc_bench} &mu;g/L</p>",
+      narc_bench = round(narcotic_benchmark(req(input$chemical)), 2)
+    )
+  })
+
+  output$photo_bench_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> short-term PLC50<sub>(5)</sub></p>",
+      aq_env = tools::toTitleCase(input$aq_env)
     )
   })
 
   output$photo_bench <- renderText({
-    paste(
-      "<p>",
-      round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2),
-      "&mu;g/L</p>"
+    glue::glue(
+      "<p>{photo_bench} &mu;g/L</p>",
+      photo_bench = round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2)
     )
   })
 
@@ -200,7 +224,7 @@ server <- function(input, output, session) {
 
   output$multi_tox <- DT::renderDT({
     DT::datatable(req(multi_tox())) |>
-      DT::formatRound(columns = c("narc_bench", "photo_bench"), digits = 3) |>
+      DT::formatRound(columns = c("narcotic_benchmark", "phototoxic_benchmark"), digits = 3) |>
       DT::formatRound(columns = "pabs", digits = 5)
   })
 
@@ -215,7 +239,7 @@ server <- function(input, output, session) {
 
   output$multi_tox_download <- downloadHandler(
     filename = function() {
-      paste0("phototoxic-benchmark-multi-results_", Sys.Date(), ".csv")
+      paste0("phototoxic-benchmark-multi-results-", input$aq_env, "_", Sys.Date(), ".csv")
     },
     content = function(file) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
