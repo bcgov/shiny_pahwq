@@ -23,8 +23,8 @@ doc_input <- function(id, label_prefix = NULL) {
     id,
     HTML(add_prefix("DOC (g/m<sup>3</sup>)", label_prefix)),
     value = NA_real_,
-    min = 0.2,
-    max = 23
+    min = suppressWarnings(pahwq:::doc_valid_range(-Inf)),
+    max = suppressWarnings(pahwq:::doc_valid_range(Inf))
   )
 }
 
