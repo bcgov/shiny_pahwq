@@ -284,8 +284,8 @@ server <- function(input, output, session) {
         sliderInput(
           "sens_doc",
           HTML("DOC Range (g/m<sup>3</sup>)"),
-          min = 0.2,
-          max = 23,
+          min = suppressWarnings(pahwq:::doc_valid_range(-Inf)),
+          max = suppressWarnings(pahwq:::doc_valid_range(Inf)),
           value = c(5, 10)
         ),
         sliderInput(
