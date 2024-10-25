@@ -48,6 +48,10 @@ server <- function(input, output, session) {
       if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
         validate("Only one of DOC or Kd(ref) may be chosen")
       }
+
+      tryCatch(pahwq:::doc_valid_range(doc_reactive()),
+        warning = function(w) showNotification(w, type = "warning")
+      )
     }
 
     tuv(
@@ -94,7 +98,7 @@ server <- function(input, output, session) {
   output$pabs <- renderText({
     paste(
       "<p>",
-      round(pabs(), 2),
+      round(pabs(), 3),
       '</br><span class="small">mol photons/mol PAH</span></p>'
     )
   })
@@ -109,7 +113,21 @@ server <- function(input, output, session) {
   output$narc_bench <- renderText({
     glue::glue(
       "<p>{narc_bench} &mu;g/L</p>",
-      narc_bench = round(narcotic_benchmark(req(input$chemical)), 2)
+      narc_bench = round(narcotic_benchmark(req(input$chemical)), 3)
+    )
+  })
+
+  output$narc_cwqg_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> CWQG</p>",
+      aq_env = tools::toTitleCase(input$aq_env)
+    )
+  })
+
+  output$narc_cwqg <- renderText({
+    glue::glue(
+      "<p>{narc_cwqg} &mu;g/L</p>",
+      narc_cwqg = round(narcotic_cwqg(req(input$chemical)), 3)
     )
   })
 
@@ -123,7 +141,21 @@ server <- function(input, output, session) {
   output$photo_bench <- renderText({
     glue::glue(
       "<p>{photo_bench} &mu;g/L</p>",
-      photo_bench = round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 2)
+      photo_bench = round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 3)
+    )
+  })
+
+  output$photo_cwqg_title <- renderText({
+    glue::glue(
+      "<p><em>{aq_env}</em> CWQG</p>",
+      aq_env = tools::toTitleCase(input$aq_env)
+    )
+  })
+
+  output$photo_cwqg <- renderText({
+    glue::glue(
+      "<p>{photo_cwqg} &mu;g/L</p>",
+      photo_cwqg = round(phototoxic_cwqg(pabs(), pah = req(input$chemical)), 3)
     )
   })
 
