@@ -119,7 +119,7 @@ server <- function(input, output, session) {
 
   output$narc_cwqg_title <- renderText({
     glue::glue(
-      "<p><em>{aq_env}</em> CWQG</p>",
+      "<p><em>{aq_env}</em> narcotic CWQG</p>",
       aq_env = tools::toTitleCase(input$aq_env)
     )
   })
@@ -147,7 +147,7 @@ server <- function(input, output, session) {
 
   output$photo_cwqg_title <- renderText({
     glue::glue(
-      "<p><em>{aq_env}</em> CWQG</p>",
+      "<p><em>{aq_env}</em> phototoxic CWQG</p>",
       aq_env = tools::toTitleCase(input$aq_env)
     )
   })
