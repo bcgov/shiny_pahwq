@@ -48,6 +48,10 @@ server <- function(input, output, session) {
       if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
         validate("Only one of DOC or Kd(ref) may be chosen")
       }
+
+      tryCatch(pahwq:::doc_valid_range(doc_reactive()),
+        warning = function(w) showNotification(w, type = "warning")
+      )
     }
 
     tuv(
