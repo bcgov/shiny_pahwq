@@ -256,7 +256,15 @@ server <- function(input, output, session) {
 
   output$multi_tox <- DT::renderDT({
     DT::datatable(req(multi_tox())) |>
-      DT::formatRound(columns = c("narcotic_benchmark", "phototoxic_benchmark"), digits = 3) |>
+      DT::formatRound(
+        columns = c(
+          "narcotic_benchmark",
+          "narcotic_cwqg",
+          "phototoxic_benchmark",
+          "phototoxic_cwqg"
+        ),
+        digits = 3
+      ) |>
       DT::formatRound(columns = "pabs", digits = 5)
   })
 
@@ -271,7 +279,7 @@ server <- function(input, output, session) {
 
   output$multi_tox_download <- downloadHandler(
     filename = function() {
-      paste0("phototoxic-benchmark-multi-results-", input$aq_env, "_", Sys.Date(), ".csv")
+      paste0("phototoxic-wq-multi-results-", input$aq_env, "_", Sys.Date(), ".csv")
     },
     content = function(file) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
