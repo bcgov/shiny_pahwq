@@ -5,9 +5,31 @@ If you have bcgovr installed and you use RStudio, click the 'Insert BCDevex Badg
 
 # pahwq_shiny
 
-This repository contains code for a Shiny App for calculating water quality 
-guidelines for phototoxic polycyclic aromatic hydrocarbons (PAHs). It relies 
-on the [pahwq](https://bcgov.github.io/pahwq) for the calculations.
+This repository contains code for a Shiny App for calculating water quality
+guidelines for phototoxic polycyclic aromatic hydrocarbons (PAHs). It relies
+on the [pahwq](https://bcgov.github.io/pahwq) package for the calculations.
+
+### Instructions
+
+To run the app locally, first install the app:
+
+```r
+devtools::install_github("bcgov/shiny_pahwq")
+```
+
+Then run the app:
+
+```r
+pahwq.shiny:::run_app()
+```
+
+#### Deploying the app
+
+Stop the running app, then run:
+
+```r
+rsconnect::deployApp()
+```
 
 ### Project Status
 
@@ -40,4 +62,4 @@ See the License for the specific language governing permissions and limitations 
 ```
 
 ---
-*This project was created using the [bcgovr](https://github.com/bcgov/bcgovr) package.* 
+*This project was created using the [bcgovr](https://github.com/bcgov/bcgovr) package.*
