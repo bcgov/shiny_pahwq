@@ -5,6 +5,6 @@ account: ateucher
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 10964507
-bundleId: 9282437
+bundleId: 9298852
 url: https://ateucher.shinyapps.io/pahwq_shiny/
 version: 1
