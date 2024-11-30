@@ -322,6 +322,45 @@ ui <- function() {
         )
       ),
       nav_panel(
+        "Representative Guidelines",
+        navset_tab(
+          nav_panel(
+            "Freshwater",
+            card(
+              p("
+          This is a static lookup table for benchmarks and guidelines at a representative
+          freshwater site and date, for a range of Dissolved Oxygen Concentrations"),
+              tags$ul(
+                tags$li("Location: Basin Lake, Saskatchewan"),
+                tags$li("Lat: 52.60453"),
+                tags$li("Long: -105.28278"),
+                tags$li("Elevation: 515m"),
+                tags$li("Depth: 0.25m"),
+                tags$li("Date: 2024-08-01"),
+              )
+            ),
+            DT::DTOutput("multi_doc_pah_fw")
+          ),
+          nav_panel(
+            "Marine", 
+            card(
+              p("
+          This is a static lookup table for benchmarks and guidelines at a representative
+          marine site and date"),
+              tags$ul(
+                tags$li("Location: Tofino, BC"),
+                tags$li("Lat: 49.15085"),
+                tags$li("Lon: -125.91427"),
+                tags$li("Elevation: 0m"),
+                tags$li("Depth: 0.25m"),
+                tags$li("Date: 2024-08-01"),
+              )
+            ),
+            DT::DTOutput("multi_pah_marine")
+          )
+        )
+      ),
+      nav_panel(
         "Help/About",
         card(
           withMathJax(),
