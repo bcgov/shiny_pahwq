@@ -286,14 +286,32 @@ server <- function(input, output, session) {
     }
   )
 
+  multi_doc_pah_fw_csv <- reactive(
+    system.file(
+      "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv", package = "pahwq"
+    )
+  )
+
+  output$multi_doc_pah_fw_dl <- downloadHandler(
+    filename = "PAH-DOC_freshwater-guidelines.csv",
+    content = function(file) file.copy(req(multi_doc_pah_fw_csv()), file)
+  )
+  
+  multi_pah_marine_csv <- reactive(
+    system.file(
+      "doc-guideline-lookup/PAH_marine-guidelines.csv", package = "pahwq"
+    )
+  )
+
+  output$multi_pah_marine_dl <- downloadHandler(
+    filename = basename(req(multi_pah_marine_csv())),
+    content = function(file) file.copy(req(multi_pah_marine_csv()), file)
+  )
+  
   output$multi_doc_pah_fw <- DT::renderDT({
     DT::datatable(
-      req(readr::read_csv(
-        system.file(
-          "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv", package = "pahwq"
-      )
-    )),
-    filter = "top"
+      req(utils::read.csv(multi_doc_pah_fw_csv())),
+      filter = "top"
     ) |> 
       DT::formatRound(
         columns = c(
@@ -309,11 +327,7 @@ server <- function(input, output, session) {
 
   output$multi_pah_marine <- DT::renderDT({
     DT::datatable(
-      req(readr::read_csv(
-        system.file(
-          "doc-guideline-lookup/PAH_marine-guidelines.csv", package = "pahwq"
-      )
-    )),
+      req(utils::read.csv(multi_pah_marine_csv())),
     filter = "top"
     ) |> 
       DT::formatRound(

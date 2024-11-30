@@ -337,6 +337,11 @@ ui <- function() {
                 tags$li("Elevation: 515m"),
                 tags$li("Depth: 0.25m"),
                 tags$li("Date: 2024-08-01"),
+              ),
+              downloadButton(
+                "multi_doc_pah_fw_dl",
+                "Download",
+                style = "width:200px;"
               )
             ),
             DT::DTOutput("multi_doc_pah_fw")
@@ -354,6 +359,11 @@ ui <- function() {
                 tags$li("Elevation: 0m"),
                 tags$li("Depth: 0.25m"),
                 tags$li("Date: 2024-08-01"),
+              ),
+              downloadButton(
+                "multi_pah_marine_dl",
+                "Download",
+                style = "width:200px;"
               )
             ),
             DT::DTOutput("multi_pah_marine")
