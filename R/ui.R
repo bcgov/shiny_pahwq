@@ -327,16 +327,19 @@ ui <- function() {
           nav_panel(
             "Freshwater",
             card(
-              p("
-          This is a static lookup table for benchmarks and guidelines at a representative
-          freshwater site and date, for a range of Dissolved Oxygen Concentrations"),
+              p(HTML(
+                "This is a static lookup table for short-term (benchmark) and
+              long-term (cwqg) guidelines at a representative freshwater site in
+              Canada on June 21, for a range of dissolved organic carbon (DOC)
+              (g/m<sup>3</sup>) concentrations."
+              )),
               tags$ul(
                 tags$li("Location: Basin Lake, Saskatchewan"),
                 tags$li("Lat: 52.60453"),
                 tags$li("Long: -105.28278"),
                 tags$li("Elevation: 515m"),
                 tags$li("Depth: 0.25m"),
-                tags$li("Date: 2024-08-01"),
+                tags$li("Date: 2024-06-21"),
               ),
               downloadButton(
                 "multi_doc_pah_fw_dl",
@@ -347,18 +350,18 @@ ui <- function() {
             DT::DTOutput("multi_doc_pah_fw")
           ),
           nav_panel(
-            "Marine", 
+            "Marine",
             card(
-              p("
-          This is a static lookup table for benchmarks and guidelines at a representative
-          marine site and date"),
+              p("This is a static lookup table for short-term (benchmark) and
+              long-term (cwqg) guidelines at a representative marine site in
+              Canada on June 21."),
               tags$ul(
                 tags$li("Location: Tofino, BC"),
                 tags$li("Lat: 49.15085"),
                 tags$li("Lon: -125.91427"),
                 tags$li("Elevation: 0m"),
-                tags$li("Depth: 0.25m"),
-                tags$li("Date: 2024-08-01"),
+                tags$li("Depth: 0.01m"),
+                tags$li("Date: 2024-06-21"),
               ),
               downloadButton(
                 "multi_pah_marine_dl",
