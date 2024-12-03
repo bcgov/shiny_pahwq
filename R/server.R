@@ -286,6 +286,62 @@ server <- function(input, output, session) {
     }
   )
 
+  multi_doc_pah_fw_csv <- reactive(
+    system.file(
+      "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv", package = "pahwq"
+    )
+  )
+
+  output$multi_doc_pah_fw_dl <- downloadHandler(
+    filename = "PAH-DOC_freshwater-guidelines.csv",
+    content = function(file) file.copy(req(multi_doc_pah_fw_csv()), file)
+  )
+  
+  multi_pah_marine_csv <- reactive(
+    system.file(
+      "doc-guideline-lookup/PAH_marine-guidelines.csv", package = "pahwq"
+    )
+  )
+
+  output$multi_pah_marine_dl <- downloadHandler(
+    filename = basename(req(multi_pah_marine_csv())),
+    content = function(file) file.copy(req(multi_pah_marine_csv()), file)
+  )
+  
+  output$multi_doc_pah_fw <- DT::renderDT({
+    DT::datatable(
+      req(utils::read.csv(multi_doc_pah_fw_csv())),
+      filter = "top"
+    ) |> 
+      DT::formatRound(
+        columns = c(
+          "narcotic_benchmark",
+          "narcotic_cwqg",
+          "phototoxic_benchmark",
+          "phototoxic_cwqg"
+        ),
+        digits = 3
+      ) |>
+      DT::formatRound(columns = "pabs", digits = 5)
+  })
+
+  output$multi_pah_marine <- DT::renderDT({
+    DT::datatable(
+      req(utils::read.csv(multi_pah_marine_csv())),
+    filter = "top"
+    ) |> 
+      DT::formatRound(
+        columns = c(
+          "narcotic_benchmark",
+          "narcotic_cwqg",
+          "phototoxic_benchmark",
+          "phototoxic_cwqg"
+        ),
+        digits = 3
+      ) |>
+      DT::formatRound(columns = "pabs", digits = 5)
+  })
+
   output$attenuation_selector <- renderUI({
     if (input$doc_or_kd == "doc") {
       tagList(
