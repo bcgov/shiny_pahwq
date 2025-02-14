@@ -450,12 +450,12 @@ ui <- function() {
                   at each wavelength (\\(k_d(\\lambda)\\)) is determined
                   from the attenuation coefficient at a reference wavelength (305nm), which is calculated from
                   Dissolved Organic Carbon (DOC) concentration using the following
-                  equation from Morris et al (1995):"
+                  equation from CCME (2025):"
             )
           ),
           p(
             HTML(
-              "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 2.76\\text{ and }b_{305} = 1.23$$"
+              "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 1.28\\text{ and }b_{305} = 1.31$$"
             )
           ),
           p(
@@ -489,15 +489,9 @@ ui <- function() {
           ),
           h3("References"),
           p(
-            "Morris, D.P., H. Zagarese, C.E. Williamson, E.G. Balseiro,
-                    B.R. Hargreaves, B. Modenutti, R. Moeller, and C. Queimalinos.
-                    1995. The attenuation of solar UV radiation in lakes and the
-                    role of dissolved organic carbon. Limnology and Oceanography, 4
-                    0, 1381-1391. doi:",
-            a(
-              "10.4319/lo.1995.40.8.1381.",
-              href = "https://doi.org/10.4319/lo.1995.40.8.1381"
-            )
+            "CCME 2025. Scientific Criteria Document for the development of the 
+            Canadian Water Quality Guidelines for the protection of aquatic 
+            life: Polycyclic Aromatic Compounds (PACs) (DRAFT)"
           ),
           p(
             "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone
