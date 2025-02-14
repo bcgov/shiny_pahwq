@@ -1,6 +1,6 @@
 Package: pacwq.shiny
 Title: Shiny App for PAC phototoxicity and Water Quality Guideline calculations
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Andy", "Teucher", , "andy.teucher@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7840-692X")),
