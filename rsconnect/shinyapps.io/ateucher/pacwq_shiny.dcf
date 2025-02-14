@@ -1,10 +1,10 @@
 name: pacwq_shiny
-title:
+title: Water Quality Calculator for Phototoxic PACs
 username: ateucher
 account: ateucher
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 13851003
-bundleId: 9720169
+appId: 14005358
+bundleId: 9802104
 url: https://ateucher.shinyapps.io/pacwq_shiny/
 version: 1
