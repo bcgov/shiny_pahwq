@@ -14,7 +14,7 @@ on the [pahwq](https://bcgov.github.io/pahwq) package for the calculations.
 To run the app locally, first install the app:
 
 ```r
-devtools::install_github("bcgov/pahwq_shiny")
+devtools::install_github("bcgov/shiny_pahwq")
 ```
 
 Then run the app:
@@ -37,7 +37,7 @@ This project is currently under active development.
 
 ### Getting Help or Reporting an Issue
 
-To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/pahwq_shiny/issues/).
+To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/shiny_pahwq/issues/).
 
 ### How to Contribute
 
