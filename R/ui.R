@@ -15,7 +15,9 @@ ui <- function() {
     theme = bs_theme(version = 5, bootswatch = "cerulean"),
     tags$head(
       tags$link(
-        rel = "stylesheet", type = "text/css", href = "www/style.css"
+        rel = "stylesheet",
+        type = "text/css",
+        href = "www/style.css"
       )
     ),
     title = h1(
@@ -25,16 +27,19 @@ ui <- function() {
         src = "www/BCID_V_rgb_rev.png",
         height = 80,
         width = 80
-      ), "Water Quality Calculator for Phototoxic PAHs"
+      ),
+      "Water Quality Calculator for Phototoxic PACs"
     ),
-    # title = "Water Quality Calculator for Phototoxic PAHs",
+    # title = "Water Quality Calculator for Phototoxic PACs",
 
     # Sidebar with a slider input for DOC
     sidebar = sidebar(
       accordion(
         accordion_panel(
           "Location and Date",
-          em("Get Latitude and Longitude by clicking on the map, or enter here"),
+          em(
+            "Get Latitude and Longitude by clicking on the map, or enter here"
+          ),
           br(),
           numericInput(
             "lat",
@@ -160,8 +165,10 @@ ui <- function() {
             min = 0,
             max = 700
           ),
-          em("Ozone column and aerosol optical depth are calculated from
-            climatology, but can be entered manually here"),
+          em(
+            "Ozone column and aerosol optical depth are calculated from
+            climatology, but can be entered manually here"
+          ),
           br(),
           numericInput(
             "o3_tc",
@@ -247,7 +254,9 @@ ui <- function() {
       nav_panel(
         "Map",
         br(),
-        p("Click the map to select the location, or set Latitude, Longitude and elevation in the left panel"),
+        p(
+          "Click the map to select the location, or set Latitude, Longitude and elevation in the left panel"
+        ),
         card(
           card_body(leaflet::leafletOutput("map", height = 600, width = 600))
         )
@@ -270,8 +279,12 @@ ui <- function() {
       nav_panel(
         "DOC and Depth Sensitivity",
         br(),
-        p("Select a chemical above, and a location using the Map tab or the Latitude/Longitude/Elevation fields on the left."),
-        p("Choose a range of depths and DOC or Kd(ref), and click 'Run'. All other TUV parameters (e.g., Ozone Column and Aerosol Optical Depth) will be used as set in the left sidebar."),
+        p(
+          "Select a chemical above, and a location using the Map tab or the Latitude/Longitude/Elevation fields on the left."
+        ),
+        p(
+          "Choose a range of depths and DOC or Kd(ref), and click 'Run'. All other TUV parameters (e.g., Ozone Column and Aerosol Optical Depth) will be used as set in the left sidebar."
+        ),
         layout_columns(
           card(
             card_body(
@@ -291,14 +304,16 @@ ui <- function() {
               sliderInput(
                 "sens_depth",
                 "Depth Range (m)",
-                min = 0, max = 2,
+                min = 0,
+                max = 2,
                 value = c(0.25, 1),
                 step = 0.05
               ),
               sliderInput(
                 "depth_steps",
                 "Number of depth increments",
-                min = 1, max = 10,
+                min = 1,
+                max = 10,
                 value = 5
               ),
               radioButtons(
@@ -327,12 +342,14 @@ ui <- function() {
           nav_panel(
             "Freshwater",
             card(
-              p(HTML(
-                "This is a static lookup table for short-term (benchmark) and
+              p(
+                HTML(
+                  "This is a static lookup table for short-term (benchmark) and
               long-term (cwqg) guidelines at a representative freshwater site in
               Canada on June 21, for a range of dissolved organic carbon (DOC)
               (g/m<sup>3</sup>) concentrations."
-              )),
+                )
+              ),
               tags$ul(
                 tags$li("Location: Basin Lake, Saskatchewan"),
                 tags$li("Lat: 52.60453"),
@@ -352,9 +369,11 @@ ui <- function() {
           nav_panel(
             "Marine",
             card(
-              p("This is a static lookup table for short-term (benchmark) and
+              p(
+                "This is a static lookup table for short-term (benchmark) and
               long-term (cwqg) guidelines at a representative marine site in
-              Canada on June 21."),
+              Canada on June 21."
+              ),
               tags$ul(
                 tags$li("Location: Tofino, BC"),
                 tags$li("Lat: 49.15085"),
@@ -377,24 +396,28 @@ ui <- function() {
         "Help/About",
         card(
           withMathJax(),
-          p(HTML(
-            "This app implements the <a href='https://doi.org/10.1002/etc.3601'>
+          p(
+            HTML(
+              "This app implements the <a href='https://doi.org/10.1002/etc.3601'>
                 Phototoxic Target Lipid Model</a> (PTLM) for
                 the calculation of Canadian Water Quality Guidelines for Polycyclic
                 Aromatic Hydrocarbons (PAH)."
-          )),
-          p(HTML(
-            "It relies on the <a href='https://bcgov.github.io/pahwq'>pahwq</a>
+            )
+          ),
+          p(
+            HTML(
+              "It relies on the <a href='https://bcgov.github.io/pahwq'>pahwq</a>
                 R package, which uses the <a href='https://github.com/NCAR/TUV'>
                 Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
                 to calculate the light penetration through water of a given depth
                 at a given location and date, with a specified attenuation coefficient. This
                 coefficient can be calculated from a Dissolved Organic Carbon concentration.
-                The light exposure is then used (along with the PAH-specific molar
+                The light exposure is then used (along with the PAC-specific molar
                   absorption across a range of wavelengths), to calculate the light
-                  absorption (Pabs) of the given PAH at that location. This is then
-                  used to determine the phototoxic benchmark of the PAH under those conditions."
-          )),
+                  absorption (Pabs) of the given PAC at that location. This is then
+                  used to determine the phototoxic benchmark of the PAC under those conditions."
+            )
+          ),
           p(
             "By default, the app will run the TUV model for 24 hours on the
                   given day, with one irradiance calculation per hour at each wavelength.
@@ -408,8 +431,9 @@ ui <- function() {
             "These determine the location and date for which the TUV model
                   is run to determine irradiance."
           ),
-          p(HTML(
-            "Location is determined by entering latitude, longitude, and
+          p(
+            HTML(
+              "Location is determined by entering latitude, longitude, and
                   elevation, or by clicking a location on the map.
                   When clicking a location on a map, elevation is looked up using
                   Natural Resource Canada's <a href='https://natural-resources.canada.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/elevation-api/17328'>
@@ -417,21 +441,30 @@ ui <- function() {
                   <a href='https://epqs.nationalmap.gov/v1/docs'>USGS Elevation
                   Point Query Service</a>.
                   "
-          )),
+            )
+          ),
           h4("Water parameters"),
-          p(HTML(
-            "These determine the light attenuation through the water at a given depth. Light attenuation
+          p(
+            HTML(
+              "These determine the light attenuation through the water at a given depth. Light attenuation
                   at each wavelength (\\(k_d(\\lambda)\\)) is determined
                   from the attenuation coefficient at a reference wavelength (305nm), which is calculated from
                   Dissolved Organic Carbon (DOC) concentration using the following
                   equation from Morris et al (1995):"
-          )),
-          p(HTML(
-            "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 2.76\\text{ and }b_{305} = 1.23$$"
-          )),
-          p(HTML("You can supply an absorption coefficient (\\(k_d(\\lambda)\\))
+            )
+          ),
+          p(
+            HTML(
+              "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 2.76\\text{ and }b_{305} = 1.23$$"
+            )
+          ),
+          p(
+            HTML(
+              "You can supply an absorption coefficient (\\(k_d(\\lambda)\\))
                 and reference wavelength directly instead of calculating it from DOC
-                in the 'Other TUV Parameters section:")),
+                in the 'Other TUV Parameters section:"
+            )
+          ),
           h4("Other TUV parameters"),
           p(
             "Ozone column and aerosol optical depth are looked up from
@@ -461,7 +494,8 @@ ui <- function() {
                     1995. The attenuation of solar UV radiation in lakes and the
                     role of dissolved organic carbon. Limnology and Oceanography, 4
                     0, 1381-1391. doi:",
-            a("10.4319/lo.1995.40.8.1381.",
+            a(
+              "10.4319/lo.1995.40.8.1381.",
               href = "https://doi.org/10.4319/lo.1995.40.8.1381"
             )
           ),
@@ -469,7 +503,8 @@ ui <- function() {
             "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone
                     climatology based on ozonesonde and satellite measurements,
                     J. Geophys. Res., 103(D24), 31709-31734, doi:",
-            a("10.1029/1998JD200008.",
+            a(
+              "10.1029/1998JD200008.",
               href = "https://doi.org/10.1029/1998JD200008"
             )
           )

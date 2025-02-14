@@ -1,10 +1,10 @@
-name: pahwq_shiny
-title: pahwq_shiny
+name: pacwq_shiny
+title:
 username: ateucher
 account: ateucher
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 10964507
-bundleId: 9298852
-url: https://ateucher.shinyapps.io/pahwq_shiny/
+appId: 13851003
+bundleId: 9720169
+url: https://ateucher.shinyapps.io/pacwq_shiny/
 version: 1
