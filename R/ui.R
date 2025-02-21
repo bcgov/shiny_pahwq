@@ -153,7 +153,7 @@ ui <- function() {
             ),
             value = 280,
             min = 0,
-            max = 700
+            max = 800
           ),
           numericInput(
             "wvl_end",
@@ -161,9 +161,9 @@ ui <- function() {
               "End Wavelength (nm)",
               "Longest wavelength at which to calculate irradiance"
             ),
-            value = 700,
+            value = 800,
             min = 0,
-            max = 700
+            max = 800
           ),
           em(
             "Ozone column and aerosol optical depth are calculated from
