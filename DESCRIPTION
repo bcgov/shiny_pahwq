@@ -23,6 +23,7 @@ Imports:
     glue,
     ggiraph,
     shinycssloaders,
+    shinymanager,
     DT
 Remotes:
     bcgov/pahwq
