@@ -5,7 +5,11 @@ chemical_list <- function() {
 }
 
 local_tuv_dir <- function(env = parent.frame()) {
-  tdir <- file.path(withr::local_tempdir(.local_envir = env), "pahwq", "tuv_data")
+  tdir <- file.path(
+    withr::local_tempdir(.local_envir = env),
+    "pahwq",
+    "tuv_data"
+  )
   withr::local_options("pahwq.tuv_data_dir" = tdir, .local_envir = env)
   pahwq:::setup_tuv_dir()
 }
