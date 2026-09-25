@@ -17,7 +17,60 @@
 ## usethis namespace: end
 NULL
 
-run_app <- function(...) {
+#' Run the app
+#'
+#' @param auth Should the app be protected by a login page? The credentials
+#'   are read from the `PACWQ_USER` and `PACWQ_PASSWORD` environment
+#'   variables (see [app_credentials()]).
+#' @param ... Passed on to [shiny::shinyApp()].
+#'
+#' @noRd
+run_app <- function(auth = TRUE, ...) {
   addResourcePath("www", system.file("www/", package = "pacwq.shiny"))
-  shinyApp(ui = ui, server = server, ...)
+
+  if (!auth) {
+    return(shinyApp(ui = ui, server = server, ...))
+  }
+
+  # The credentials are read once, at startup
+  credentials <- app_credentials()
+
+  secure_ui <- shinymanager::secure_app(
+    ui(),
+    theme = bs_theme(version = 5, bootswatch = "cerulean")
+  )
+
+  secure_server <- function(input, output, session) {
+    shinymanager::secure_server(
+      check_credentials = shinymanager::check_credentials(credentials)
+    )
+    server(input, output, session)
+  }
+
+  shinyApp(ui = secure_ui, server = secure_server, ...)
+}
+
+#' Build the credentials table used by the login page
+#'
+#' The app is protected by a single shared username and password, read in
+#' from the `PACWQ_USER` and `PACWQ_PASSWORD` environment variables.
+#'
+#' @noRd
+app_credentials <- function() {
+  user <- Sys.getenv("PACWQ_USER")
+  password <- Sys.getenv("PACWQ_PASSWORD")
+
+  if (!nzchar(user) || !nzchar(password)) {
+    stop(
+      "The environment variables `PACWQ_USER` and `PACWQ_PASSWORD` ",
+      "must be set to run the app with authentication. ",
+      "Set them in your `~/.Renviron` file, or use `run_app(auth = FALSE)`.",
+      call. = FALSE
+    )
+  }
+
+  data.frame(
+    user = user,
+    password = password
+  )
 }
