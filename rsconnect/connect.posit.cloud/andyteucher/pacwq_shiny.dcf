@@ -1,0 +1,10 @@
+name: pacwq_shiny
+title: pacwq_shiny
+username: andyteucher
+account: andyteucher
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019ffcb2-72f6-75c4-6c8b-5d7d20591247
+bundleId:
+url: https://connect.posit.cloud/andyteucher/content/019ffcb2-72f6-75c4-6c8b-5d7d20591247
+version: 1

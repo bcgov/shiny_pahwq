@@ -49,9 +49,9 @@ server <- function(input, output, session) {
         validate("Only one of DOC or Kd(ref) may be chosen")
       }
 
-      tryCatch(pahwq:::doc_valid_range(doc_reactive()),
-        warning = function(w) showNotification(w, type = "warning")
-      )
+      tryCatch(pahwq:::doc_valid_range(doc_reactive()), warning = function(w) {
+        showNotification(w, type = "warning")
+      })
     }
 
     tuv(
@@ -81,7 +81,8 @@ server <- function(input, output, session) {
     HTML(paste(
       paste0("<b>", names(params), "</b>"),
       params,
-      sep = ": ", collapse = "<br/>"
+      sep = ": ",
+      collapse = "<br/>"
     ))
   })
 
@@ -141,7 +142,10 @@ server <- function(input, output, session) {
   output$photo_bench <- renderText({
     glue::glue(
       "<p>{photo_bench} &mu;g/L</p>",
-      photo_bench = round(phototoxic_benchmark(pabs(), pah = req(input$chemical)), 3)
+      photo_bench = round(
+        phototoxic_benchmark(pabs(), pah = req(input$chemical)),
+        3
+      )
     )
   })
 
@@ -279,7 +283,13 @@ server <- function(input, output, session) {
 
   output$multi_tox_download <- downloadHandler(
     filename = function() {
-      paste0("phototoxic-wq-multi-results-", input$aq_env, "_", Sys.Date(), ".csv")
+      paste0(
+        "phototoxic-wq-multi-results-",
+        input$aq_env,
+        "_",
+        Sys.Date(),
+        ".csv"
+      )
     },
     content = function(file) {
       utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
@@ -288,7 +298,8 @@ server <- function(input, output, session) {
 
   multi_doc_pah_fw_csv <- reactive(
     system.file(
-      "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv", package = "pahwq"
+      "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv",
+      package = "pahwq"
     )
   )
 
@@ -296,10 +307,11 @@ server <- function(input, output, session) {
     filename = "PAH-DOC_freshwater-guidelines.csv",
     content = function(file) file.copy(req(multi_doc_pah_fw_csv()), file)
   )
-  
+
   multi_pah_marine_csv <- reactive(
     system.file(
-      "doc-guideline-lookup/PAH_marine-guidelines.csv", package = "pahwq"
+      "doc-guideline-lookup/PAH_marine-guidelines.csv",
+      package = "pahwq"
     )
   )
 
@@ -307,12 +319,12 @@ server <- function(input, output, session) {
     filename = basename(req(multi_pah_marine_csv())),
     content = function(file) file.copy(req(multi_pah_marine_csv()), file)
   )
-  
+
   output$multi_doc_pah_fw <- DT::renderDT({
     DT::datatable(
       req(utils::read.csv(multi_doc_pah_fw_csv())),
       filter = "top"
-    ) |> 
+    ) |>
       DT::formatRound(
         columns = c(
           "narcotic_benchmark",
@@ -328,8 +340,8 @@ server <- function(input, output, session) {
   output$multi_pah_marine <- DT::renderDT({
     DT::datatable(
       req(utils::read.csv(multi_pah_marine_csv())),
-    filter = "top"
-    ) |> 
+      filter = "top"
+    ) |>
       DT::formatRound(
         columns = c(
           "narcotic_benchmark",
@@ -355,7 +367,8 @@ server <- function(input, output, session) {
         sliderInput(
           "doc_steps",
           "Number of DOC increments",
-          min = 1, max = 10,
+          min = 1,
+          max = 10,
           value = 5
         )
       )
@@ -371,7 +384,8 @@ server <- function(input, output, session) {
         sliderInput(
           "kd_steps",
           "Number of Kd increments",
-          min = 1, max = 10,
+          min = 1,
+          max = 10,
           value = 5
         )
       )

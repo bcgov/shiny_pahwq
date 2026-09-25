@@ -5,14 +5,22 @@ run_sens <- function(input) {
   )
 
   if (input$doc_or_kd == "doc") {
-    doc <- seq(input$sens_doc[1], input$sens_doc[2], length.out = input$doc_steps)
+    doc <- seq(
+      input$sens_doc[1],
+      input$sens_doc[2],
+      length.out = input$doc_steps
+    )
     kd <- NULL
   } else {
     kd <- seq(input$sens_kd[1], input$sens_kd[2], length.out = input$kd_steps)
     doc <- NULL
   }
 
-  depth <- seq(input$sens_depth[1], input$sens_depth[2], length.out = input$depth_steps)
+  depth <- seq(
+    input$sens_depth[1],
+    input$sens_depth[2],
+    length.out = input$depth_steps
+  )
 
   kd_wvl_reactive <- reactive(x_or_null(input$kd_wvl))
 
@@ -50,9 +58,8 @@ run_sens <- function(input) {
       ggiraph::opts_sizing(width = 1, rescale = TRUE)
     )
   )
-
 }
 
 x_or_null <- function(x) {
-    if (!isTruthy(x)) NULL else x
+  if (!isTruthy(x)) NULL else x
 }
