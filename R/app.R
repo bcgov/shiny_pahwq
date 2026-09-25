@@ -32,14 +32,11 @@ run_app <- function(auth = TRUE, ...) {
     return(shinyApp(ui = ui, server = server, ...))
   }
 
-  # The credentials are read once, at startup, so that a missing or empty
-  # environment variable stops the app rather than silently locking users out.
+  # The credentials are read once, at startup
   credentials <- app_credentials()
 
-  # secure_app() calls the ui function with the request object, whereas ui()
-  # takes no arguments, hence the wrapper.
   secure_ui <- shinymanager::secure_app(
-    function(request) ui(),
+    ui(),
     theme = bs_theme(version = 5, bootswatch = "cerulean")
   )
 
@@ -56,8 +53,7 @@ run_app <- function(auth = TRUE, ...) {
 #' Build the credentials table used by the login page
 #'
 #' The app is protected by a single shared username and password, read in
-#' plain text from the `PACWQ_USER` and `PACWQ_PASSWORD` environment
-#' variables.
+#' from the `PACWQ_USER` and `PACWQ_PASSWORD` environment variables.
 #'
 #' @noRd
 app_credentials <- function() {
@@ -75,7 +71,6 @@ app_credentials <- function() {
 
   data.frame(
     user = user,
-    password = password,
-    stringsAsFactors = FALSE
+    password = password
   )
 }
