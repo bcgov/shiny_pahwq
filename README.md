@@ -5,9 +5,8 @@ If you have bcgovr installed and you use RStudio, click the 'Insert BCDevex Badg
 
 # pacwq_shiny
 
-This repository contains code for a Shiny App for calculating water quality
-guidelines for phototoxic polycyclic aromatic compounds (PACs). It relies
-on the [pahwq](https://bcgov.github.io/pahwq) package for the calculations.
+This repository contains code for a Shiny App for calculating water quality guidelines for phototoxic polycyclic aromatic compounds (PACs).
+It relies on the [pahwq](https://bcgov.github.io/pahwq) package for the calculations.
 
 ### Instructions
 
@@ -23,13 +22,31 @@ Then run the app:
 pacwq.shiny:::run_app()
 ```
 
+#### Password protection
+
+The app is protected by a single shared username and password, using [shinymanager](https://datastorm-open.github.io/shinymanager/).
+The credentials are read from the `PACWQ_USER` and `PACWQ_PASSWORD` environment variables.
+Set them in your user-level `~/.Renviron` file (for example with `usethis::edit_r_environ()`), then restart R:
+
+```
+PACWQ_USER=pacwq
+PACWQ_PASSWORD=the-password
+```
+
+To run the app locally without the login page, use `pacwq.shiny:::run_app(auth = FALSE)`.
+
 #### Deploying the app
 
-Stop the running app, then run:
+The app is deployed to Posit Connect Cloud.
+Stop the running app, make sure the environment variables described above are set in your R session, then run:
 
 ```r
-rsconnect::deployApp()
+rsconnect::deployApp(envVars = c("PACWQ_USER", "PACWQ_PASSWORD"))
 ```
+
+rsconnect sends the values to Connect Cloud as encrypted secrets, separately from the app bundle.
+The variable names are saved in the deployment record, so subsequent deployments with `rsconnect::deployApp()` update them automatically.
+The secrets can also be managed in the content settings on Connect Cloud.
 
 ### Project Status
 
@@ -43,7 +60,8 @@ To report bugs/issues/feature requests, please file an [issue](https://github.co
 
 If you would like to contribute, please see our [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ### License
 
@@ -61,5 +79,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ```
 
----
+--------------------------------------------------------------------------------
+
 *This project was created using the [bcgovr](https://github.com/bcgov/bcgovr) package.*
