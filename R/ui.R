@@ -196,7 +196,8 @@ ui <- function() {
           )
         ),
         open = c("Location and Date", "Water Parameters")
-      )
+      ),
+      resizable = FALSE
     ),
     layout_columns(
       fill = FALSE,
