@@ -49,9 +49,14 @@ server <- function(input, output, session) {
         validate("Only one of DOC or Kd(ref) may be chosen")
       }
 
-      tryCatch(pahwq:::doc_valid_range(doc_reactive()), warning = function(w) {
-        showNotification(w, type = "warning")
-      })
+      if (isTruthy(doc_reactive())) {
+        tryCatch(
+          doc_range_check(doc_reactive()),
+          warning = function(w) {
+            showNotification(w, type = "warning")
+          }
+        )
+      }
     }
 
     tuv(
@@ -360,8 +365,8 @@ server <- function(input, output, session) {
         sliderInput(
           "sens_doc",
           HTML("DOC Range (g/m<sup>3</sup>)"),
-          min = suppressWarnings(pahwq:::doc_valid_range(-Inf)),
-          max = suppressWarnings(pahwq:::doc_valid_range(Inf)),
+          min = doc_range()[1],
+          max = doc_range()[2],
           value = c(5, 10)
         ),
         sliderInput(
