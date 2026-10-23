@@ -8,6 +8,14 @@ test_that("marine guidelines use the ecoregion model and ignore DOC", {
   expect_equal(output_number(app, "pabs"), expected$pabs)
   expect_equal(output_number(app, "photo_bench"), expected$photo_bench)
   expect_equal(output_number(app, "photo_cwqg"), expected$photo_cwqg)
+  expect_match(
+    app$get_text("#kd_model_card"),
+    "Southern Shelf ecoregion, turbid water, summer"
+  )
+  card_height <- app$get_js(
+    "document.querySelector('#kd_model_card .card').getBoundingClientRect().height"
+  )
+  expect_gt(card_height, 50)
 
   app$set_inputs(doc = 5, wait_ = FALSE)
   app$wait_for_idle()
@@ -93,6 +101,10 @@ test_that("a low-confidence marine model shows a warning", {
     app$get_text(".shiny-notification"),
     "fewer than 10% valid pixels over time",
     all = FALSE
+  )
+  expect_match(
+    app$get_text("#kd_model_card"),
+    "Low confidence"
   )
   expect_null(output_error(app, "pabs"))
   expect_length(output_number(app, "pabs"), 1)

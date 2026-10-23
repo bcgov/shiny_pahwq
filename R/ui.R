@@ -252,6 +252,7 @@ ui <- function() {
         )
       )
     ),
+    uiOutput("kd_model_card"),
     navset_tab(
       nav_panel(
         "Map",

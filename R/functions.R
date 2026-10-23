@@ -34,6 +34,18 @@ site_elevation <- function(lat, lon, marine) {
   )
 }
 
+# Add the marine Kd model, if any, as constant columns
+tuv_results_export <- function(x) {
+  kd_model <- attr(x, "kd_model")
+  x <- as.data.frame(x)
+  if (is.null(kd_model)) {
+    return(x)
+  }
+  kd_model$area <- NULL
+  names(kd_model) <- paste0("marine_kd_model_", names(kd_model))
+  cbind(x, kd_model, row.names = NULL)
+}
+
 local_tuv_dir <- function(env = parent.frame()) {
   tdir <- file.path(
     withr::local_tempdir(.local_envir = env),

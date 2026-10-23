@@ -116,6 +116,14 @@ server <- function(input, output, session) {
     }
   })
 
+  output$kd_model_card <- renderUI({
+    req(input$aq_env == "marine")
+    kd_model_card(
+      req(attr(irrad(), "kd_model")),
+      kd_ref_set = isTruthy(input$kd_ref)
+    )
+  })
+
   output$tuv_params <- renderUI({
     params <- tuv_run_params(irrad())
     HTML(paste(
@@ -300,7 +308,12 @@ server <- function(input, output, session) {
       paste0("tuv-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      utils::write.csv(irrad(), file, row.names = FALSE, na = "")
+      utils::write.csv(
+        tuv_results_export(irrad()),
+        file,
+        row.names = FALSE,
+        na = ""
+      )
     }
   )
 
