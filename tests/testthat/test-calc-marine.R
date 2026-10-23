@@ -47,3 +47,53 @@ test_that("DOC is disabled and Kd(ref) wavelength changes in marine water", {
   expect_equal(doc_disabled(), FALSE)
   expect_equal(app$get_value(input = "kd_wvl"), 305)
 })
+
+test_that("a location far from a marine area shows a clear error", {
+  app <- local_app()
+  app$set_inputs(chemical = "Anthracene")
+  set_site(app, "freshwater")
+  app$set_inputs(aq_env = "marine", wait_ = FALSE)
+  app$wait_for_idle()
+
+  expect_match(
+    output_error(app, "pabs"),
+    "not within 25 km of an area with a marine Kd model"
+  )
+})
+
+test_that("a marine area and season with no model shows a clear error", {
+  app <- local_app()
+  app$set_inputs(chemical = "Anthracene", date = "2024-01-15")
+  app$set_inputs(
+    lat = sites$arctic_basin$lat,
+    lon = sites$arctic_basin$lon,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+
+  expect_equal(app$get_value(input = "aq_env"), "marine")
+  expect_match(
+    output_error(app, "pabs"),
+    "There is no marine Kd model for Arctic_Basin_Clear in winter"
+  )
+})
+
+test_that("a low-confidence marine model shows a warning", {
+  app <- local_app()
+  app$set_inputs(chemical = "Anthracene", date = "2024-01-15")
+  app$set_inputs(
+    lat = sites$labrador_shelf$lat,
+    lon = sites$labrador_shelf$lon,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+
+  expect_equal(app$get_value(input = "aq_env"), "marine")
+  expect_match(
+    app$get_text(".shiny-notification"),
+    "fewer than 10% valid pixels over time",
+    all = FALSE
+  )
+  expect_null(output_error(app, "pabs"))
+  expect_length(output_number(app, "pabs"), 1)
+})

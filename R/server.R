@@ -47,34 +47,45 @@ server <- function(input, output, session) {
       }
     }
 
-    withCallingHandlers(
-      tuv(
-        depth_m = req(input$depth_m),
-        lat = req(input$lat),
-        lon = req(input$lon),
-        elev_m = req(input$elev_m),
-        date = req(input$date),
-        tzone = req(input$tzone),
-        DOC = doc,
-        aq_env = req(input$aq_env),
-        Kd_ref = kd_ref,
-        Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
-        tstart = req(input$tstart),
-        tstop = req(input$tstop),
-        tsteps = req(input$tsteps),
-        wvl_start = req(input$wvl_start),
-        wvl_end = req(input$wvl_end),
-        o3_tc = o3_tc_reactive(),
-        tauaer = tauaer_reactive(),
-        quiet = TRUE
+    tryCatch(
+      withCallingHandlers(
+        tuv(
+          depth_m = req(input$depth_m),
+          lat = req(input$lat),
+          lon = req(input$lon),
+          elev_m = req(input$elev_m),
+          date = req(input$date),
+          tzone = req(input$tzone),
+          DOC = doc,
+          aq_env = req(input$aq_env),
+          Kd_ref = kd_ref,
+          Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
+          tstart = req(input$tstart),
+          tstop = req(input$tstop),
+          tsteps = req(input$tsteps),
+          wvl_start = req(input$wvl_start),
+          wvl_end = req(input$wvl_end),
+          o3_tc = o3_tc_reactive(),
+          tauaer = tauaer_reactive(),
+          quiet = TRUE
+        ),
+        message = function(m) {
+          showNotification(conditionMessage(m), type = "message")
+          invokeRestart("muffleMessage")
+        },
+        warning = function(w) {
+          showNotification(conditionMessage(w), type = "warning")
+          invokeRestart("muffleWarning")
+        }
       ),
-      message = function(m) {
-        showNotification(conditionMessage(m), type = "message")
-        invokeRestart("muffleMessage")
-      },
-      warning = function(w) {
-        showNotification(conditionMessage(w), type = "warning")
-        invokeRestart("muffleWarning")
+      # Show pahwq's errors (e.g., no marine Kd model for the location) to the
+      # user, as Shiny hides error messages in deployed apps. Errors from
+      # req() and validate() are passed through unchanged.
+      error = function(e) {
+        if (inherits(e, "validation")) {
+          stop(e)
+        }
+        validate(conditionMessage(e))
       }
     )
   })

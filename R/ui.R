@@ -162,7 +162,7 @@ ui <- function() {
               "End Wavelength (nm)",
               "Longest wavelength at which to calculate irradiance"
             ),
-            value = 800,
+            value = 500,
             min = 0,
             max = 800
           ),

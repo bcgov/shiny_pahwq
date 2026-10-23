@@ -5,6 +5,8 @@ local_app <- function(..., env = parent.frame()) {
       # shinytest2 sets warn = 2 when testing a dev package from its own
       # directory, which turns pahwq's warnings into fatal app errors
       options(warn = 1)
+      # As in deployed apps, which hide unhandled error messages
+      options(shiny.sanitize.errors = TRUE)
       pacwq.shiny:::run_app(auth = FALSE)
     },
     timeout = 30000,
@@ -19,7 +21,11 @@ sites <- list(
   freshwater = list(lat = 52.60453, lon = -105.28278, elev_m = 515),
   marine = list(lat = 49.15085, lon = -125.91427, elev_m = 0),
   # Just outside the Strait of Georgia marine Kd area
-  nearshore = list(lat = 49.28, lon = -123.12, elev_m = 0)
+  nearshore = list(lat = 49.28, lon = -123.12, elev_m = 0),
+  # No marine Kd model data in winter
+  arctic_basin = list(lat = 78.135, lon = -126.252, elev_m = 0),
+  # Low-confidence (VPFTIME) marine Kd model in winter
+  labrador_shelf = list(lat = 53.673, lon = -56.187, elev_m = 0)
 )
 
 # Setting lat/lon triggers an elevation lookup over the network, so wait for it
@@ -80,7 +86,7 @@ expected_results <- function(
     tstop = 23,
     tsteps = 24,
     wvl_start = 280,
-    wvl_end = 800,
+    wvl_end = 500,
     quiet = TRUE
   )
   pabs <- pahwq::p_abs(irrad, chemical, time_multiplier = multiplier)
