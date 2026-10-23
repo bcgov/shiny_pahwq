@@ -125,6 +125,8 @@ server <- function(input, output, session) {
   depth_default <- reactiveVal(0.25)
   observe(
     {
+      # Not set while the login page is shown
+      req(input$aq_env)
       area <- location_area()
       # Marine selected manually outside the marine areas
       if (input$aq_env == "marine" && is.null(area)) {

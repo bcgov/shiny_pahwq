@@ -1,3 +1,9 @@
+test_that("the login page doesn't crash the app", {
+  app <- local_app(auth = TRUE)
+
+  expect_equal(app$get_js("Shiny.shinyapp.isConnected()"), TRUE)
+})
+
 test_that("narcotic guidelines appear once a chemical is chosen", {
   app <- local_app()
 

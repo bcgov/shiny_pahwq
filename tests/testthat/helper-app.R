@@ -1,6 +1,7 @@
-local_app <- function(..., env = parent.frame()) {
+local_app <- function(..., auth = FALSE, env = parent.frame()) {
   app <- shinytest2::AppDriver$new(
     function() {
+      Sys.setenv(PACWQ_USER = "user", PACWQ_PASSWORD = "password")
       library(pacwq.shiny)
       # shinytest2 sets warn = 2 when testing a dev package from its own
       # directory, which turns pahwq's warnings into fatal app errors
@@ -10,7 +11,7 @@ local_app <- function(..., env = parent.frame()) {
       # Instead of the elevation web service: the freshwater test site's
       # elevation (the app runs in its own process, so `sites` isn't available)
       options(pacwq.shiny.elevation = function(lon, lat) 515)
-      pacwq.shiny:::run_app(auth = FALSE)
+      pacwq.shiny:::run_app(auth = auth)
     },
     timeout = 30000,
     load_timeout = 60000,
