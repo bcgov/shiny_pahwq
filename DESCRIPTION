@@ -19,6 +19,7 @@ Imports:
     htmlwidgets,
     leaflet,
     pahwq (>= 0.4.0),
+    sf,
     pkgload,
     shiny,
     withr,

@@ -79,14 +79,19 @@ server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$aq_env, {
-    marine <- input$aq_env == "marine"
-    session$sendCustomMessage(
-      "set-disabled",
-      list(id = "doc", disabled = marine)
-    )
-    updateNumericInput(inputId = "kd_wvl", value = if (marine) 375 else 305)
-  })
+  observeEvent(
+    input$aq_env,
+    {
+      marine <- input$aq_env == "marine"
+      session$sendCustomMessage(
+        "set-disabled",
+        list(id = "doc", disabled = marine)
+      )
+      updateNumericInput(inputId = "kd_wvl", value = if (marine) 375 else 305)
+      update_elevation(input, marine)
+    },
+    priority = 1
+  )
 
   output$water_params_note <- renderUI({
     if (input$aq_env == "marine") {
@@ -219,20 +224,32 @@ server <- function(input, output, session) {
     updateNumericInput(inputId = "lon", value = input$map_click$lng)
   })
 
+  # Choose the aquatic environment from the location. If it changes, the
+  # aq_env observer sets the elevation. Higher priority than the outputs, and
+  # inputs are frozen while they are updated, so results aren't calculated
+  # with the previous environment or elevation.
   observeEvent(
     c(input$lat, input$lon),
     {
-      elev_val <- tryCatch(
-        get_elevation(req(input$lon), req(input$lat)),
-        error = function(e) {
-          return(NA_real_)
-        }
-      )
-      updateNumericInput(
-        inputId = "elev_m",
-        value = elev_val
-      )
-    }
+      if (!isTruthy(input$lat) || !isTruthy(input$lon)) {
+        update_elevation(input, input$aq_env == "marine")
+        return()
+      }
+
+      aq_env <- if (in_marine_area(input$lat, input$lon)) {
+        "marine"
+      } else {
+        "freshwater"
+      }
+      if (aq_env != input$aq_env) {
+        # calculation pauses until the browser confirms the switch
+        freezeReactiveValue(input, "aq_env")
+        updateRadioButtons(inputId = "aq_env", selected = aq_env)
+      } else {
+        update_elevation(input, aq_env == "marine")
+      }
+    },
+    priority = 1
   )
 
   # A default value of zoom, and then store the new value when the user changes
