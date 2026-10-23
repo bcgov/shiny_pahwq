@@ -446,14 +446,36 @@ ui <- function() {
                   "
             )
           ),
+          p(
+            "The aquatic environment is selected from the location: marine
+              if it is within one of the marine areas described below, and
+              freshwater otherwise. It can be changed manually, and is selected
+              again when the location changes. In marine water, elevation is
+              set to 0 m."
+          ),
           h4("Water parameters"),
           p(
             HTML(
-              "These determine the light attenuation through the water at a given depth. Light attenuation
-                  at each wavelength (\\(k_d(\\lambda)\\)) is determined
-                  from the attenuation coefficient at a reference wavelength (305nm), which is calculated from
-                  Dissolved Organic Carbon (DOC) concentration using the following
-                  equation from CCME (2025):"
+              "These determine the light attenuation through the water at a
+                given depth. Light attenuation at each wavelength
+                (\\(k_d(\\lambda)\\)) is calculated from the attenuation
+                coefficient at a reference wavelength
+                (\\(k_d(\\lambda_{ref})\\)) and the slope of its decrease with
+                wavelength (\\(S_k\\)):"
+            )
+          ),
+          p(
+            HTML(
+              "$$k_d(\\lambda) = k_d(\\lambda_{ref})\\,e^{-S_k(\\lambda - \\lambda_{ref})}$$"
+            )
+          ),
+          h5("Freshwater"),
+          p(
+            HTML(
+              "The attenuation coefficient at 305 nm is calculated from the
+                Dissolved Organic Carbon (DOC) concentration using the
+                following equation from CCME (2025), with
+                \\(S_k = 0.018\\) nm<sup>-1</sup>:"
             )
           ),
           p(
@@ -463,15 +485,67 @@ ui <- function() {
           ),
           p(
             HTML(
-              "You can supply an absorption coefficient (\\(k_d(\\lambda)\\))
-                and reference wavelength directly instead of calculating it from DOC
-                in the 'Other TUV Parameters section:"
+              "Instead of DOC, you can supply \\(k_d(\\lambda_{ref})\\) and the
+                reference wavelength at which it was measured in the 'Other TUV
+                parameters' section. The default water depth is 0.25 m."
             )
+          ),
+          h5("Marine water"),
+          p(
+            HTML(
+              "Light attenuation is calculated from models of
+                \\(\\log_{10}(k_d)\\) as a linear function of wavelength,
+                derived from satellite observations for 21 areas: Canada's
+                marine ecoregions, divided into clear and turbid water. There
+                is a model for each area and season (winter: December to
+                February, spring: March to May, summer: June to August, fall:
+                September to November). The area is selected from the location
+                and the season from the date. The areas are shown on the map
+                when marine water is selected. DOC is not used."
+            )
+          ),
+          p(
+            HTML(
+              "The models are expressed in the form above with a reference
+                wavelength of 375 nm. They were fitted to visible wavelengths
+                (up to 490 or 555 nm, depending on the area and season) and are
+                extrapolated to shorter wavelengths, down to 280 nm."
+            )
+          ),
+          tags$ul(
+            tags$li(
+              "If the location is outside the marine areas, the nearest area
+                within 25 km is used. Further away, there is no model."
+            ),
+            tags$li(
+              "Some Arctic areas have no model in winter, as there were no
+                data."
+            ),
+            tags$li(
+              "A warning is shown when a model was derived from data with
+                fewer than 10% valid pixels across the area or over time, as it
+                may not be reliable."
+            ),
+            tags$li(
+              HTML(
+                "\\(k_d(\\lambda_{ref})\\) can be set in the 'Other TUV
+                  parameters' section to override the model; \\(S_k\\) is
+                  still taken from the model."
+              )
+            )
+          ),
+          p(
+            "The model used is shown with the results, and included in the
+              TUV run parameters and the TUV results download. The default
+              water depth is 1 cm in nearshore (turbid) marine water. There is
+              no default in offshore (clear) marine water, so a depth must be
+              entered."
           ),
           h4("Other TUV parameters"),
           p(
-            "Ozone column and aerosol optical depth are looked up from
-                  historic climatology based on the date and location entered."
+            "Irradiance is calculated from 280 to 500 nm by default. Ozone
+              column and aerosol optical depth are looked up from historic
+              climatology based on the date and location entered."
           ),
           h5("Ozone column (DU)"),
           p(
