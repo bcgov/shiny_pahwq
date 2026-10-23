@@ -4,3 +4,5 @@
 ^app\.R$
 ^rsconnect$
 ^.*\.code-workspace$
+_\.new\.png$
+^\.rscignore$
