@@ -47,10 +47,13 @@ server <- function(input, output, session) {
       }
     }
 
+    req(input$lat, input$lon)
+    validate(need(input$depth_m, "Enter a water depth"))
+
     tryCatch(
       withCallingHandlers(
         tuv(
-          depth_m = req(input$depth_m),
+          depth_m = input$depth_m,
           lat = req(input$lat),
           lon = req(input$lon),
           elev_m = req(input$elev_m),
@@ -109,6 +112,29 @@ server <- function(input, output, session) {
         map |>
           leaflet::hideGroup("Marine areas") |>
           leaflet::removeControl("marine_legend")
+      }
+    },
+    priority = 1
+  )
+
+  # The marine area at the location, looked up once per location change
+  location_area <- reactive(marine_area_at(input$lat, input$lon))
+
+  # Only set the depth when its default changes (with the environment or the
+  # marine water type), so a depth the user entered is kept otherwise
+  depth_default <- reactiveVal(0.25)
+  observe(
+    {
+      area <- location_area()
+      # Marine selected manually outside the marine areas
+      if (input$aq_env == "marine" && is.null(area)) {
+        area <- marine_area_at(input$lat, input$lon, nearest = TRUE)
+      }
+      depth <- default_depth(input$aq_env, area$water_type)
+      if (!identical(depth, isolate(depth_default()))) {
+        depth_default(depth)
+        freezeReactiveValue(input, "depth_m")
+        updateNumericInput(inputId = "depth_m", value = depth)
       }
     },
     priority = 1
@@ -273,7 +299,7 @@ server <- function(input, output, session) {
         return()
       }
 
-      aq_env <- if (in_marine_area(input$lat, input$lon)) {
+      aq_env <- if (!is.null(location_area())) {
         "marine"
       } else {
         "freshwater"

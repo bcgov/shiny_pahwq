@@ -14,9 +14,35 @@ marine_areas <- local({
   }
 })
 
-in_marine_area <- function(lat, lon) {
+# The marine area containing the location, as a one-row data frame, or NULL.
+# With `nearest = TRUE`, the nearest area within 25 km is used instead, as
+# pahwq does for the Kd model.
+marine_area_at <- function(lat, lon, nearest = FALSE) {
+  if (length(c(lat, lon)) != 2 || anyNA(c(lat, lon))) {
+    return(NULL)
+  }
   pt <- sf::st_sfc(sf::st_point(c(lon, lat)), crs = 4326)
-  lengths(sf::st_intersects(pt, marine_areas())) > 0
+  areas <- marine_areas()
+  idx <- sf::st_intersects(pt, areas)[[1]]
+  if (!length(idx) && nearest) {
+    idx <- sf::st_nearest_feature(pt, areas)
+    if (as.numeric(sf::st_distance(pt, areas[idx, ])) > 25000) {
+      idx <- integer()
+    }
+  }
+  if (!length(idx)) {
+    return(NULL)
+  }
+  sf::st_drop_geometry(areas[idx[1], ])
+}
+
+# Nearshore (turbid) marine water defaults to 1 cm; offshore (clear) marine
+# water has no default (#33)
+default_depth <- function(aq_env, water_type) {
+  if (aq_env != "marine") {
+    return(0.25)
+  }
+  if (identical(water_type, "turbid")) 0.01 else NA_real_
 }
 
 site_elevation <- function(lat, lon, marine) {

@@ -33,7 +33,7 @@ depth_input <- function(id, label_prefix = NULL) {
     id,
     input_tooltip(
       add_prefix("Water Depth (m)", label_prefix),
-      "Set depth to 0.01m for marine environments"
+      "Depth at which light exposure is calculated. Defaults to 0.25 m in freshwater and 0.01 m in nearshore (turbid) marine water. There is no default for offshore (clear) marine water, so enter a depth."
     ),
     value = 0.25
   )

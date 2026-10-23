@@ -2,7 +2,6 @@ test_that("marine guidelines use the ecoregion model and ignore DOC", {
   app <- local_app()
   app$set_inputs(chemical = "Anthracene", aq_env = "marine")
   set_site(app, "marine")
-  app$set_inputs(depth_m = 0.01)
 
   expected <- expected_results("Anthracene", "marine", depth_m = 0.01)
   expect_equal(output_number(app, "pabs"), expected$pabs)
@@ -26,7 +25,7 @@ test_that("Kd(ref) overrides the marine model", {
   app <- local_app()
   app$set_inputs(chemical = "Anthracene", aq_env = "marine")
   set_site(app, "marine")
-  app$set_inputs(depth_m = 0.01, kd_ref = 10)
+  app$set_inputs(kd_ref = 10)
 
   expected <- expected_results(
     "Anthracene",
@@ -62,6 +61,7 @@ test_that("a location far from a marine area shows a clear error", {
   set_site(app, "freshwater")
   app$set_inputs(aq_env = "marine", wait_ = FALSE)
   app$wait_for_idle()
+  app$set_inputs(depth_m = 0.01)
 
   expect_match(
     output_error(app, "pabs"),
@@ -78,6 +78,7 @@ test_that("a marine area and season with no model shows a clear error", {
     wait_ = FALSE
   )
   app$wait_for_idle()
+  app$set_inputs(depth_m = 0.01)
 
   expect_equal(app$get_value(input = "aq_env"), "marine")
   expect_match(
@@ -108,4 +109,27 @@ test_that("a low-confidence marine model shows a warning", {
   )
   expect_null(output_error(app, "pabs"))
   expect_length(output_number(app, "pabs"), 1)
+})
+
+test_that("depth defaults to 1 cm in nearshore marine water only", {
+  app <- local_app()
+  app$set_inputs(chemical = "Anthracene")
+  set_site(app, "marine")
+  expect_equal(app$get_value(input = "depth_m"), 0.01)
+
+  app$set_inputs(depth_m = 0.05)
+  app$set_inputs(date = "2024-07-01")
+  expect_equal(app$get_value(input = "depth_m"), 0.05)
+
+  app$set_inputs(
+    lat = sites$arctic_basin$lat,
+    lon = sites$arctic_basin$lon,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "depth_m"), NA)
+  expect_equal(output_error(app, "pabs"), "Enter a water depth")
+
+  set_site(app, "freshwater")
+  expect_equal(app$get_value(input = "depth_m"), 0.25)
 })

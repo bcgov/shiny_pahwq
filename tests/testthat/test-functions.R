@@ -1,9 +1,21 @@
-test_that("in_marine_area() finds marine locations", {
-  expect_equal(in_marine_area(sites$marine$lat, sites$marine$lon), TRUE)
+test_that("marine_area_at() finds the containing or nearest marine area", {
   expect_equal(
-    in_marine_area(sites$freshwater$lat, sites$freshwater$lon),
-    FALSE
+    marine_area_at(sites$marine$lat, sites$marine$lon)$water_type,
+    "turbid"
   )
+  expect_null(marine_area_at(sites$nearshore$lat, sites$nearshore$lon))
+  expect_equal(
+    marine_area_at(
+      sites$nearshore$lat,
+      sites$nearshore$lon,
+      nearest = TRUE
+    )$area,
+    "Strait_of_Georgia_Turbid"
+  )
+  expect_null(
+    marine_area_at(sites$freshwater$lat, sites$freshwater$lon, nearest = TRUE)
+  )
+  expect_null(marine_area_at(NA, NA))
 })
 
 test_that("site_elevation() is 0 in marine water without a lookup", {
@@ -40,4 +52,11 @@ test_that("tuv_results_export() adds the marine Kd model as columns", {
   )
   expect_equal(exported$marine_kd_model_ecoregion, rep("Strait of Georgia", 2))
   expect_equal(exported$marine_kd_model_Kd_ref, rep(1.15809, 2))
+})
+
+test_that("default_depth() is 1 cm only in nearshore marine water", {
+  expect_equal(default_depth("freshwater", NULL), 0.25)
+  expect_equal(default_depth("marine", "turbid"), 0.01)
+  expect_equal(default_depth("marine", "clear"), NA_real_)
+  expect_equal(default_depth("marine", NULL), NA_real_)
 })
