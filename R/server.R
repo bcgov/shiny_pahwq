@@ -162,12 +162,14 @@ server <- function(input, output, session) {
 
   output$tuv_params <- renderUI({
     params <- tuv_run_params(irrad())
-    HTML(paste(
-      paste0("<b>", names(params), "</b>"),
-      params,
-      sep = ": ",
-      collapse = "<br/>"
-    ))
+    tags$table(
+      class = "table table-sm",
+      tags$tbody(Map(
+        \(name, value) tags$tr(tags$th(name), tags$td(value)),
+        names(params),
+        params
+      ))
+    )
   })
 
   pabs <- reactive(

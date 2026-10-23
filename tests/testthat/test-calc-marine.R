@@ -133,3 +133,14 @@ test_that("depth defaults to 1 cm in nearshore marine water only", {
   set_site(app, "freshwater")
   expect_equal(app$get_value(input = "depth_m"), 0.25)
 })
+
+test_that("the TUV run parameters include the marine model", {
+  app <- local_app()
+  set_site(app, "marine")
+  show_tab(app, "TUV Run Parameters")
+
+  expect_match(
+    app$get_value(output = "tuv_params")$html,
+    "<th>ecoregion</th>\\s*<td>Southern Shelf</td>"
+  )
+})
