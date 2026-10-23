@@ -17,7 +17,9 @@ local_app <- function(..., env = parent.frame()) {
 
 sites <- list(
   freshwater = list(lat = 52.60453, lon = -105.28278, elev_m = 515),
-  marine = list(lat = 49.15085, lon = -125.91427, elev_m = 0)
+  marine = list(lat = 49.15085, lon = -125.91427, elev_m = 0),
+  # Just outside the Strait of Georgia marine Kd area
+  nearshore = list(lat = 49.28, lon = -123.12, elev_m = 0)
 )
 
 # Setting lat/lon triggers an elevation lookup over the network, so wait for it
