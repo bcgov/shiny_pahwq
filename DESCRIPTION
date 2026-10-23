@@ -34,3 +34,5 @@ Suggests:
     shinytest2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/testthat/parallel: true
+Config/testthat/start-first: calc-marine, calc-freshwater, location

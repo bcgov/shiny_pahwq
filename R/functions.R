@@ -52,8 +52,11 @@ site_elevation <- function(lat, lon, marine) {
   if (length(c(lat, lon)) != 2 || anyNA(c(lat, lon))) {
     return(NA_real_)
   }
+  # The lookup can be replaced (e.g., in tests) with the option
+  # `pacwq.shiny.elevation`, a function of `lon` and `lat`
+  lookup <- getOption("pacwq.shiny.elevation", get_elevation)
   tryCatch(
-    get_elevation(lon, lat),
+    lookup(lon, lat),
     error = function(e) {
       return(NA_real_)
     }

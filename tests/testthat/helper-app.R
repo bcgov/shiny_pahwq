@@ -7,6 +7,9 @@ local_app <- function(..., env = parent.frame()) {
       options(warn = 1)
       # As in deployed apps, which hide unhandled error messages
       options(shiny.sanitize.errors = TRUE)
+      # Instead of the elevation web service: the freshwater test site's
+      # elevation (the app runs in its own process, so `sites` isn't available)
+      options(pacwq.shiny.elevation = function(lon, lat) 515)
       pacwq.shiny:::run_app(auth = FALSE)
     },
     timeout = 30000,
@@ -28,8 +31,8 @@ sites <- list(
   labrador_shelf = list(lat = 53.673, lon = -56.187, elev_m = 0)
 )
 
-# Setting lat/lon triggers an elevation lookup over the network, so wait for it
-# to finish before overwriting elevation with a known value.
+# Setting lat/lon triggers an elevation lookup, so wait for it to finish before
+# overwriting elevation with a known value.
 set_site <- function(app, site = c("freshwater", "marine")) {
   site <- sites[[match.arg(site)]]
   app$set_inputs(lat = site$lat, lon = site$lon, wait_ = FALSE)
