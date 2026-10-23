@@ -33,52 +33,71 @@ server <- function(input, output, session) {
   irrad <- reactive({
     local_tuv_dir()
 
+    kd_ref <- kd_reactive()
+
+    # In marine water Kd comes from the ecoregion model unless Kd(ref) is set
     if (input$aq_env == "marine") {
-      doc_reactive <- reactive(NULL)
-      kd_reactive <- reactive(NULL)
-      kd_wvl_reactive <- reactive(NULL)
-      showNotification(
-        "DOC, Kd, and Kd wavelength are ignored for marine calculations",
-        duration = 10,
-        type = "warning"
-      )
+      doc <- NULL
     } else {
-      req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
+      doc <- doc_reactive()
+      req(isTruthy(doc) || isTruthy(kd_ref))
 
-      if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
+      if (isTruthy(doc) && isTruthy(kd_ref)) {
         validate("Only one of DOC or Kd(ref) may be chosen")
-      }
-
-      if (isTruthy(doc_reactive())) {
-        tryCatch(
-          doc_range_check(doc_reactive()),
-          warning = function(w) {
-            showNotification(w, type = "warning")
-          }
-        )
       }
     }
 
-    tuv(
-      depth_m = req(input$depth_m),
-      lat = req(input$lat),
-      lon = req(input$lon),
-      elev_m = req(input$elev_m),
-      date = req(input$date),
-      tzone = req(input$tzone),
-      DOC = doc_reactive(),
-      aq_env = req(input$aq_env),
-      Kd_ref = kd_reactive(),
-      Kd_wvl = kd_wvl_reactive(),
-      tstart = req(input$tstart),
-      tstop = req(input$tstop),
-      tsteps = req(input$tsteps),
-      wvl_start = req(input$wvl_start),
-      wvl_end = req(input$wvl_end),
-      o3_tc = o3_tc_reactive(),
-      tauaer = tauaer_reactive(),
-      quiet = TRUE
+    withCallingHandlers(
+      tuv(
+        depth_m = req(input$depth_m),
+        lat = req(input$lat),
+        lon = req(input$lon),
+        elev_m = req(input$elev_m),
+        date = req(input$date),
+        tzone = req(input$tzone),
+        DOC = doc,
+        aq_env = req(input$aq_env),
+        Kd_ref = kd_ref,
+        Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
+        tstart = req(input$tstart),
+        tstop = req(input$tstop),
+        tsteps = req(input$tsteps),
+        wvl_start = req(input$wvl_start),
+        wvl_end = req(input$wvl_end),
+        o3_tc = o3_tc_reactive(),
+        tauaer = tauaer_reactive(),
+        quiet = TRUE
+      ),
+      message = function(m) {
+        showNotification(conditionMessage(m), type = "message")
+        invokeRestart("muffleMessage")
+      },
+      warning = function(w) {
+        showNotification(conditionMessage(w), type = "warning")
+        invokeRestart("muffleWarning")
+      }
     )
+  })
+
+  observeEvent(input$aq_env, {
+    marine <- input$aq_env == "marine"
+    session$sendCustomMessage(
+      "set-disabled",
+      list(id = "doc", disabled = marine)
+    )
+    updateNumericInput(inputId = "kd_wvl", value = if (marine) 375 else 305)
+  })
+
+  output$water_params_note <- renderUI({
+    if (input$aq_env == "marine") {
+      em(HTML(
+        "DOC is not used in marine water. Light attenuation is calculated
+        from the ecoregion model for the location and date, unless
+        K<sub>d</sub>(ref) is set in the TUV parameters section below."
+      ))
+    } else {
+      em("Input DOC here or Kd(ref) in the TUV parameters section below")
+    }
   })
 
   output$tuv_params <- renderUI({

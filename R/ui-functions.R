@@ -44,7 +44,7 @@ kd_input <- function(id, label_prefix = NULL) {
     id,
     input_tooltip(
       HTML(add_prefix("K<sub>d</sub>(ref) (m<sup>-1</sup>)", label_prefix)),
-      "Light attenuation coefficient at reference wavelength. Can be set directly, or calculated from DOC."
+      "Light attenuation coefficient at reference wavelength. In freshwater, it can be set directly, or calculated from DOC. In marine water, it is calculated from the ecoregion model for the location and date, unless set here."
     ),
     value = NA_real_
   )

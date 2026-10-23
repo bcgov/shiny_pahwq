@@ -54,9 +54,13 @@ expected_results <- function(
   depth_m = 0.25,
   DOC = NULL,
   Kd_ref = NULL,
+  Kd_wvl = NULL,
   multiplier = 2
 ) {
   aq_env <- match.arg(site)
+  if (!is.null(Kd_ref)) {
+    Kd_wvl <- Kd_wvl %||% if (aq_env == "marine") 375 else 305
+  }
   site <- sites[[aq_env]]
   local_tuv_dir()
   irrad <- pahwq::tuv(
@@ -69,7 +73,7 @@ expected_results <- function(
     DOC = DOC,
     aq_env = aq_env,
     Kd_ref = Kd_ref,
-    Kd_wvl = if (is.null(Kd_ref)) NULL else 305,
+    Kd_wvl = Kd_wvl,
     tstart = 0,
     tstop = 23,
     tsteps = 24,

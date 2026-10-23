@@ -18,7 +18,8 @@ ui <- function() {
         rel = "stylesheet",
         type = "text/css",
         href = "www/style.css"
-      )
+      ),
+      tags$script(src = "www/app.js")
     ),
     title = h1(
       class = "bslib-page-title",
@@ -83,8 +84,7 @@ ui <- function() {
         ),
         accordion_panel(
           "Water Parameters",
-          em("Input DOC here or Kd(ref) in the TUV parameters section below"),
-          br(),
+          uiOutput("water_params_note"),
           doc_input("doc"),
           depth_input("depth_m")
         ),
@@ -95,8 +95,9 @@ ui <- function() {
             "kd_wvl",
             input_tooltip(
               HTML("K<sub>d</sub>(ref) wavelength (nm)"),
-              "The reference wavelength at which `Kd_ref` was obtained, in nm.
-                Default 305. Only used if Kd_ref is set."
+              "The reference wavelength at which Kd(ref) was obtained, in nm.
+                Default 305 in freshwater and 375 in marine water. Only used if
+                Kd(ref) is set."
             ),
             value = 305
           ),
