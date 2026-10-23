@@ -33,62 +33,143 @@ server <- function(input, output, session) {
   irrad <- reactive({
     local_tuv_dir()
 
+    kd_ref <- kd_reactive()
+
+    # In marine water Kd comes from the ecoregion model unless Kd(ref) is set
     if (input$aq_env == "marine") {
-      doc_reactive <- reactive(NULL)
-      kd_reactive <- reactive(NULL)
-      kd_wvl_reactive <- reactive(NULL)
-      showNotification(
-        "DOC, Kd, and Kd wavelength are ignored for marine calculations",
-        duration = 10,
-        type = "warning"
-      )
+      doc <- NULL
     } else {
-      req(isTruthy(doc_reactive()) || isTruthy(kd_reactive()))
+      doc <- doc_reactive()
+      req(isTruthy(doc) || isTruthy(kd_ref))
 
-      if (isTruthy(doc_reactive()) && isTruthy(kd_reactive())) {
+      if (isTruthy(doc) && isTruthy(kd_ref)) {
         validate("Only one of DOC or Kd(ref) may be chosen")
-      }
-
-      if (isTruthy(doc_reactive())) {
-        tryCatch(
-          doc_range_check(doc_reactive()),
-          warning = function(w) {
-            showNotification(w, type = "warning")
-          }
-        )
       }
     }
 
-    tuv(
-      depth_m = req(input$depth_m),
-      lat = req(input$lat),
-      lon = req(input$lon),
-      elev_m = req(input$elev_m),
-      date = req(input$date),
-      tzone = req(input$tzone),
-      DOC = doc_reactive(),
-      aq_env = req(input$aq_env),
-      Kd_ref = kd_reactive(),
-      Kd_wvl = kd_wvl_reactive(),
-      tstart = req(input$tstart),
-      tstop = req(input$tstop),
-      tsteps = req(input$tsteps),
-      wvl_start = req(input$wvl_start),
-      wvl_end = req(input$wvl_end),
-      o3_tc = o3_tc_reactive(),
-      tauaer = tauaer_reactive(),
-      quiet = TRUE
+    req(input$lat, input$lon)
+    validate(need(input$depth_m, "Enter a water depth"))
+
+    tryCatch(
+      withCallingHandlers(
+        tuv(
+          depth_m = input$depth_m,
+          lat = req(input$lat),
+          lon = req(input$lon),
+          elev_m = req(input$elev_m),
+          date = req(input$date),
+          tzone = req(input$tzone),
+          DOC = doc,
+          aq_env = req(input$aq_env),
+          Kd_ref = kd_ref,
+          Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
+          tstart = req(input$tstart),
+          tstop = req(input$tstop),
+          tsteps = req(input$tsteps),
+          wvl_start = req(input$wvl_start),
+          wvl_end = req(input$wvl_end),
+          o3_tc = o3_tc_reactive(),
+          tauaer = tauaer_reactive(),
+          quiet = TRUE
+        ),
+        message = function(m) {
+          showNotification(conditionMessage(m), type = "message")
+          invokeRestart("muffleMessage")
+        },
+        warning = function(w) {
+          showNotification(conditionMessage(w), type = "warning")
+          invokeRestart("muffleWarning")
+        }
+      ),
+      # Show pahwq's errors (e.g., no marine Kd model for the location) to the
+      # user, as Shiny hides error messages in deployed apps. Errors from
+      # req() and validate() are passed through unchanged.
+      error = function(e) {
+        if (inherits(e, "validation")) {
+          stop(e)
+        }
+        validate(conditionMessage(e))
+      }
+    )
+  })
+
+  observeEvent(
+    input$aq_env,
+    {
+      marine <- input$aq_env == "marine"
+      session$sendCustomMessage(
+        "set-disabled",
+        list(id = "doc", disabled = marine)
+      )
+      updateNumericInput(inputId = "kd_wvl", value = if (marine) 375 else 305)
+      update_elevation(input, marine)
+      map <- leaflet::leafletProxy("map")
+      if (marine) {
+        map |>
+          leaflet::showGroup("Marine areas") |>
+          add_marine_legend("Marine areas", layerId = "marine_legend")
+      } else {
+        map |>
+          leaflet::hideGroup("Marine areas") |>
+          leaflet::removeControl("marine_legend")
+      }
+    },
+    priority = 1
+  )
+
+  # The marine area at the location, looked up once per location change
+  location_area <- reactive(marine_area_at(input$lat, input$lon))
+
+  # Only set the depth when its default changes (with the environment or the
+  # marine water type), so a depth the user entered is kept otherwise
+  depth_default <- reactiveVal(0.25)
+  observe(
+    {
+      area <- location_area()
+      # Marine selected manually outside the marine areas
+      if (input$aq_env == "marine" && is.null(area)) {
+        area <- marine_area_at(input$lat, input$lon, nearest = TRUE)
+      }
+      depth <- default_depth(input$aq_env, area$water_type)
+      if (!identical(depth, isolate(depth_default()))) {
+        depth_default(depth)
+        freezeReactiveValue(input, "depth_m")
+        updateNumericInput(inputId = "depth_m", value = depth)
+      }
+    },
+    priority = 1
+  )
+
+  output$water_params_note <- renderUI({
+    if (input$aq_env == "marine") {
+      em(HTML(
+        "DOC is not used in marine water. Light attenuation is calculated
+        from the ecoregion model for the location and date, unless
+        K<sub>d</sub>(ref) is set in the TUV parameters section below."
+      ))
+    } else {
+      em("Input DOC here or Kd(ref) in the TUV parameters section below")
+    }
+  })
+
+  output$kd_model_card <- renderUI({
+    req(input$aq_env == "marine")
+    kd_model_card(
+      req(attr(irrad(), "kd_model")),
+      kd_ref_set = isTruthy(input$kd_ref)
     )
   })
 
   output$tuv_params <- renderUI({
     params <- tuv_run_params(irrad())
-    HTML(paste(
-      paste0("<b>", names(params), "</b>"),
-      params,
-      sep = ": ",
-      collapse = "<br/>"
-    ))
+    tags$table(
+      class = "table table-sm",
+      tags$tbody(Map(
+        \(name, value) tags$tr(tags$th(name), tags$td(value)),
+        names(params),
+        params
+      ))
+    )
   })
 
   pabs <- reactive(
@@ -182,8 +263,11 @@ server <- function(input, output, session) {
         leaflet::providers$Esri.WorldImagery,
         group = "ESRI Imagery"
       ) |>
+      add_marine_areas(group = "Marine areas") |>
+      leaflet::hideGroup("Marine areas") |>
       leaflet::addLayersControl(
         baseGroups = c("OpenStreetMap", "OpenTopoMap", "ESRI Imagery"),
+        overlayGroups = "Marine areas",
         position = "bottomleft"
       ) |>
       leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5) |>
@@ -194,26 +278,43 @@ server <- function(input, output, session) {
       )
   })
 
-  # This updates the lat and lon input fields if the user clicks on the map
+  # This updates the lat and lon input fields if the user clicks on the map.
+  # Clicks on the marine area polygons are reported as shape clicks.
   observeEvent(input$map_click, {
     updateNumericInput(inputId = "lat", value = input$map_click$lat)
     updateNumericInput(inputId = "lon", value = input$map_click$lng)
   })
+  observeEvent(input$map_shape_click, {
+    updateNumericInput(inputId = "lat", value = input$map_shape_click$lat)
+    updateNumericInput(inputId = "lon", value = input$map_shape_click$lng)
+  })
 
+  # Choose the aquatic environment from the location. If it changes, the
+  # aq_env observer sets the elevation. Higher priority than the outputs, and
+  # inputs are frozen while they are updated, so results aren't calculated
+  # with the previous environment or elevation.
   observeEvent(
     c(input$lat, input$lon),
     {
-      elev_val <- tryCatch(
-        get_elevation(req(input$lon), req(input$lat)),
-        error = function(e) {
-          return(NA_real_)
-        }
-      )
-      updateNumericInput(
-        inputId = "elev_m",
-        value = elev_val
-      )
-    }
+      if (!isTruthy(input$lat) || !isTruthy(input$lon)) {
+        update_elevation(input, input$aq_env == "marine")
+        return()
+      }
+
+      aq_env <- if (!is.null(location_area())) {
+        "marine"
+      } else {
+        "freshwater"
+      }
+      if (aq_env != input$aq_env) {
+        # calculation pauses until the browser confirms the switch
+        freezeReactiveValue(input, "aq_env")
+        updateRadioButtons(inputId = "aq_env", selected = aq_env)
+      } else {
+        update_elevation(input, aq_env == "marine")
+      }
+    },
+    priority = 1
   )
 
   # A default value of zoom, and then store the new value when the user changes
@@ -253,7 +354,12 @@ server <- function(input, output, session) {
       paste0("tuv-results_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      utils::write.csv(irrad(), file, row.names = FALSE, na = "")
+      utils::write.csv(
+        tuv_results_export(irrad()),
+        file,
+        row.names = FALSE,
+        na = ""
+      )
     }
   )
 

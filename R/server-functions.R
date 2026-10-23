@@ -60,6 +60,15 @@ run_sens <- function(input) {
   )
 }
 
+update_elevation <- function(input, marine) {
+  # calculation pauses until the browser confirms the switch
+  freezeReactiveValue(input, "elev_m")
+  updateNumericInput(
+    inputId = "elev_m",
+    value = site_elevation(input$lat, input$lon, marine)
+  )
+}
+
 x_or_null <- function(x) {
   if (!isTruthy(x)) NULL else x
 }

@@ -8,6 +8,7 @@ test_that("guidelines calculated from DOC match pahwq", {
   expect_equal(output_number(app, "pabs"), expected$pabs)
   expect_equal(output_number(app, "photo_bench"), expected$photo_bench)
   expect_equal(output_number(app, "photo_cwqg"), expected$photo_cwqg)
+  expect_equal(app$get_text("#kd_model_card"), "")
 })
 
 test_that("the TUV results multiplier is applied to Pabs", {
