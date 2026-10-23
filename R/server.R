@@ -100,6 +100,16 @@ server <- function(input, output, session) {
       )
       updateNumericInput(inputId = "kd_wvl", value = if (marine) 375 else 305)
       update_elevation(input, marine)
+      map <- leaflet::leafletProxy("map")
+      if (marine) {
+        map |>
+          leaflet::showGroup("Marine areas") |>
+          add_marine_legend("Marine areas", layerId = "marine_legend")
+      } else {
+        map |>
+          leaflet::hideGroup("Marine areas") |>
+          leaflet::removeControl("marine_legend")
+      }
     },
     priority = 1
   )
@@ -225,8 +235,11 @@ server <- function(input, output, session) {
         leaflet::providers$Esri.WorldImagery,
         group = "ESRI Imagery"
       ) |>
+      add_marine_areas(group = "Marine areas") |>
+      leaflet::hideGroup("Marine areas") |>
       leaflet::addLayersControl(
         baseGroups = c("OpenStreetMap", "OpenTopoMap", "ESRI Imagery"),
+        overlayGroups = "Marine areas",
         position = "bottomleft"
       ) |>
       leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5) |>
@@ -237,10 +250,15 @@ server <- function(input, output, session) {
       )
   })
 
-  # This updates the lat and lon input fields if the user clicks on the map
+  # This updates the lat and lon input fields if the user clicks on the map.
+  # Clicks on the marine area polygons are reported as shape clicks.
   observeEvent(input$map_click, {
     updateNumericInput(inputId = "lat", value = input$map_click$lat)
     updateNumericInput(inputId = "lon", value = input$map_click$lng)
+  })
+  observeEvent(input$map_shape_click, {
+    updateNumericInput(inputId = "lat", value = input$map_shape_click$lat)
+    updateNumericInput(inputId = "lon", value = input$map_shape_click$lng)
   })
 
   # Choose the aquatic environment from the location. If it changes, the

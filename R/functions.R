@@ -34,6 +34,35 @@ site_elevation <- function(lat, lon, marine) {
   )
 }
 
+marine_areas_pal <- function() {
+  leaflet::colorFactor(c("#2c7fb8", "#a6611a"), levels = c("clear", "turbid"))
+}
+
+add_marine_areas <- function(map, group) {
+  pal <- marine_areas_pal()
+  leaflet::addPolygons(
+    map,
+    data = marine_areas(),
+    group = group,
+    color = ~ pal(water_type),
+    weight = 1,
+    fillOpacity = 0.2,
+    label = ~ paste0(ecoregion, " (", water_type, " water)")
+  )
+}
+
+add_marine_legend <- function(map, group, layerId) {
+  leaflet::addLegend(
+    map,
+    pal = marine_areas_pal(),
+    values = c("clear", "turbid"),
+    title = "Marine water type",
+    position = "bottomright",
+    group = group,
+    layerId = layerId
+  )
+}
+
 # Add the marine Kd model, if any, as constant columns
 tuv_results_export <- function(x) {
   kd_model <- attr(x, "kd_model")
