@@ -1,7 +1,19 @@
+# Homologue groups that combine two parents (e.g. C1-Phenanthrenes/Anthracenes)
+# have one row per parent with identical properties and spectra, so the first
+# is used for the group.
 chemical_list <- function() {
-  ma_chems <- tolower(sort(unique(pahwq:::molar_absorption$chemical)))
-  narc_bench_chems <- tolower(sort(unique(pahwq:::nlc50_lookup$chemical)))
-  tools::toTitleCase(intersect(ma_chems, narc_bench_chems))
+  pacs <- pac_list(app_only = TRUE)
+  pacs <- pacs[!duplicated(pacs$pac), ]
+  pacs <- pacs[order(tolower(pacs$pac)), ]
+  stats::setNames(pacs$chemical, pacs$pac)
+}
+
+multi_tox_table <- function(tuv_res, time_multiplier) {
+  chems <- chemical_list()
+  ret <- pb_multi(tuv_res, unname(chems), time_multiplier = time_multiplier)
+  ret$pah <- names(chems)[match(ret$pah, chems)]
+  names(ret)[names(ret) == "pah"] <- "pac"
+  ret
 }
 
 marine_areas <- local({
@@ -34,15 +46,6 @@ marine_area_at <- function(lat, lon, nearest = FALSE) {
     return(NULL)
   }
   sf::st_drop_geometry(areas[idx[1], ])
-}
-
-# Nearshore (turbid) marine water defaults to 1 cm; offshore (clear) marine
-# water has no default (#33)
-default_depth <- function(aq_env, water_type) {
-  if (aq_env != "marine") {
-    return(0.25)
-  }
-  if (identical(water_type, "turbid")) 0.01 else NA_real_
 }
 
 site_elevation <- function(lat, lon, marine) {

@@ -1,6 +1,6 @@
 test_that("guidelines calculated from DOC match pahwq", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(doc = 5)
 
@@ -13,7 +13,7 @@ test_that("guidelines calculated from DOC match pahwq", {
 
 test_that("the TUV results multiplier is applied to Pabs", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(doc = 5, multiplier = 1)
 
@@ -29,7 +29,7 @@ test_that("the TUV results multiplier is applied to Pabs", {
 
 test_that("guidelines calculated from Kd(ref) match pahwq", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(kd_ref = 10)
 
@@ -41,7 +41,7 @@ test_that("guidelines calculated from Kd(ref) match pahwq", {
 
 test_that("DOC and Kd(ref) can't both be supplied", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(doc = 5, kd_ref = 10)
 
@@ -53,7 +53,7 @@ test_that("DOC and Kd(ref) can't both be supplied", {
 
 test_that("out of range DOC warns and is replaced with the maximum", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(doc = 100)
 
