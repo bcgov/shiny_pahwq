@@ -10,7 +10,7 @@ test_that("narcotic guidelines appear once a chemical is chosen", {
   expect_equal(output_error(app, "narc_bench"), "")
   expect_equal(output_error(app, "narc_cwqg"), "")
 
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
 
   expect_equal(
     output_number(app, "narc_bench"),
@@ -24,7 +24,7 @@ test_that("narcotic guidelines appear once a chemical is chosen", {
 
 test_that("phototoxic outputs wait for a location and water parameters", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
 
   expect_equal(output_error(app, "pabs"), "")
   expect_equal(output_error(app, "photo_bench"), "")

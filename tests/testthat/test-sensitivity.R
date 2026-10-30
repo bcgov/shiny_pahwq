@@ -17,7 +17,7 @@ test_that("the attenuation sliders switch between DOC and Kd(ref)", {
 
 test_that("the sensitivity analysis produces a plot", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   show_tab(app, "DOC and Depth Sensitivity")
   app$set_inputs(sens_months = "June", depth_steps = 2, doc_steps = 2)

@@ -1,6 +1,6 @@
 test_that("moving from a marine location to land calculates for freshwater", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", doc = 5)
+  app$set_inputs(chemical = "anthracene", doc = 5)
   set_site(app, "marine")
   expect_equal(app$get_value(input = "aq_env"), "marine")
 
@@ -23,7 +23,7 @@ test_that("moving from a marine location to land calculates for freshwater", {
 
 test_that("marine can be selected manually for a nearshore location", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", depth_m = 0.01, date = "2024-06-21")
+  app$set_inputs(chemical = "anthracene", depth_m = 0.01, date = "2024-06-21")
   app$set_inputs(
     lat = sites$nearshore$lat,
     lon = sites$nearshore$lon,

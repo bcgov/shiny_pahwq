@@ -60,3 +60,14 @@ test_that("default_depth() is 1 cm only in nearshore marine water", {
   expect_equal(default_depth("marine", "clear"), NA_real_)
   expect_equal(default_depth("marine", NULL), NA_real_)
 })
+
+test_that("chemical_list() has one entry per PAC shown in the app", {
+  chems <- chemical_list()
+  expect_length(chems, 47)
+  expect_setequal(names(chems), pac_list(app_only = TRUE)$pac)
+  expect_equal(
+    chems[["C1-Benz(a)anthracenes/Chrysenes"]],
+    "c1-benzo(a)anthracenes"
+  )
+  expect_equal(chems[["Benzo(a)pyrene"]], "benzo(a)pyrene")
+})

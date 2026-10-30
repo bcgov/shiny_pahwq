@@ -1,6 +1,6 @@
 test_that("marine guidelines use the ecoregion model and ignore DOC", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", aq_env = "marine")
+  app$set_inputs(chemical = "anthracene", aq_env = "marine")
   set_site(app, "marine")
 
   expected <- expected_results("Anthracene", "marine", depth_m = 0.01)
@@ -23,7 +23,7 @@ test_that("marine guidelines use the ecoregion model and ignore DOC", {
 
 test_that("Kd(ref) overrides the marine model", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", aq_env = "marine")
+  app$set_inputs(chemical = "anthracene", aq_env = "marine")
   set_site(app, "marine")
   app$set_inputs(kd_ref = 10)
 
@@ -57,7 +57,7 @@ test_that("DOC is disabled and Kd(ref) wavelength changes in marine water", {
 
 test_that("a location far from a marine area shows a clear error", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(aq_env = "marine", wait_ = FALSE)
   app$wait_for_idle()
@@ -71,7 +71,7 @@ test_that("a location far from a marine area shows a clear error", {
 
 test_that("a marine area and season with no model shows a clear error", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", date = "2024-01-15")
+  app$set_inputs(chemical = "anthracene", date = "2024-01-15")
   app$set_inputs(
     lat = sites$arctic_basin$lat,
     lon = sites$arctic_basin$lon,
@@ -89,7 +89,7 @@ test_that("a marine area and season with no model shows a clear error", {
 
 test_that("a low-confidence marine model shows a warning", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene", date = "2024-01-15")
+  app$set_inputs(chemical = "anthracene", date = "2024-01-15")
   app$set_inputs(
     lat = sites$labrador_shelf$lat,
     lon = sites$labrador_shelf$lon,
@@ -113,7 +113,7 @@ test_that("a low-confidence marine model shows a warning", {
 
 test_that("depth defaults to 1 cm in nearshore marine water only", {
   app <- local_app()
-  app$set_inputs(chemical = "Anthracene")
+  app$set_inputs(chemical = "anthracene")
   set_site(app, "marine")
   expect_equal(app$get_value(input = "depth_m"), 0.01)
 
