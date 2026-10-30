@@ -48,15 +48,6 @@ marine_area_at <- function(lat, lon, nearest = FALSE) {
   sf::st_drop_geometry(areas[idx[1], ])
 }
 
-# Nearshore (turbid) marine water defaults to 1 cm; offshore (clear) marine
-# water has no default (#33)
-default_depth <- function(aq_env, water_type) {
-  if (aq_env != "marine") {
-    return(0.25)
-  }
-  if (identical(water_type, "turbid")) 0.01 else NA_real_
-}
-
 site_elevation <- function(lat, lon, marine) {
   if (marine) {
     return(0)

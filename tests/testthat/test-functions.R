@@ -54,13 +54,6 @@ test_that("tuv_results_export() adds the marine Kd model as columns", {
   expect_equal(exported$marine_kd_model_Kd_ref, rep(1.15809, 2))
 })
 
-test_that("default_depth() is 1 cm only in nearshore marine water", {
-  expect_equal(default_depth("freshwater", NULL), 0.25)
-  expect_equal(default_depth("marine", "turbid"), 0.01)
-  expect_equal(default_depth("marine", "clear"), NA_real_)
-  expect_equal(default_depth("marine", NULL), NA_real_)
-})
-
 test_that("chemical_list() has one entry per PAC shown in the app", {
   chems <- chemical_list()
   expect_length(chems, 47)

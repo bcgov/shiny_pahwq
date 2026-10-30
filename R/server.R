@@ -120,28 +120,6 @@ server <- function(input, output, session) {
   # The marine area at the location, looked up once per location change
   location_area <- reactive(marine_area_at(input$lat, input$lon))
 
-  # Only set the depth when its default changes (with the environment or the
-  # marine water type), so a depth the user entered is kept otherwise
-  depth_default <- reactiveVal(0.25)
-  observe(
-    {
-      # Not set while the login page is shown
-      req(input$aq_env)
-      area <- location_area()
-      # Marine selected manually outside the marine areas
-      if (input$aq_env == "marine" && is.null(area)) {
-        area <- marine_area_at(input$lat, input$lon, nearest = TRUE)
-      }
-      depth <- default_depth(input$aq_env, area$water_type)
-      if (!identical(depth, isolate(depth_default()))) {
-        depth_default(depth)
-        freezeReactiveValue(input, "depth_m")
-        updateNumericInput(inputId = "depth_m", value = depth)
-      }
-    },
-    priority = 1
-  )
-
   output$water_params_note <- renderUI({
     if (input$aq_env == "marine") {
       em(HTML(

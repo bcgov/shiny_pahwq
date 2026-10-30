@@ -20,6 +20,7 @@ test_that("the sensitivity analysis produces a plot", {
   app$set_inputs(chemical = "anthracene")
   set_site(app, "freshwater")
   show_tab(app, "DOC and Depth Sensitivity")
+  expect_equal(app$get_value(input = "sens_depth"), c(0.01, 0.51))
   app$set_inputs(sens_months = "June", depth_steps = 2, doc_steps = 2)
 
   app$click("run_sens_button", timeout_ = 120000)

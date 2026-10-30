@@ -307,17 +307,17 @@ ui <- function() {
               sliderInput(
                 "sens_depth",
                 "Depth Range (m)",
-                min = 0,
+                min = 0.01,
                 max = 2,
-                value = c(0.25, 1),
-                step = 0.05
+                value = c(0.01, 0.51),
+                step = 0.01
               ),
               sliderInput(
                 "depth_steps",
                 "Number of depth increments",
                 min = 1,
                 max = 10,
-                value = 5
+                value = 6
               ),
               radioButtons(
                 "doc_or_kd",
@@ -358,7 +358,7 @@ ui <- function() {
                 tags$li("Lat: 52.60453"),
                 tags$li("Long: -105.28278"),
                 tags$li("Elevation: 515m"),
-                tags$li("Depth: 0.25m"),
+                tags$li("Depth: 0.01m"),
                 tags$li("Date: 2024-06-21"),
               ),
               downloadButton(
@@ -487,7 +487,7 @@ ui <- function() {
             HTML(
               "Instead of DOC, you can supply \\(k_d(\\lambda_{ref})\\) and the
                 reference wavelength at which it was measured in the 'Other TUV
-                parameters' section. The default water depth is 0.25 m."
+                parameters' section. The default water depth is 0.01 m."
             )
           ),
           h5("Marine water"),
@@ -536,10 +536,7 @@ ui <- function() {
           ),
           p(
             "The model used is shown with the results, and included in the
-              TUV run parameters and the TUV results download. The default
-              water depth is 1 cm in nearshore (turbid) marine water. There is
-              no default in offshore (clear) marine water, so a depth must be
-              entered."
+              TUV run parameters and the TUV results download."
           ),
           h4("Other TUV parameters"),
           p(

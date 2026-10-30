@@ -23,7 +23,7 @@ test_that("moving from a marine location to land calculates for freshwater", {
 
 test_that("marine can be selected manually for a nearshore location", {
   app <- local_app()
-  app$set_inputs(chemical = "anthracene", depth_m = 0.01, date = "2024-06-21")
+  app$set_inputs(chemical = "anthracene", date = "2024-06-21")
   app$set_inputs(
     lat = sites$nearshore$lat,
     lon = sites$nearshore$lon,

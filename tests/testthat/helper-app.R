@@ -63,7 +63,7 @@ output_error <- function(app, id) {
 expected_results <- function(
   chemical,
   site = c("freshwater", "marine"),
-  depth_m = 0.25,
+  depth_m = 0.01,
   DOC = NULL,
   Kd_ref = NULL,
   Kd_wvl = NULL,
