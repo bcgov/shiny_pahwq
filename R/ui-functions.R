@@ -5,7 +5,8 @@ chem_input <- function(id) {
     choices = c(
       "Choose a chemical" = "",
       chemical_list()
-    )
+    ),
+    width = "100%"
   )
 }
 
