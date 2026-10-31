@@ -66,3 +66,13 @@ test_that("out of range DOC warns and is replaced with the maximum", {
   expected <- expected_results("Anthracene", "freshwater", DOC = doc_range()[2])
   expect_equal(output_number(app, "advanced-pabs"), expected$pabs)
 })
+
+test_that("a user-supplied Sk is used", {
+  app <- local_app(tab = "Advanced")
+  app$set_inputs(`advanced-chemical` = "anthracene")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 5, `advanced-sk` = 0.025)
+
+  expected <- expected_results("Anthracene", "freshwater", DOC = 5, Sk = 0.025)
+  expect_equal(output_number(app, "advanced-pabs"), expected$pabs)
+})

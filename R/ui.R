@@ -197,7 +197,8 @@ help_panel <- function() {
         HTML(
           "Instead of DOC, you can supply \\(k_d(\\lambda_{ref})\\) and the
             reference wavelength at which it was measured in the 'Other TUV
-            parameters' section. The default water depth is 0.01 m."
+            parameters' section, and \\(S_k\\) can be changed there too. The
+            default water depth is 0.01 m."
         )
       ),
       h5("Marine water"),
@@ -238,9 +239,9 @@ help_panel <- function() {
         ),
         tags$li(
           HTML(
-            "\\(k_d(\\lambda_{ref})\\) can be set in the 'Other TUV
-              parameters' section to override the model; \\(S_k\\) is
-              still taken from the model."
+            "\\(k_d(\\lambda_{ref})\\) and \\(S_k\\) can each be set in the
+              'Other TUV parameters' section of the Advanced tab to override
+              the model."
           )
         )
       ),

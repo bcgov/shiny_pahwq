@@ -80,6 +80,7 @@ expected_results <- function(
   DOC = NULL,
   Kd_ref = NULL,
   Kd_wvl = NULL,
+  Sk = NULL,
   multiplier = 2,
   date = as.Date("2024-06-21"),
   tzone = 0
@@ -101,6 +102,7 @@ expected_results <- function(
     aq_env = aq_env,
     Kd_ref = Kd_ref,
     Kd_wvl = Kd_wvl,
+    Sk = Sk,
     tstart = 0,
     tstop = 23,
     tsteps = 24,

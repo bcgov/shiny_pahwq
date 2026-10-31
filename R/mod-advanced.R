@@ -82,6 +82,16 @@ advanced_ui <- function(id) {
             value = 305
           ),
           numericInput(
+            ns("sk"),
+            input_tooltip(
+              HTML("S<sub>k</sub> (nm<sup>-1</sup>)"),
+              "Spectral slope: how quickly light attenuation decreases with
+                wavelength. If empty, 0.018 in freshwater, and from the
+                ecoregion model in marine water."
+            ),
+            value = NA_real_
+          ),
+          numericInput(
             ns("tstart"),
             input_tooltip(
               "Start time (h)",
@@ -324,6 +334,7 @@ advanced_server <- function(id, shared, active) {
         aq_env = req(input$aq_env),
         Kd_ref = kd_ref,
         Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
+        Sk = x_or_null(input$sk),
         tstart = req(input$tstart),
         tstop = req(input$tstop),
         tsteps = req(input$tsteps),
@@ -392,7 +403,8 @@ advanced_server <- function(id, shared, active) {
       req(input$aq_env == "marine")
       kd_model_card(
         req(attr(irrad(), "kd_model")),
-        kd_ref_set = isTruthy(input$kd_ref)
+        kd_ref_set = isTruthy(input$kd_ref),
+        sk_set = isTruthy(input$sk)
       )
     })
 

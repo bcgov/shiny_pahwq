@@ -51,10 +51,13 @@ kd_input <- function(id, label_prefix = NULL) {
   )
 }
 
-kd_model_card <- function(kd_model, kd_ref_set = FALSE) {
+kd_model_card <- function(kd_model, kd_ref_set = FALSE, sk_set = FALSE) {
   notes <- c(
     if (kd_ref_set) {
       "K<sub>d</sub>(ref) was set by the user, overriding the model."
+    },
+    if (sk_set) {
+      "S<sub>k</sub> was set by the user, overriding the model."
     },
     if (kd_model$dist_km > 0) {
       sprintf(

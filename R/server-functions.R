@@ -41,6 +41,7 @@ run_sens <- function(input) {
     depth_m = depth,
     tzone = req(input$tzone),
     Kd_wvl = kd_wvl_reactive(),
+    Sk = x_or_null(input$sk),
     tstart = req(input$tstart),
     tstop = req(input$tstop),
     tsteps = req(input$tsteps),
