@@ -16,7 +16,20 @@ body * {
   margin-left: -16px;
 }
 
-#sens_plot {
+/* Put the navigation menu on its own line, under the title */
+.navbar > .container-fluid {
+  flex-wrap: wrap;
+}
+
+.navbar-header {
+  flex-basis: 100%;
+}
+
+.navbar .bslib-page-title {
+  color: inherit;
+}
+
+#advanced-sens_plot {
   width: 100% !important;
 }
 

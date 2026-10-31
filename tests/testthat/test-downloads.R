@@ -15,16 +15,16 @@ download_filename <- function(app, id) {
 test_that("TUV results can be downloaded", {
   app <- local_app()
   set_site(app, "freshwater")
-  app$set_inputs(doc = 5)
+  app$set_inputs(`advanced-doc` = 5)
   show_tab(app, "TUV Results")
 
   expect_equal(
-    download_filename(app, "tuv_download"),
+    download_filename(app, "advanced-tuv_download"),
     paste0("tuv-results_", Sys.Date(), ".csv")
   )
 
   expected <- expected_results("Anthracene", "freshwater", DOC = 5)$irrad
-  downloaded <- utils::read.csv(app$get_download("tuv_download"))
+  downloaded <- utils::read.csv(app$get_download("advanced-tuv_download"))
   expect_named(downloaded, names(expected))
   expect_equal(downloaded, as.data.frame(expected), ignore_attr = TRUE)
 })
@@ -34,7 +34,7 @@ test_that("marine TUV results include the Kd model", {
   set_site(app, "marine")
   show_tab(app, "TUV Results")
 
-  downloaded <- utils::read.csv(app$get_download("tuv_download"))
+  downloaded <- utils::read.csv(app$get_download("advanced-tuv_download"))
   expect_contains(
     names(downloaded),
     c(
@@ -50,15 +50,15 @@ test_that("marine TUV results include the Kd model", {
 test_that("multi-chemical results cover every chemical and can be downloaded", {
   app <- local_app()
   set_site(app, "freshwater")
-  app$set_inputs(doc = 5)
+  app$set_inputs(`advanced-doc` = 5)
   show_tab(app, "Multi-Chemical Toxicity")
 
   expect_equal(
-    download_filename(app, "multi_tox_download"),
+    download_filename(app, "advanced-multi_tox_download"),
     paste0("phototoxic-wq-multi-results-freshwater_", Sys.Date(), ".csv")
   )
 
-  downloaded <- utils::read.csv(app$get_download("multi_tox_download"))
+  downloaded <- utils::read.csv(app$get_download("advanced-multi_tox_download"))
   expect_equal(downloaded$pac, names(chemical_list()))
   expect_contains(
     names(downloaded),

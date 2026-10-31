@@ -36,9 +36,17 @@ sites <- list(
 # overwriting elevation with a known value.
 set_site <- function(app, site = c("freshwater", "marine")) {
   site <- sites[[match.arg(site)]]
-  app$set_inputs(lat = site$lat, lon = site$lon, wait_ = FALSE)
+  app$set_inputs(
+    `advanced-lat` = site$lat,
+    `advanced-lon` = site$lon,
+    wait_ = FALSE
+  )
   app$wait_for_idle()
-  app$set_inputs(elev_m = site$elev_m, date = "2024-06-21", wait_ = FALSE)
+  app$set_inputs(
+    `advanced-elev_m` = site$elev_m,
+    `advanced-date` = "2024-06-21",
+    wait_ = FALSE
+  )
   app$wait_for_idle()
   invisible(app)
 }
