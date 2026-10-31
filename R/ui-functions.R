@@ -123,3 +123,69 @@ input_tooltip <- function(label, tooltip) {
     )
   )
 }
+
+# The chemical, aquatic environment and guideline boxes of a calculator module
+result_boxes <- function(ns) {
+  tagList(
+    layout_columns(
+      fill = FALSE,
+      card(
+        chem_input(ns("chemical")),
+        aq_env_input(ns("aq_env")),
+        class = "select-overflowable",
+        wrapper = function(...) card_body(..., class = "select-overflowable")
+      ),
+      value_box(
+        title = htmlOutput(ns("narc_bench_title")),
+        value = htmlOutput(ns("narc_bench")),
+        showcase = tooltip(
+          bsicons::bs_icon("bug-fill"),
+          "You must select a chemical"
+        )
+      ),
+      value_box(
+        title = htmlOutput(ns("narc_cwqg_title")),
+        value = htmlOutput(ns("narc_cwqg")),
+        showcase = tooltip(
+          bsicons::bs_icon("bug-fill"),
+          "You must select a chemical"
+        )
+      ),
+    ),
+    layout_columns(
+      fill = FALSE,
+      value_box(
+        title = p(HTML("P<sub>abs</sub>")),
+        value = htmlOutput(ns("pabs")),
+        showcase = tooltip(
+          bsicons::bs_icon("sun"),
+          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+        )
+      ),
+      value_box(
+        title = htmlOutput(ns("photo_bench_title")),
+        value = htmlOutput(ns("photo_bench")),
+        showcase = tooltip(
+          bsicons::bs_icon("bug"),
+          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+        )
+      ),
+      value_box(
+        title = htmlOutput(ns("photo_cwqg_title")),
+        value = htmlOutput(ns("photo_cwqg")),
+        showcase = tooltip(
+          bsicons::bs_icon("bug"),
+          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
+        )
+      )
+    )
+  )
+}
+
+multi_tox_panel <- function(ns) {
+  nav_panel(
+    "Multi-Chemical Toxicity",
+    uiOutput(ns("multi_tox_download_btn")),
+    DT::DTOutput(ns("multi_tox"))
+  )
+}

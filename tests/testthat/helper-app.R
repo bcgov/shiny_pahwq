@@ -1,4 +1,4 @@
-local_app <- function(..., auth = FALSE, env = parent.frame()) {
+local_app <- function(..., auth = FALSE, tab = NULL, env = parent.frame()) {
   app <- shinytest2::AppDriver$new(
     function() {
       Sys.setenv(PACWQ_USER = "user", PACWQ_PASSWORD = "password")
@@ -18,6 +18,9 @@ local_app <- function(..., auth = FALSE, env = parent.frame()) {
     ...
   )
   withr::defer(app$stop(), envir = env)
+  if (!is.null(tab)) {
+    show_tab(app, tab)
+  }
   app
 }
 
@@ -25,26 +28,35 @@ sites <- list(
   freshwater = list(lat = 52.60453, lon = -105.28278, elev_m = 515),
   marine = list(lat = 49.15085, lon = -125.91427, elev_m = 0),
   # Just outside the Strait of Georgia marine Kd area
-  nearshore = list(lat = 49.28, lon = -123.12, elev_m = 0),
-  # No marine Kd model data in winter
-  arctic_basin = list(lat = 78.135, lon = -126.252, elev_m = 0),
-  # Low-confidence (VPFTIME) marine Kd model in winter
-  labrador_shelf = list(lat = 53.673, lon = -56.187, elev_m = 0)
+  nearshore = list(lat = 49.28, lon = -123.12, elev_m = 0)
 )
 
 # Setting lat/lon triggers an elevation lookup, so wait for it to finish before
 # overwriting elevation with a known value.
 set_site <- function(app, site = c("freshwater", "marine")) {
   site <- sites[[match.arg(site)]]
-  app$set_inputs(lat = site$lat, lon = site$lon, wait_ = FALSE)
+  app$set_inputs(
+    `advanced-lat` = site$lat,
+    `advanced-lon` = site$lon,
+    wait_ = FALSE
+  )
   app$wait_for_idle()
-  app$set_inputs(elev_m = site$elev_m, date = "2024-06-21", wait_ = FALSE)
+  app$set_inputs(
+    `advanced-elev_m` = site$elev_m,
+    `advanced-date` = "2024-06-21",
+    wait_ = FALSE
+  )
   app$wait_for_idle()
   invisible(app)
 }
 
+# The calculators have tabs with the same names, so click the visible one
 show_tab <- function(app, name) {
-  app$click(selector = sprintf("a[data-value='%s']", name))
+  app$run_js(sprintf(
+    "Array.from(document.querySelectorAll(\"a[data-value='%s']\"))
+      .find(a => a.offsetParent !== null).click();",
+    name
+  ))
   app$wait_for_idle()
   invisible(app)
 }
@@ -59,7 +71,8 @@ output_error <- function(app, id) {
   if (is.list(out)) out$message else NULL
 }
 
-# Independent calculation with pahwq, using the app's default TUV settings
+# Independent calculation with pahwq, using the Advanced tab's default TUV
+# settings
 expected_results <- function(
   chemical,
   site = c("freshwater", "marine"),
@@ -67,7 +80,9 @@ expected_results <- function(
   DOC = NULL,
   Kd_ref = NULL,
   Kd_wvl = NULL,
-  multiplier = 2
+  multiplier = 2,
+  date = as.Date("2024-06-21"),
+  tzone = 0
 ) {
   aq_env <- match.arg(site)
   if (!is.null(Kd_ref)) {
@@ -80,8 +95,8 @@ expected_results <- function(
     lat = site$lat,
     lon = site$lon,
     elev_m = site$elev_m,
-    date = as.Date("2024-06-21"),
-    tzone = -8,
+    date = date,
+    tzone = tzone,
     DOC = DOC,
     aq_env = aq_env,
     Kd_ref = Kd_ref,
