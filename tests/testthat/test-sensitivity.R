@@ -1,5 +1,5 @@
 test_that("the attenuation sliders switch between DOC and Kd(ref)", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   show_tab(app, "DOC and Depth Sensitivity")
 
   selector <- app$get_html("#advanced-attenuation_selector")
@@ -16,7 +16,7 @@ test_that("the attenuation sliders switch between DOC and Kd(ref)", {
 })
 
 test_that("the sensitivity analysis produces a plot", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   app$set_inputs(`advanced-chemical` = "anthracene")
   set_site(app, "freshwater")
   show_tab(app, "DOC and Depth Sensitivity")

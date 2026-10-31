@@ -11,7 +11,19 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 server <- function(input, output, session) {
-  advanced_server("advanced")
+  # The location, aquatic environment, DOC and chemical, shared by the
+  # calculators
+  shared <- reactiveValues()
+  simple_server(
+    "simple",
+    shared,
+    active = reactive(identical(input$nav, "Simple"))
+  )
+  advanced_server(
+    "advanced",
+    shared,
+    active = reactive(identical(input$nav, "Advanced"))
+  )
 
   multi_doc_pah_fw_csv <- reactive(
     system.file(

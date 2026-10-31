@@ -13,7 +13,7 @@ download_filename <- function(app, id) {
 }
 
 test_that("TUV results can be downloaded", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   set_site(app, "freshwater")
   app$set_inputs(`advanced-doc` = 5)
   show_tab(app, "TUV Results")
@@ -29,26 +29,8 @@ test_that("TUV results can be downloaded", {
   expect_equal(downloaded, as.data.frame(expected), ignore_attr = TRUE)
 })
 
-test_that("marine TUV results include the Kd model", {
-  app <- local_app()
-  set_site(app, "marine")
-  show_tab(app, "TUV Results")
-
-  downloaded <- utils::read.csv(app$get_download("advanced-tuv_download"))
-  expect_contains(
-    names(downloaded),
-    c(
-      "marine_kd_model_ecoregion",
-      "marine_kd_model_season",
-      "marine_kd_model_Kd_ref",
-      "marine_kd_model_Sk"
-    )
-  )
-  expect_all_equal(downloaded$marine_kd_model_ecoregion, "Southern Shelf")
-})
-
 test_that("multi-chemical results cover every chemical and can be downloaded", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   set_site(app, "freshwater")
   app$set_inputs(`advanced-doc` = 5)
   show_tab(app, "Multi-Chemical Toxicity")

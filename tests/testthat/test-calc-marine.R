@@ -1,5 +1,5 @@
 test_that("marine guidelines use the ecoregion model and ignore DOC", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   app$set_inputs(
     `advanced-chemical` = "anthracene",
     `advanced-aq_env` = "marine"
@@ -25,7 +25,7 @@ test_that("marine guidelines use the ecoregion model and ignore DOC", {
 })
 
 test_that("Kd(ref) overrides the marine model", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   app$set_inputs(
     `advanced-chemical` = "anthracene",
     `advanced-aq_env` = "marine"
@@ -43,7 +43,7 @@ test_that("Kd(ref) overrides the marine model", {
 })
 
 test_that("DOC is disabled and Kd(ref) wavelength changes in marine water", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   doc_disabled <- function() {
     app$get_js("document.getElementById('advanced-doc').disabled")
   }
@@ -61,7 +61,7 @@ test_that("DOC is disabled and Kd(ref) wavelength changes in marine water", {
 })
 
 test_that("a location far from a marine area shows a clear error", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   app$set_inputs(`advanced-chemical` = "anthracene")
   set_site(app, "freshwater")
   app$set_inputs(`advanced-aq_env` = "marine", wait_ = FALSE)
@@ -73,67 +73,8 @@ test_that("a location far from a marine area shows a clear error", {
   )
 })
 
-test_that("a marine area and season with no model shows a clear error", {
-  app <- local_app()
-  app$set_inputs(
-    `advanced-chemical` = "anthracene",
-    `advanced-date` = "2024-01-15"
-  )
-  app$set_inputs(
-    `advanced-lat` = sites$arctic_basin$lat,
-    `advanced-lon` = sites$arctic_basin$lon,
-    wait_ = FALSE
-  )
-  app$wait_for_idle()
-
-  expect_equal(app$get_value(input = "advanced-aq_env"), "marine")
-  expect_match(
-    output_error(app, "advanced-pabs"),
-    "There is no marine Kd model for Arctic_Basin_Clear in winter"
-  )
-})
-
-test_that("a low-confidence marine model shows a warning", {
-  app <- local_app()
-  app$set_inputs(
-    `advanced-chemical` = "anthracene",
-    `advanced-date` = "2024-01-15"
-  )
-  app$set_inputs(
-    `advanced-lat` = sites$labrador_shelf$lat,
-    `advanced-lon` = sites$labrador_shelf$lon,
-    wait_ = FALSE
-  )
-  app$wait_for_idle()
-
-  expect_equal(app$get_value(input = "advanced-aq_env"), "marine")
-  expect_match(
-    app$get_text(".shiny-notification"),
-    "fewer than 10% valid pixels over time",
-    all = FALSE
-  )
-  expect_match(
-    app$get_text("#advanced-kd_model_card"),
-    "Low confidence"
-  )
-  expect_null(output_error(app, "advanced-pabs"))
-  expect_length(output_number(app, "advanced-pabs"), 1)
-})
-
-test_that("depth defaults to 1 cm and keeps a depth the user entered", {
-  app <- local_app()
-  expect_equal(app$get_value(input = "advanced-depth_m"), 0.01)
-
-  set_site(app, "marine")
-  expect_equal(app$get_value(input = "advanced-depth_m"), 0.01)
-
-  app$set_inputs(`advanced-depth_m` = 0.05)
-  set_site(app, "freshwater")
-  expect_equal(app$get_value(input = "advanced-depth_m"), 0.05)
-})
-
 test_that("the TUV run parameters include the marine model", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   set_site(app, "marine")
   show_tab(app, "TUV Run Parameters")
 

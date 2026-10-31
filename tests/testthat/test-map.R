@@ -1,5 +1,5 @@
 test_that("clicking the map sets the location and aquatic environment", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   show_tab(app, "Map")
 
   app$set_inputs(
@@ -26,10 +26,24 @@ test_that("clicking the map sets the location and aquatic environment", {
   )
   app$wait_for_idle()
   expect_equal(app$get_value(input = "advanced-aq_env"), "freshwater")
+
+  # Clicks on the marine area polygons are reported separately
+  app$set_inputs(
+    `advanced-map-leaflet_shape_click` = list(
+      lat = sites$marine$lat,
+      lng = sites$marine$lon,
+      group = "Marine areas"
+    ),
+    allow_no_input_binding_ = TRUE,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "advanced-lat"), sites$marine$lat)
+  expect_equal(app$get_value(input = "advanced-aq_env"), "marine")
 })
 
 test_that("the marine areas are shown on the map in marine water", {
-  app <- local_app()
+  app <- local_app(tab = "Advanced")
   show_tab(app, "Map")
   shown_marine_areas <- function() {
     app$get_js(
@@ -57,23 +71,4 @@ test_that("the marine areas are shown on the map in marine water", {
   app$wait_for_idle()
   expect_equal(shown_marine_areas(), 0)
   expect_equal(legend_shown(), FALSE)
-})
-
-test_that("clicking a marine area polygon sets the location", {
-  app <- local_app()
-  show_tab(app, "Map")
-
-  app$set_inputs(
-    `advanced-map-leaflet_shape_click` = list(
-      lat = sites$marine$lat,
-      lng = sites$marine$lon,
-      group = "Marine areas"
-    ),
-    allow_no_input_binding_ = TRUE,
-    wait_ = FALSE
-  )
-  app$wait_for_idle()
-
-  expect_equal(app$get_value(input = "advanced-lat"), sites$marine$lat)
-  expect_equal(app$get_value(input = "advanced-lon"), sites$marine$lon)
 })

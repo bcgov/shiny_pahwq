@@ -13,6 +13,7 @@
 ui <- function() {
   theme <- bs_theme(version = 5, bootswatch = "cerulean")
   page_navbar(
+    id = "nav",
     theme = theme,
     navbar_options = navbar_options(
       bg = bs_get_variables(theme, "primary"),
@@ -37,6 +38,7 @@ ui <- function() {
       "Water Quality Calculator for Phototoxic PACs"
     ),
     window_title = "Water Quality Calculator for Phototoxic PACs",
+    nav_panel("Simple", simple_ui("simple")),
     nav_panel("Advanced", advanced_ui("advanced")),
     rep_guidelines_panel(),
     help_panel()

@@ -48,7 +48,8 @@ advanced_ui <- function(id) {
           ),
           dateInput(
             ns("date"),
-            "Date"
+            "Date",
+            value = simple_date()
           ),
           numericInput(
             ns("tzone"),
@@ -56,7 +57,7 @@ advanced_ui <- function(id) {
               "Timezone (hrs)",
               "timezone offset from UTC, in hours. Default 0"
             ),
-            value = -8,
+            value = 0,
             min = -14,
             max = 12
           )
@@ -179,58 +180,7 @@ advanced_ui <- function(id) {
       ),
       resizable = FALSE
     ),
-    layout_columns(
-      fill = FALSE,
-      card(
-        chem_input(ns("chemical")),
-        aq_env_input(ns("aq_env")),
-        class = "select-overflowable",
-        wrapper = function(...) card_body(..., class = "select-overflowable")
-      ),
-      value_box(
-        title = htmlOutput(ns("narc_bench_title")),
-        value = htmlOutput(ns("narc_bench")),
-        showcase = tooltip(
-          bsicons::bs_icon("bug-fill"),
-          "You must select a chemical"
-        )
-      ),
-      value_box(
-        title = htmlOutput(ns("narc_cwqg_title")),
-        value = htmlOutput(ns("narc_cwqg")),
-        showcase = tooltip(
-          bsicons::bs_icon("bug-fill"),
-          "You must select a chemical"
-        )
-      ),
-    ),
-    layout_columns(
-      fill = FALSE,
-      value_box(
-        title = p(HTML("P<sub>abs</sub>")),
-        value = htmlOutput(ns("pabs")),
-        showcase = tooltip(
-          bsicons::bs_icon("sun"),
-          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
-        )
-      ),
-      value_box(
-        title = htmlOutput(ns("photo_bench_title")),
-        value = htmlOutput(ns("photo_bench")),
-        showcase = tooltip(
-          bsicons::bs_icon("bug"),
-          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
-        )
-      ),
-      value_box(
-        title = htmlOutput(ns("photo_cwqg_title")),
-        value = htmlOutput(ns("photo_cwqg")),
-        showcase = tooltip(
-          bsicons::bs_icon("bug"),
-          "You must select a chemical and fill in the necessary parameters on the left to run the TUV model"
-        )
-      )
-    ),
+    result_boxes(ns),
     uiOutput(ns("kd_model_card")),
     navset_tab(
       nav_panel(
@@ -251,11 +201,7 @@ advanced_ui <- function(id) {
         br(),
         card(htmlOutput(ns("tuv_params")))
       ),
-      nav_panel(
-        "Multi-Chemical Toxicity",
-        uiOutput(ns("multi_tox_download_btn")),
-        DT::DTOutput(ns("multi_tox"))
-      ),
+      multi_tox_panel(ns),
       nav_panel(
         "DOC and Depth Sensitivity",
         br(),
@@ -324,7 +270,7 @@ advanced_ui <- function(id) {
   )
 }
 
-advanced_server <- function(id) {
+advanced_server <- function(id, shared, active) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -367,48 +313,34 @@ advanced_server <- function(id) {
       req(input$lat, input$lon)
       validate(need(input$depth_m, "Enter a water depth"))
 
-      tryCatch(
-        withCallingHandlers(
-          tuv(
-            depth_m = input$depth_m,
-            lat = req(input$lat),
-            lon = req(input$lon),
-            elev_m = req(input$elev_m),
-            date = req(input$date),
-            tzone = req(input$tzone),
-            DOC = doc,
-            aq_env = req(input$aq_env),
-            Kd_ref = kd_ref,
-            Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
-            tstart = req(input$tstart),
-            tstop = req(input$tstop),
-            tsteps = req(input$tsteps),
-            wvl_start = req(input$wvl_start),
-            wvl_end = req(input$wvl_end),
-            o3_tc = o3_tc_reactive(),
-            tauaer = tauaer_reactive(),
-            quiet = TRUE
-          ),
-          message = function(m) {
-            showNotification(conditionMessage(m), type = "message")
-            invokeRestart("muffleMessage")
-          },
-          warning = function(w) {
-            showNotification(conditionMessage(w), type = "warning")
-            invokeRestart("muffleWarning")
-          }
-        ),
-        # Show pahwq's errors (e.g., no marine Kd model for the location) to
-        # the user, as Shiny hides error messages in deployed apps. Errors from
-        # req() and validate() are passed through unchanged.
-        error = function(e) {
-          if (inherits(e, "validation")) {
-            stop(e)
-          }
-          validate(conditionMessage(e))
-        }
+      run_tuv(
+        depth_m = input$depth_m,
+        lat = req(input$lat),
+        lon = req(input$lon),
+        elev_m = req(input$elev_m),
+        date = req(input$date),
+        tzone = req(input$tzone),
+        DOC = doc,
+        aq_env = req(input$aq_env),
+        Kd_ref = kd_ref,
+        Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
+        tstart = req(input$tstart),
+        tstop = req(input$tstop),
+        tsteps = req(input$tsteps),
+        wvl_start = req(input$wvl_start),
+        wvl_end = req(input$wvl_end),
+        o3_tc = o3_tc_reactive(),
+        tauaer = tauaer_reactive()
       )
     })
+
+    result_outputs(
+      input,
+      output,
+      session,
+      irrad,
+      multiplier = reactive(input$multiplier)
+    )
 
     observeEvent(
       input$aq_env,
@@ -442,14 +374,6 @@ advanced_server <- function(id) {
       }
     })
 
-    output$kd_model_card <- renderUI({
-      req(input$aq_env == "marine")
-      kd_model_card(
-        req(attr(irrad(), "kd_model")),
-        kd_ref_set = isTruthy(input$kd_ref)
-      )
-    })
-
     output$tuv_params <- renderUI({
       params <- tuv_run_params(irrad())
       tags$table(
@@ -462,83 +386,13 @@ advanced_server <- function(id) {
       )
     })
 
-    pabs <- reactive(
-      p_abs(
-        irrad(),
-        req(input$chemical),
-        time_multiplier = req(input$multiplier)
-      )
-    )
-
     output$irrad_tbl <- renderTable(irrad())
 
-    output$pabs <- renderText({
-      paste(
-        "<p>",
-        round(pabs(), 3),
-        '</br><span class="small">mol photons/mol PAH</span></p>'
-      )
-    })
-
-    output$narc_bench_title <- renderText({
-      glue::glue(
-        "<p><em>{aq_env}</em> short-term NLC50<sub>(5)</sub></p>",
-        aq_env = tools::toTitleCase(input$aq_env)
-      )
-    })
-
-    output$narc_bench <- renderText({
-      glue::glue(
-        "<p>{narc_bench} &mu;g/L</p>",
-        narc_bench = round(narcotic_benchmark(req(input$chemical)), 3)
-      )
-    })
-
-    output$narc_cwqg_title <- renderText({
-      glue::glue(
-        "<p><em>{aq_env}</em> narcotic CWQG</p>",
-        aq_env = tools::toTitleCase(input$aq_env)
-      )
-    })
-
-    output$narc_cwqg <- renderText({
-      glue::glue(
-        "<p>{narc_cwqg} &mu;g/L</p>",
-        narc_cwqg = round(narcotic_cwqg(req(input$chemical)), 3)
-      )
-    })
-
-    output$photo_bench_title <- renderText({
-      glue::glue(
-        "<p><em>{aq_env}</em> short-term PLC50<sub>(5)</sub></p>",
-        aq_env = tools::toTitleCase(input$aq_env)
-      )
-    })
-
-    output$photo_bench <- renderText({
-      glue::glue(
-        "<p>{photo_bench} &mu;g/L</p>",
-        photo_bench = round(
-          phototoxic_benchmark(pabs(), pah = req(input$chemical)),
-          3
-        )
-      )
-    })
-
-    output$photo_cwqg_title <- renderText({
-      glue::glue(
-        "<p><em>{aq_env}</em> phototoxic CWQG</p>",
-        aq_env = tools::toTitleCase(input$aq_env)
-      )
-    })
-
-    output$photo_cwqg <- renderText({
-      glue::glue(
-        "<p>{photo_cwqg} &mu;g/L</p>",
-        photo_cwqg = round(
-          phototoxic_cwqg(pabs(), pah = req(input$chemical)),
-          3
-        )
+    output$kd_model_card <- renderUI({
+      req(input$aq_env == "marine")
+      kd_model_card(
+        req(attr(irrad(), "kd_model")),
+        kd_ref_set = isTruthy(input$kd_ref)
       )
     })
 
@@ -554,29 +408,23 @@ advanced_server <- function(id) {
       updateNumericInput(inputId = "lon", value = map_click()$lng)
     })
 
-    # Choose the aquatic environment from the location. If it changes, the
-    # aq_env observer sets the elevation. Higher priority than the outputs, and
-    # inputs are frozen while they are updated, so results aren't calculated
-    # with the previous environment or elevation.
+    share_inputs(input, shared, active)
+
+    # Choose the aquatic environment from the location, unless the location
+    # came from the Simple tab with its environment. If it changes, the aq_env
+    # observer sets the elevation. Higher priority than the outputs, and inputs
+    # are frozen while they are updated, so results aren't calculated with the
+    # previous environment or elevation.
     observeEvent(
       c(input$lat, input$lon),
       {
-        if (!isTruthy(input$lat) || !isTruthy(input$lon)) {
+        if (
+          !isTruthy(input$lat) ||
+            !isTruthy(input$lon) ||
+            from_shared(input, shared) ||
+            !select_aq_env(input, location_area())
+        ) {
           update_elevation(input, input$aq_env == "marine")
-          return()
-        }
-
-        aq_env <- if (!is.null(location_area())) {
-          "marine"
-        } else {
-          "freshwater"
-        }
-        if (aq_env != input$aq_env) {
-          # calculation pauses until the browser confirms the switch
-          freezeReactiveValue(input, "aq_env")
-          updateRadioButtons(inputId = "aq_env", selected = aq_env)
-        } else {
-          update_elevation(input, aq_env == "marine")
         }
       },
       priority = 1
@@ -602,51 +450,6 @@ advanced_server <- function(id) {
           row.names = FALSE,
           na = ""
         )
-      }
-    )
-
-    multi_tox <- reactive({
-      multi_tox_table(
-        req(irrad()),
-        time_multiplier = req(input$multiplier)
-      )
-    })
-
-    output$multi_tox <- DT::renderDT({
-      DT::datatable(req(multi_tox())) |>
-        DT::formatRound(
-          columns = c(
-            "narcotic_benchmark",
-            "narcotic_cwqg",
-            "phototoxic_benchmark",
-            "phototoxic_cwqg"
-          ),
-          digits = 3
-        ) |>
-        DT::formatRound(columns = "pabs", digits = 5)
-    })
-
-    output$multi_tox_download_btn <- renderUI({
-      req(multi_tox())
-      downloadButton(
-        ns("multi_tox_download"),
-        "Download results to csv",
-        class = "btn-primary m-2"
-      )
-    })
-
-    output$multi_tox_download <- downloadHandler(
-      filename = function() {
-        paste0(
-          "phototoxic-wq-multi-results-",
-          input$aq_env,
-          "_",
-          Sys.Date(),
-          ".csv"
-        )
-      },
-      content = function(file) {
-        utils::write.csv(multi_tox(), file, row.names = FALSE, na = "")
       }
     )
 
