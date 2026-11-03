@@ -10,9 +10,11 @@ test_that("kd_model_card() describes the model", {
 test_that("kd_model_card() notes overrides, distance and quality flags", {
   card <- as.character(kd_model_card(
     fake_kd_model(dist_km = 1.66, vpf_time = TRUE),
-    kd_ref_set = TRUE
+    kd_ref_set = TRUE,
+    sk_set = TRUE
   ))
-  expect_match(card, "set by the user")
+  expect_match(card, "K<sub>d</sub>\\(ref\\) was set by the user")
+  expect_match(card, "S<sub>k</sub> was set by the user")
   expect_match(card, "nearest area \\(1.7 km away\\)")
   expect_match(card, "fewer than 10% valid pixels over time")
 
