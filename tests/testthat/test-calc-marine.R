@@ -73,6 +73,18 @@ test_that("a location far from a marine area shows a clear error", {
   )
 })
 
+test_that("depth defaults to 1 cm and keeps a depth the user entered", {
+  app <- local_app(tab = "Advanced")
+  expect_equal(app$get_value(input = "advanced-depth_m"), 0.01)
+
+  set_site(app, "marine")
+  expect_equal(app$get_value(input = "advanced-depth_m"), 0.01)
+
+  app$set_inputs(`advanced-depth_m` = 0.05)
+  set_site(app, "freshwater")
+  expect_equal(app$get_value(input = "advanced-depth_m"), 0.05)
+})
+
 test_that("the TUV run parameters include the marine model", {
   app <- local_app(tab = "Advanced")
   set_site(app, "marine")

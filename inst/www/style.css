@@ -37,6 +37,12 @@ span.small {
   font-size: 0.7em;
 }
 
+/* Messages in value boxes, which would otherwise use the large value font */
+.bslib-value-box .shiny-output-error-validation {
+  font-size: 1.1rem;
+  color: #666;
+}
+
 /* .bslib-value-box .value-box-value#narc_bench, .value-box-value#pabs, .value-box-value#photo_bench {
   font-size: calc(0.8rem + .9vw);
   margin-top: 0;

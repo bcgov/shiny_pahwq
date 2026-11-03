@@ -1,4 +1,11 @@
-local_app <- function(..., auth = FALSE, tab = NULL, env = parent.frame()) {
+local_app <- function(
+  ...,
+  auth = FALSE,
+  tab = NULL,
+  elevation = function(lon, lat) 515,
+  env = parent.frame()
+) {
+  force(elevation)
   app <- shinytest2::AppDriver$new(
     function() {
       Sys.setenv(PACWQ_USER = "user", PACWQ_PASSWORD = "password")
@@ -10,7 +17,7 @@ local_app <- function(..., auth = FALSE, tab = NULL, env = parent.frame()) {
       options(shiny.sanitize.errors = TRUE)
       # Instead of the elevation web service: the freshwater test site's
       # elevation (the app runs in its own process, so `sites` isn't available)
-      options(pacwq.shiny.elevation = function(lon, lat) 515)
+      options(pacwq.shiny.elevation = elevation)
       pacwq.shiny:::run_app(auth = auth)
     },
     timeout = 30000,

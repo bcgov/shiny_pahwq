@@ -33,7 +33,7 @@ run_sens <- function(input) {
     pah = req(input$chemical),
     lat = req(input$lat),
     lon = req(input$lon),
-    elev_m = req(input$elev_m),
+    elev_m = require_elevation(input$elev_m),
     date = dates,
     time_multiplier = req(input$multiplier),
     DOC = doc,
@@ -61,13 +61,26 @@ run_sens <- function(input) {
   )
 }
 
-update_elevation <- function(input, marine) {
+# The elevation for the location and aquatic environment in a calculator module.
+# Call in a reactive, so that the lookup happens once.
+input_elevation <- function(input) {
+  site_elevation(input$lat, input$lon, input$aq_env == "marine")
+}
+
+# An elevation for a calculation, or a message in its results if there is none
+# (e.g., the lookup failed, or the user cleared it)
+require_elevation <- function(elev_m) {
+  validate(need(
+    elev_m,
+    "No elevation found for this location. Enter it on the Advanced tab."
+  ))
+  elev_m
+}
+
+update_elevation <- function(input, elev_m) {
   # calculation pauses until the browser confirms the switch
   freezeReactiveValue(input, "elev_m")
-  updateNumericInput(
-    inputId = "elev_m",
-    value = site_elevation(input$lat, input$lon, marine)
-  )
+  updateNumericInput(inputId = "elev_m", value = elev_m)
 }
 
 x_or_null <- function(x) {
