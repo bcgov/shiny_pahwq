@@ -306,6 +306,8 @@ advanced_server <- function(id, shared, active) {
     irrad <- reactive({
       local_tuv_dir()
 
+      req(input$lat, input$lon)
+
       kd_ref <- kd_reactive()
 
       # In marine water Kd comes from the ecoregion model unless Kd(ref) is set
@@ -313,14 +315,13 @@ advanced_server <- function(id, shared, active) {
         doc <- NULL
       } else {
         doc <- doc_reactive()
-        req(isTruthy(doc) || isTruthy(kd_ref))
+        require_attenuation(isTruthy(doc) || isTruthy(kd_ref), "DOC or Kd(ref)")
 
         if (isTruthy(doc) && isTruthy(kd_ref)) {
           validate("Only one of DOC or Kd(ref) may be chosen")
         }
       }
 
-      req(input$lat, input$lon)
       validate(need(input$depth_m, "Enter a water depth"))
 
       run_tuv(

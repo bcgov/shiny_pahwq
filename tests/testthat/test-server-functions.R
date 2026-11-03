@@ -17,3 +17,12 @@ test_that("require_elevation() accepts sea level but not a missing elevation", {
   expect_error(require_elevation(NA_real_), class = "validation")
   expect_error(require_elevation(NULL), class = "validation")
 })
+
+test_that("require_attenuation() names what is missing", {
+  expect_no_error(require_attenuation(TRUE, "DOC"))
+  expect_error(
+    require_attenuation(FALSE, "DOC or Kd(ref)"),
+    "Enter DOC or Kd\\(ref\\) to calculate results",
+    class = "validation"
+  )
+})

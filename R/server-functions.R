@@ -77,6 +77,12 @@ require_elevation <- function(elev_m) {
   elev_m
 }
 
+# A message in a calculation's results if freshwater has nothing to calculate
+# light attenuation from
+require_attenuation <- function(supplied, label) {
+  validate(need(supplied, paste0("Enter ", label, " to calculate results.")))
+}
+
 update_elevation <- function(input, elev_m) {
   # calculation pauses until the browser confirms the switch
   freezeReactiveValue(input, "elev_m")

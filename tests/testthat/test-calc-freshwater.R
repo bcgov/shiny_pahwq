@@ -39,6 +39,26 @@ test_that("guidelines calculated from Kd(ref) match pahwq", {
   expect_equal(output_number(app, "advanced-photo_cwqg"), expected$photo_cwqg)
 })
 
+test_that("blank DOC prompts for DOC or Kd(ref) once there is a location", {
+  app <- local_app(tab = "Advanced")
+  expect_equal(output_error(app, "advanced-pabs"), "")
+
+  set_site(app, "freshwater")
+  expect_equal(
+    output_error(app, "advanced-pabs"),
+    "Enter DOC or Kd(ref) to calculate results."
+  )
+
+  app$set_inputs(`advanced-chemical` = "anthracene")
+  expect_equal(
+    output_error(app, "advanced-pabs"),
+    "Enter DOC or Kd(ref) to calculate results."
+  )
+
+  app$set_inputs(`advanced-kd_ref` = 10)
+  expect_length(output_number(app, "advanced-pabs"), 1)
+})
+
 test_that("DOC and Kd(ref) can't both be supplied", {
   app <- local_app(tab = "Advanced")
   app$set_inputs(`advanced-chemical` = "anthracene")

@@ -64,7 +64,10 @@ simple_server <- function(id, shared, active) {
     irrad <- reactive({
       local_tuv_dir()
       marine <- input$aq_env == "marine"
-      req(input$lat, input$lon, marine || isTruthy(input$doc))
+      req(input$lat, input$lon)
+      if (!marine) {
+        require_attenuation(isTruthy(input$doc), "DOC")
+      }
 
       run_tuv(
         lat = input$lat,
@@ -91,6 +94,8 @@ simple_server <- function(id, shared, active) {
           "DOC is not used in marine water. Light attenuation is calculated
           from the ecoregion model for the location."
         )
+      } else {
+        em("Input DOC here")
       }
     })
 

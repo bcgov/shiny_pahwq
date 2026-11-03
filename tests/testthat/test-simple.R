@@ -96,3 +96,29 @@ test_that("a manually selected aquatic environment carries over", {
   expect_equal(app$get_value(input = "advanced-aq_env"), "marine")
   expect_equal(app$get_value(input = "advanced-elev_m"), 0)
 })
+
+test_that("blank DOC prompts for DOC once there is a location", {
+  app <- local_app()
+  expect_match(app$get_text("#simple-water_params_note"), "Input DOC here")
+  expect_equal(output_error(app, "simple-pabs"), "")
+
+  app$set_inputs(
+    `simple-lat` = sites$freshwater$lat,
+    `simple-lon` = sites$freshwater$lon,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+  expect_equal(
+    output_error(app, "simple-pabs"),
+    "Enter DOC to calculate results."
+  )
+
+  app$set_inputs(`simple-chemical` = "anthracene")
+  expect_equal(
+    output_error(app, "simple-pabs"),
+    "Enter DOC to calculate results."
+  )
+
+  app$set_inputs(`simple-doc` = 5)
+  expect_length(output_number(app, "simple-pabs"), 1)
+})
