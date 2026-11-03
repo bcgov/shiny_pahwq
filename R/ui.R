@@ -138,21 +138,49 @@ help_panel <- function() {
               chemical is multiplied by 2 as the standard exposure is 48h for
               determining the narcotic and phototoxic benchmarks."
       ),
+      h3("Simple and Advanced tabs"),
+      p(
+        "Both tabs calculate guidelines for a chemical at a location. The
+          latitude, longitude, aquatic environment, DOC and chemical carry
+          over when you switch between them."
+      ),
+      h4("Simple"),
+      p(
+        "The Simple tab needs only a location, an aquatic environment, a DOC
+          concentration (freshwater only) and a chemical. It always uses June
+          21 of the current year, a water depth of 1 cm, and the default TUV
+          settings described below. Because of the date, marine water always
+          uses the summer model, and results can shift very slightly from year to
+          year."
+      ),
+      h4("Advanced"),
+      p(
+        HTML(
+          "The Advanced tab starts with the same settings as the Simple tab,
+            and every input can be changed, including elevation, date,
+            timezone, water depth, \\(k_d(\\lambda_{ref})\\) and \\(S_k\\).
+            It also shows the TUV results and run parameters, the DOC and
+            depth sensitivity analysis, and the marine model used. Settings
+            that only exist in the Advanced tab do not affect the Simple tab."
+        )
+      ),
       h3("Inputs"),
       h4("Location and Date"),
       p(
         "These determine the location and date for which the TUV model
-              is run to determine irradiance."
+              is run to determine irradiance. The date can be changed in the
+              Advanced tab."
       ),
       p(
         HTML(
-          "Location is determined by entering latitude, longitude, and
-              elevation, or by clicking a location on the map.
-              When clicking a location on a map, elevation is looked up using
+          "Location is determined by entering latitude and longitude, or by
+              clicking a location on the map.
+              Elevation is looked up from the location using
               Natural Resource Canada's <a href='https://natural-resources.canada.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/elevation-api/17328'>
               Elevation API</a>, and if outside of Canada, using the
               <a href='https://epqs.nationalmap.gov/v1/docs'>USGS Elevation
-              Point Query Service</a>.
+              Point Query Service</a>. It can be entered manually in the
+              Advanced tab.
               "
         )
       ),
@@ -190,15 +218,23 @@ help_panel <- function() {
       ),
       p(
         HTML(
-          "$$k_{d,305} = a_{305}[DOC]^{b,305} + 0.13;\\,a_{305} = 1.28\\text{ and }b_{305} = 1.31$$"
+          "$$k_{d,305} = a_{305}[DOC]^{b_{305}} + 0.13;\\,a_{305} = 1.28\\text{ and }b_{305} = 1.31$$"
+        )
+      ),
+      p(
+        HTML(
+          "DOC must be between 0.2 and 61.5 g/m<sup>3</sup>. A value outside
+            this range is replaced by the nearest limit, and a notice is
+            shown."
         )
       ),
       p(
         HTML(
           "Instead of DOC, you can supply \\(k_d(\\lambda_{ref})\\) and the
             reference wavelength at which it was measured in the 'Other TUV
-            parameters' section, and \\(S_k\\) can be changed there too. The
-            default water depth is 0.01 m."
+            parameters' section of the Advanced tab, and \\(S_k\\) can be
+            changed there too. The default water depth is 0.01 m, which can
+            also be changed in the Advanced tab."
         )
       ),
       h5("Marine water"),
@@ -246,8 +282,8 @@ help_panel <- function() {
         )
       ),
       p(
-        "The model used is shown with the results, and included in the
-          TUV run parameters and the TUV results download."
+        "In the Advanced tab, the model used is shown with the results, and
+          included in the TUV run parameters and the TUV results download."
       ),
       h4("Other TUV parameters"),
       p(
@@ -261,7 +297,7 @@ help_panel <- function() {
               Fortuin and Kelder (1998), which is bundled with the TUV model.
               Based on latitude and longitude and month, the ozone column value
               is looked up and supplied to the TUV model. It can be supplied
-              manually to override this behaviour"
+              manually in the Advanced tab to override this behaviour."
       ),
       h5("Aerosol optical depth"),
       p(
@@ -270,7 +306,8 @@ help_panel <- function() {
               aggregated to 1 degree latitude and longitude resolution. If no
               value is available for a given month, latitude, and longitude,
               a default value of 0.235 is used.
-              It can be supplied manually to override this behaviour"
+              It can be supplied manually in the Advanced tab to override this
+              behaviour."
       ),
       h3("References"),
       p(
