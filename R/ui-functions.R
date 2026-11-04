@@ -193,6 +193,22 @@ multi_tox_panel <- function(ns) {
   )
 }
 
+# Name, label and default of the settings shown on the TU/HI tab when they differ
+# from their defaults. Those with a NULL default are looked up by pahwq if blank,
+# and the rest are required.
+tu_hi_default_settings <- list(
+  list("time_multiplier", "TUV results multiplier", 2),
+  list("tzone", "Timezone (hrs)", 0),
+  list("Sk", "S<sub>k</sub> (nm<sup>-1</sup>)", NULL),
+  list("tstart", "Start time (h)", 0),
+  list("tstop", "Stop time (h)", 23),
+  list("tsteps", "Time steps", 24),
+  list("wvl_start", "Start wavelength (nm)", 280),
+  list("wvl_end", "End wavelength (nm)", 500),
+  list("o3_tc", "Ozone column (DU)", NULL),
+  list("tauaer", "Aerosol optical depth", NULL)
+)
+
 # Labels (which can contain HTML) and values for the settings in use on the TU/HI
 # tab, from `advanced_settings()`. Anything required but missing is "Not set",
 # and other settings are only included if they differ from their defaults.
@@ -228,24 +244,23 @@ tu_hi_settings_items <- function(settings) {
     }
   )
 
-  defaults <- list(
-    list("time_multiplier", "TUV results multiplier", 2),
-    list("tzone", "Timezone (hrs)", 0),
-    list("Sk", "S<sub>k</sub> (nm<sup>-1</sup>)", NULL),
-    list("tstart", "Start time (h)", 0),
-    list("tstop", "Stop time (h)", 23),
-    list("tsteps", "Time steps", 24),
-    list("wvl_start", "Start wavelength (nm)", 280),
-    list("wvl_end", "End wavelength (nm)", 500),
-    list("o3_tc", "Ozone column (DU)", NULL),
-    list("tauaer", "Aerosol optical depth", NULL)
-  )
-  for (x in defaults) {
+  for (x in tu_hi_default_settings) {
     if (!identical(as.numeric(settings[[x[[1]]]]), as.numeric(x[[3]]))) {
       items[[x[[2]]]] <- value(settings[[x[[1]]]])
     }
   }
   items
+}
+
+# Labels of the required settings left blank, from `advanced_settings()`. This
+# excludes those with their own message when the TUV run is started.
+missing_tu_hi_settings <- function(settings) {
+  required <- Filter(\(x) !is.null(x[[3]]), tu_hi_default_settings)
+  blank <- Filter(\(x) is.null(settings[[x[[1]]]]), required)
+  c(
+    if (is.null(settings$date)) "Date",
+    vapply(blank, \(x) x[[2]], character(1))
+  )
 }
 
 tu_hi_settings_list <- function(items) {

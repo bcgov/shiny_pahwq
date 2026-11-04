@@ -63,6 +63,27 @@ test_that("tu_hi_settings_items() shows what's missing and what isn't default", 
   expect_equal(items[["S<sub>k</sub> (nm<sup>-1</sup>)"]], "0.02")
 })
 
+test_that("missing_tu_hi_settings() lists blank required settings", {
+  complete <- list(
+    date = as.Date("2026-06-21"),
+    tzone = 0,
+    tstart = 0,
+    tstop = 23,
+    tsteps = 24,
+    wvl_start = 280,
+    wvl_end = 500,
+    time_multiplier = 2
+  )
+  expect_length(missing_tu_hi_settings(complete), 0)
+
+  complete$date <- NULL
+  complete$tstart <- NULL
+  expect_equal(
+    missing_tu_hi_settings(complete),
+    c("Date", "Start time (h)")
+  )
+})
+
 test_that("format_sum() keeps small values readable", {
   expect_equal(format_sum(0.00041234), "0.000412")
   expect_equal(format_sum(12.345), "12.3")

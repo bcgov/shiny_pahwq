@@ -181,6 +181,19 @@ test_that("Calculate shows messages for missing inputs", {
   expect_no_match(app$get_text("#tu_hi-stale_notice"), "negative")
 })
 
+test_that("Calculate names required settings left blank", {
+  app <- local_app(tab = "Advanced")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 5, `advanced-tstart` = NA)
+  show_tab(app, tu_hi_tab)
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  expect_equal(
+    output_error(app, "tu_hi-results"),
+    "Enter these settings on the Advanced tab: Start time (h)."
+  )
+})
+
 test_that("an uploaded file fills in the table, and Clear empties it", {
   path <- withr::local_tempfile(fileext = ".csv")
   writeLines(c("pac,concentration_ug_L", "Benzo[a]pyrene,0.5"), path)

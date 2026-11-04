@@ -131,6 +131,15 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
         !is.null(saved$lat) && !is.null(saved$lon),
         "Set a location on the Simple or Advanced tab to calculate results."
       ))
+      missing <- missing_tu_hi_settings(saved)
+      validate(need(
+        length(missing) == 0,
+        paste0(
+          "Enter these settings on the Advanced tab: ",
+          paste(missing, collapse = ", "),
+          "."
+        )
+      ))
       tuv_res <- irrad()
       list(
         results = tu_hi_sample(unname(values), tuv_res, req(multiplier())),
