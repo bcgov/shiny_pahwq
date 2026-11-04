@@ -27,6 +27,12 @@ test_that("require_attenuation() names what is missing", {
   )
 })
 
+test_that("tuv_inputs() has arguments of tuv() and leaves DOC as entered", {
+  inputs <- tuv_inputs(list(aq_env = "freshwater", doc = 100, multiplier = 2))
+  expect_in(names(inputs), names(formals(tuv)))
+  expect_equal(inputs$DOC, 100)
+})
+
 test_that("advanced_settings() only includes inputs used in the TUV run", {
   input <- list(
     lat = 50,

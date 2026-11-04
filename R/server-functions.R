@@ -265,10 +265,9 @@ select_aq_env <- function(input, area) {
   TRUE
 }
 
-# The Advanced calculator's inputs that apply to a TUV run, named after the
-# arguments they are passed to. `input` can be a list.
-advanced_settings <- function(input) {
-  marine <- identical(input$aq_env, "marine")
+# The Advanced calculator's inputs that apply to a TUV run, as arguments to
+# `run_tuv()`. `input` can be a list.
+tuv_inputs <- function(input) {
   kd_ref <- x_or_null(input$kd_ref)
   list(
     lat = x_or_null(input$lat),
@@ -278,10 +277,7 @@ advanced_settings <- function(input) {
     date = x_or_null(input$date),
     tzone = x_or_null(input$tzone),
     depth_m = x_or_null(input$depth_m),
-    # The DOC used in the run. `run_tuv()` shows the warning when it is limited.
-    DOC = if (!marine && isTruthy(input$doc)) {
-      suppressWarnings(doc_range_check(input$doc))
-    },
+    DOC = if (!identical(input$aq_env, "marine")) x_or_null(input$doc),
     Kd_ref = kd_ref,
     Kd_wvl = if (!is.null(kd_ref)) x_or_null(input$kd_wvl),
     Sk = x_or_null(input$sk),
@@ -291,9 +287,20 @@ advanced_settings <- function(input) {
     wvl_start = x_or_null(input$wvl_start),
     wvl_end = x_or_null(input$wvl_end),
     o3_tc = x_or_null(input$o3_tc),
-    tauaer = x_or_null(input$tauaer),
-    time_multiplier = x_or_null(input$multiplier)
+    tauaer = x_or_null(input$tauaer)
   )
+}
+
+# The settings of a TUV run from the Advanced calculator, and the multiplier of
+# its results. `input` can be a list.
+advanced_settings <- function(input) {
+  settings <- tuv_inputs(input)
+  # The DOC used in the run. `run_tuv()` shows the warning when it is limited.
+  if (!is.null(settings$DOC)) {
+    settings$DOC <- suppressWarnings(doc_range_check(settings$DOC))
+  }
+  settings$time_multiplier <- x_or_null(input$multiplier)
+  settings
 }
 
 # June 21 of the current year, the date of the Simple calculator

@@ -285,66 +285,42 @@ advanced_server <- function(id, shared, active) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    doc_reactive <- reactive(x_or_null(input$doc))
-
-    kd_reactive <- reactive({
-      if (!isTruthy(input$kd_ref)) {
-        NULL
-      } else {
-        validate(
-          need(input$kd_wvl, label = "Kd_wvl")
-        )
-        input$kd_ref
-      }
-    })
-
-    kd_wvl_reactive <- reactive(x_or_null(input$kd_wvl))
-
-    o3_tc_reactive <- reactive(x_or_null(input$o3_tc))
-
-    tauaer_reactive <- reactive(x_or_null(input$tauaer))
-
     irrad <- reactive({
       local_tuv_dir()
 
-      req(input$lat, input$lon)
+      args <- tuv_inputs(input)
 
-      kd_ref <- kd_reactive()
+      req(args$lat, args$lon)
+
+      if (!is.null(args$Kd_ref)) {
+        validate(need(args$Kd_wvl, label = "Kd_wvl"))
+      }
 
       # In marine water Kd comes from the ecoregion model unless Kd(ref) is set
-      if (input$aq_env == "marine") {
-        doc <- NULL
-      } else {
-        doc <- doc_reactive()
-        require_attenuation(isTruthy(doc) || isTruthy(kd_ref), "DOC or Kd(ref)")
+      if (args$aq_env != "marine") {
+        require_attenuation(
+          !is.null(args$DOC) || !is.null(args$Kd_ref),
+          "DOC or Kd(ref)"
+        )
 
-        if (isTruthy(doc) && isTruthy(kd_ref)) {
+        if (!is.null(args$DOC) && !is.null(args$Kd_ref)) {
           validate("Only one of DOC or Kd(ref) may be chosen")
         }
       }
 
-      validate(need(input$depth_m, "Enter a water depth"))
-
-      run_tuv(
-        depth_m = input$depth_m,
-        lat = req(input$lat),
-        lon = req(input$lon),
-        elev_m = require_elevation(input$elev_m),
-        date = req(input$date),
-        tzone = req(input$tzone),
-        DOC = doc,
-        aq_env = req(input$aq_env),
-        Kd_ref = kd_ref,
-        Kd_wvl = if (is.null(kd_ref)) NULL else kd_wvl_reactive(),
-        Sk = x_or_null(input$sk),
-        tstart = req(input$tstart),
-        tstop = req(input$tstop),
-        tsteps = req(input$tsteps),
-        wvl_start = req(input$wvl_start),
-        wvl_end = req(input$wvl_end),
-        o3_tc = o3_tc_reactive(),
-        tauaer = tauaer_reactive()
+      validate(need(args$depth_m, "Enter a water depth"))
+      require_elevation(args$elev_m)
+      req(
+        args$date,
+        args$tzone,
+        args$tstart,
+        args$tstop,
+        args$tsteps,
+        args$wvl_start,
+        args$wvl_end
       )
+
+      do.call(run_tuv, args)
     })
 
     result_outputs(
