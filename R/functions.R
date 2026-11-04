@@ -107,6 +107,158 @@ tuv_results_export <- function(x) {
   cbind(x, kd_model, row.names = NULL)
 }
 
+# TUs and HIs for concentrations in `chemical_list()` order. PACs with no
+# concentration (NA) are left out, while a concentration of 0 is kept.
+tu_hi_sample <- function(concentrations, tuv_res, time_multiplier) {
+  tu_hi(
+    data.frame(
+      pac = names(chemical_list()),
+      concentration_ug_L = concentrations
+    )[!is.na(concentrations), ],
+    tuv_res,
+    time_multiplier = time_multiplier
+  )
+}
+
+# Settings from `advanced_settings()`, with the values used in the TUV run for
+# those left blank and looked up or calculated by pahwq. `params` is from
+# `tuv_run_params()`.
+settings_used <- function(settings, params) {
+  param <- function(name) params[[grep(name, names(params))[1]]]
+  kd <- as.numeric(strsplit(trimws(param("^a,b,c")), " +")[[1]])
+  settings$Kd_ref <- kd[1]
+  settings$Sk <- kd[2]
+  settings$Kd_wvl <- kd[3]
+  settings$o3_tc <- as.numeric(param("^o3_tc"))
+  settings$tauaer <- as.numeric(param("^tauaer"))
+  settings
+}
+
+# One row per PAC in the results and a `Total` row, with the settings (from
+# `settings_used()`) and marine Kd model, if any, as constant columns
+tu_hi_export <- function(results, settings, kd_model = NULL) {
+  pacs <- attr(results, "pacs")
+  total <- pacs[1, ]
+  total[] <- NA
+  total$pac <- "Total"
+  total[names(results)] <- as.list(as.data.frame(results))
+  out <- rbind(pacs, total)
+
+  settings$date <- format(settings$date)
+  settings[lengths(settings) == 0] <- NA
+  out <- cbind(out, settings, row.names = NULL)
+
+  if (is.null(kd_model)) {
+    return(out)
+  }
+  kd_model$area <- NULL
+  names(kd_model) <- paste0("marine_kd_model_", names(kd_model))
+  cbind(out, kd_model, row.names = NULL)
+}
+
+concentrations_template <- function() {
+  data.frame(pac = names(chemical_list()), concentration_ug_L = NA_real_)
+}
+
+# Reads a CSV of concentrations for the TU/HI tab. Returns a list with `values`
+# (in `chemical_list()` order, or NULL if the file can't be used), and `errors`
+# and `notices` to show the user.
+read_concentrations <- function(path) {
+  rejected <- function(...) {
+    list(values = NULL, errors = c(...), notices = character())
+  }
+
+  dat <- tryCatch(
+    suppressWarnings(utils::read.csv(
+      path,
+      colClasses = "character",
+      fileEncoding = "UTF-8-BOM",
+      check.names = FALSE
+    )),
+    error = function(e) NULL
+  )
+  if (is.null(dat)) {
+    return(rejected("The file could not be read as a CSV file."))
+  }
+
+  missing_cols <- setdiff(c("pac", "concentration_ug_L"), names(dat))
+  if (length(missing_cols)) {
+    return(rejected(paste0(
+      "The file is missing these columns: ",
+      paste(missing_cols, collapse = ", "),
+      "."
+    )))
+  }
+
+  file_row <- seq_len(nrow(dat)) + 1
+  name <- trimws(dat$pac)
+  conc <- trimws(dat$concentration_ug_L)
+  blank <- is.na(conc) | conc == ""
+  value <- suppressWarnings(as.numeric(conc))
+  pac <- match_pac(name)
+
+  list_rows <- function(rows) {
+    paste0("row ", file_row[rows], " (", conc[rows], ")", collapse = ", ")
+  }
+  repeated <- !is.na(pac) & (duplicated(pac) | duplicated(pac, fromLast = TRUE))
+  errors <- c(
+    if (any(!blank & is.na(value))) {
+      paste0(
+        "Concentrations must be numbers: ",
+        list_rows(!blank & is.na(value)),
+        "."
+      )
+    },
+    if (any(!blank & !is.na(value) & value < 0)) {
+      paste0(
+        "Concentrations can't be negative: ",
+        list_rows(!blank & !is.na(value) & value < 0),
+        "."
+      )
+    },
+    if (any(repeated)) {
+      paste0(
+        "Each PAC or homologue group can only be included once: ",
+        paste(unique(pac[repeated]), collapse = ", "),
+        ". If its compounds were reported separately, add their concentrations together and enter the total."
+      )
+    }
+  )
+  if (length(errors)) {
+    return(rejected(errors))
+  }
+
+  pacs <- names(chemical_list())
+  has_value <- !is.na(value)
+  unknown <- is.na(pac) & has_value
+  not_shown <- !is.na(pac) & !pac %in% pacs & has_value
+  values <- value[match(pacs, pac)]
+  if (all(is.na(values)) && !any(unknown | not_shown)) {
+    return(rejected("The file has no concentrations."))
+  }
+
+  list(
+    values = values,
+    errors = character(),
+    notices = c(
+      if (any(unknown)) {
+        paste0(
+          "These names weren't recognized, so their concentrations aren't counted: ",
+          paste(name[unknown], collapse = ", "),
+          "."
+        )
+      },
+      if (any(not_shown)) {
+        paste0(
+          "These PACs aren't included in this calculator, so their concentrations aren't counted: ",
+          paste(pac[not_shown], collapse = ", "),
+          "."
+        )
+      }
+    )
+  )
+}
+
 local_tuv_dir <- function(env = parent.frame()) {
   tdir <- file.path(
     withr::local_tempdir(.local_envir = env),

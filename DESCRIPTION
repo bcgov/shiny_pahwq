@@ -18,7 +18,7 @@ Imports:
     bslib (>= 0.9.0),
     htmlwidgets,
     leaflet,
-    pahwq (>= 0.5.2),
+    pahwq (>= 0.6.0),
     sf,
     pkgload,
     shiny,

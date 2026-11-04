@@ -14,6 +14,7 @@ advanced_ui <- function(id) {
   ns <- NS(id)
   layout_sidebar(
     sidebar = sidebar(
+      actionLink(ns("back_to_tu_hi"), paste("Back to", tu_hi_tab)),
       accordion(
         accordion_panel(
           "Location and Date",
@@ -515,5 +516,12 @@ advanced_server <- function(id, shared, active) {
     output$sens_plot <- ggiraph::renderGirafe({
       sens()
     })
+
+    list(
+      irrad = irrad,
+      multiplier = reactive(input$multiplier),
+      settings = reactive(advanced_settings(input)),
+      back_to_tu_hi = reactive(input$back_to_tu_hi)
+    )
   })
 }

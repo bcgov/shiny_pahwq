@@ -265,6 +265,34 @@ select_aq_env <- function(input, area) {
   TRUE
 }
 
+# The Advanced calculator's inputs that apply to a TUV run, named after the
+# arguments they are passed to. `input` can be a list.
+advanced_settings <- function(input) {
+  marine <- identical(input$aq_env, "marine")
+  kd_ref <- x_or_null(input$kd_ref)
+  list(
+    lat = x_or_null(input$lat),
+    lon = x_or_null(input$lon),
+    elev_m = x_or_null(input$elev_m),
+    aq_env = input$aq_env,
+    date = x_or_null(input$date),
+    tzone = x_or_null(input$tzone),
+    depth_m = x_or_null(input$depth_m),
+    DOC = if (!marine) x_or_null(input$doc),
+    Kd_ref = kd_ref,
+    Kd_wvl = if (!is.null(kd_ref)) x_or_null(input$kd_wvl),
+    Sk = x_or_null(input$sk),
+    tstart = x_or_null(input$tstart),
+    tstop = x_or_null(input$tstop),
+    tsteps = x_or_null(input$tsteps),
+    wvl_start = x_or_null(input$wvl_start),
+    wvl_end = x_or_null(input$wvl_end),
+    o3_tc = x_or_null(input$o3_tc),
+    tauaer = x_or_null(input$tauaer),
+    time_multiplier = x_or_null(input$multiplier)
+  )
+}
+
 # June 21 of the current year, the date of the Simple calculator
 simple_date <- function(today = Sys.Date()) {
   as.Date(paste0(format(today, "%Y"), "-06-21"))

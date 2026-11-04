@@ -33,6 +33,37 @@ body * {
   width: 100% !important;
 }
 
+.tu-hi-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tu-hi-settings dt {
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.tu-hi-settings dd {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* The PAC name beside its input, so the 47 rows take less space */
+.tu-hi-concentrations .shiny-input-container {
+  display: grid;
+  grid-template-columns: 1fr 7rem;
+  align-items: center;
+  column-gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.tu-hi-concentrations .control-label {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
 span.small {
   font-size: 0.7em;
 }

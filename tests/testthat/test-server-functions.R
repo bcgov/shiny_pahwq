@@ -26,3 +26,26 @@ test_that("require_attenuation() names what is missing", {
     class = "validation"
   )
 })
+
+test_that("advanced_settings() only includes inputs used in the TUV run", {
+  input <- list(
+    lat = 50,
+    lon = NA_real_,
+    aq_env = "marine",
+    doc = 5,
+    kd_wvl = 375,
+    multiplier = 2
+  )
+  settings <- advanced_settings(input)
+  expect_equal(settings$lat, 50)
+  expect_null(settings$lon)
+  expect_null(settings$DOC)
+  expect_null(settings$Kd_wvl)
+  expect_equal(settings$time_multiplier, 2)
+
+  input$aq_env <- "freshwater"
+  input$kd_ref <- 10
+  settings <- advanced_settings(input)
+  expect_equal(settings$DOC, 5)
+  expect_equal(settings$Kd_wvl, 375)
+})
