@@ -306,6 +306,8 @@ advanced_server <- function(id, shared, active) {
     irrad <- reactive({
       local_tuv_dir()
 
+      req(input$lat, input$lon)
+
       kd_ref <- kd_reactive()
 
       # In marine water Kd comes from the ecoregion model unless Kd(ref) is set
@@ -313,21 +315,20 @@ advanced_server <- function(id, shared, active) {
         doc <- NULL
       } else {
         doc <- doc_reactive()
-        req(isTruthy(doc) || isTruthy(kd_ref))
+        require_attenuation(isTruthy(doc) || isTruthy(kd_ref), "DOC or Kd(ref)")
 
         if (isTruthy(doc) && isTruthy(kd_ref)) {
           validate("Only one of DOC or Kd(ref) may be chosen")
         }
       }
 
-      req(input$lat, input$lon)
       validate(need(input$depth_m, "Enter a water depth"))
 
       run_tuv(
         depth_m = input$depth_m,
         lat = req(input$lat),
         lon = req(input$lon),
-        elev_m = req(input$elev_m),
+        elev_m = require_elevation(input$elev_m),
         date = req(input$date),
         tzone = req(input$tzone),
         DOC = doc,
@@ -365,10 +366,14 @@ advanced_server <- function(id, shared, active) {
           inputId = "kd_wvl",
           value = if (marine) 375 else 305
         )
-        update_elevation(input, marine)
+        update_elevation(input, site_elev_m())
       },
       priority = 1
     )
+
+    # A reactive so that the location and aq_env observers share one lookup when
+    # both fire in the same flush
+    site_elev_m <- reactive(input_elevation(input))
 
     # The marine area at the location, looked up once per location change
     location_area <- reactive(marine_area_at(input$lat, input$lon))
@@ -436,7 +441,7 @@ advanced_server <- function(id, shared, active) {
             from_shared(input, shared) ||
             !select_aq_env(input, location_area())
         ) {
-          update_elevation(input, input$aq_env == "marine")
+          update_elevation(input, site_elev_m())
         }
       },
       priority = 1

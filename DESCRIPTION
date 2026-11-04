@@ -15,7 +15,7 @@ Depends:
     R (>= 4.5.0)
 Imports:
     bsicons,
-    bslib,
+    bslib (>= 0.9.0),
     htmlwidgets,
     leaflet,
     pahwq (>= 0.5.2),

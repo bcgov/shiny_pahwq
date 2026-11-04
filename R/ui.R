@@ -11,12 +11,12 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 ui <- function() {
-  theme <- bs_theme(version = 5, bootswatch = "cerulean")
   page_navbar(
     id = "nav",
-    theme = theme,
+    theme = bs_theme(version = 5, bootswatch = "cerulean"),
     navbar_options = navbar_options(
-      bg = bs_get_variables(theme, "primary"),
+      # Darkened Cerulean primary: nav links are 80% white and must meet WCAG AA
+      bg = "#1a6699",
       theme = "dark"
     ),
     header = tags$head(

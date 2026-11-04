@@ -35,7 +35,7 @@ simple_ui <- function(id) {
       doc_input(ns("doc")),
       p(
         class = "small",
-        "Guidelines are calculated for June 21 at a depth of 1 cm. Use the
+        "Guidelines are calculated for June 21 of the current year at a depth of 1 cm. Use the
         Advanced tab to change these and other settings."
       ),
       resizable = FALSE
@@ -59,19 +59,20 @@ simple_server <- function(id, shared, active) {
   moduleServer(id, function(input, output, session) {
     location_area <- reactive(marine_area_at(input$lat, input$lon))
 
-    elev_m <- reactive(
-      site_elevation(input$lat, input$lon, input$aq_env == "marine")
-    )
+    site_elev_m <- reactive(input_elevation(input))
 
     irrad <- reactive({
       local_tuv_dir()
       marine <- input$aq_env == "marine"
-      req(input$lat, input$lon, marine || isTruthy(input$doc))
+      req(input$lat, input$lon)
+      if (!marine) {
+        require_attenuation(isTruthy(input$doc), "DOC")
+      }
 
       run_tuv(
         lat = input$lat,
         lon = input$lon,
-        elev_m = x_or_null(elev_m()),
+        elev_m = require_elevation(site_elev_m()),
         date = simple_date(),
         DOC = if (!marine) input$doc,
         aq_env = input$aq_env
@@ -93,6 +94,8 @@ simple_server <- function(id, shared, active) {
           "DOC is not used in marine water. Light attenuation is calculated
           from the ecoregion model for the location."
         )
+      } else {
+        em("Input DOC here")
       }
     })
 
