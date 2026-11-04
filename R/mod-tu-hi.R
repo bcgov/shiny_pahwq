@@ -48,7 +48,10 @@ tu_hi_ui <- function(id) {
         p(
           "Set these to match the sample. The location, aquatic environment and
           DOC can be changed on the Simple or Advanced tab, and all other
-          settings on the Advanced tab. ",
+          settings on the Advanced tab. Settings not shown here are at their
+          default values or don't apply."
+        ),
+        p(
           actionLink(ns("edit_settings"), "Edit settings in Advanced")
         )
       )

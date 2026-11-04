@@ -48,4 +48,8 @@ test_that("advanced_settings() only includes inputs used in the TUV run", {
   settings <- advanced_settings(input)
   expect_equal(settings$DOC, 5)
   expect_equal(settings$Kd_wvl, 375)
+
+  input$doc <- 100
+  expect_no_warning(settings <- advanced_settings(input))
+  expect_equal(settings$DOC, doc_range()[2])
 })

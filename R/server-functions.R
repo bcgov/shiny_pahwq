@@ -278,7 +278,10 @@ advanced_settings <- function(input) {
     date = x_or_null(input$date),
     tzone = x_or_null(input$tzone),
     depth_m = x_or_null(input$depth_m),
-    DOC = if (!marine) x_or_null(input$doc),
+    # The DOC used in the run. `run_tuv()` shows the warning when it is limited.
+    DOC = if (!marine && isTruthy(input$doc)) {
+      suppressWarnings(doc_range_check(input$doc))
+    },
     Kd_ref = kd_ref,
     Kd_wvl = if (!is.null(kd_ref)) x_or_null(input$kd_wvl),
     Sk = x_or_null(input$sk),

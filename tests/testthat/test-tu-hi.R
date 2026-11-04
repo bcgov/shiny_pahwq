@@ -59,6 +59,24 @@ test_that("TUs and HIs are calculated from entered concentrations", {
   expect_match(app$get_text("#tu_hi-results"), "Narcotic TUs")
 })
 
+test_that("settings and download show the DOC used when it is limited", {
+  app <- local_app(tab = "Advanced")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 100)
+  show_tab(app, tu_hi_tab)
+  expect_match(app$get_text("#tu_hi-settings"), "61.5", fixed = TRUE)
+
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  downloaded <- utils::read.csv(app$get_download("tu_hi-results_download"))
+  expected <- expected_tu_hi(c(Anthracene = 0.1), "freshwater", DOC = 61.5)
+  expect_equal(unique(downloaded$DOC), 61.5)
+  expect_equal(
+    downloaded$tu_phototoxic[downloaded$pac == "Total"],
+    expected$tu_phototoxic
+  )
+})
+
 test_that("a sample of only zeros gives results of 0", {
   app <- local_app(tab = "Advanced")
   set_site(app, "freshwater")
