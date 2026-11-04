@@ -14,7 +14,7 @@ advanced_ui <- function(id) {
   ns <- NS(id)
   layout_sidebar(
     sidebar = sidebar(
-      actionLink(ns("back_to_tu_hi"), paste("Back to", tu_hi_tab)),
+      actionLink(ns("back_to_tu_hi"), paste("Go to", tu_hi_tab)),
       accordion(
         accordion_panel(
           "Location and Date",
