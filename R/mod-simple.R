@@ -35,7 +35,7 @@ simple_ui <- function(id) {
       doc_input(ns("doc")),
       p(
         class = "small",
-        "Guidelines are calculated for June 21 at a depth of 1 cm. Use the
+        "Guidelines are calculated for June 21 of the current year at a depth of 1 cm. Use the
         Advanced tab to change these and other settings."
       ),
       resizable = FALSE
