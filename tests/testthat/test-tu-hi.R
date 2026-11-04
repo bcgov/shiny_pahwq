@@ -86,7 +86,11 @@ test_that("settings from Simple are used without visiting Advanced", {
   show_tab(app, tu_hi_tab)
   expect_match(
     app$get_text("#tu_hi-settings"),
-    paste0(sites$freshwater$lat, ", ", sites$freshwater$lon),
+    paste0(
+      round(sites$freshwater$lat, 4),
+      ", ",
+      round(sites$freshwater$lon, 4)
+    ),
     fixed = TRUE
   )
 

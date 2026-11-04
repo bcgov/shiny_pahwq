@@ -201,7 +201,7 @@ tu_hi_settings_items <- function(settings) {
     if (is.null(x)) "Not set" else paste0(format(x), unit)
   }
   location <- if (!is.null(settings$lat) && !is.null(settings$lon)) {
-    paste0(settings$lat, ", ", settings$lon)
+    paste0(round(settings$lat, 4), ", ", round(settings$lon, 4))
   }
   marine <- identical(settings$aq_env, "marine")
   kd_ref <- !is.null(settings$Kd_ref)

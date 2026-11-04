@@ -88,9 +88,9 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
         if (!is.null(res$values)) {
           p(
             class = "small",
-            "Concentrations loaded from ",
+            "Concentrations loaded from '",
             input$upload$name,
-            ". Check them, then press Calculate."
+            "'. Check them, then press Calculate."
           )
         }
       ))
@@ -151,8 +151,8 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
       box <- function(title, column) {
         value_box(title = title, value = format_sum(res$results[[column]]))
       }
-      used <- tu_hi_settings_items(res$settings)
       tagList(
+        h4("TU/HI Results"),
         layout_columns(
           fill = FALSE,
           col_widths = breakpoints(sm = 6, xxl = 3),
@@ -160,14 +160,6 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
           box("Phototoxic TUs", "tu_phototoxic"),
           box("Narcotic HI", "hi_narcotic"),
           box("Phototoxic HI", "hi_phototoxic")
-        ),
-        p(
-          class = "small",
-          HTML(paste0(
-            "Calculated with: ",
-            paste(names(used), used, sep = ": ", collapse = "; "),
-            "."
-          ))
         ),
         downloadButton(
           ns("results_download"),
