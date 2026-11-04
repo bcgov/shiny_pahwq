@@ -178,6 +178,7 @@ test_that("Calculate shows messages for missing inputs", {
     output_error(app, "tu_hi-results"),
     "Concentrations can't be negative."
   )
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), "negative")
 })
 
 test_that("an uploaded file fills in the table, and Clear empties it", {

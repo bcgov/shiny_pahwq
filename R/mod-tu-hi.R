@@ -141,7 +141,9 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
     })
 
     output$stale_notice <- renderUI({
-      req(!identical(results()$settings, settings()))
+      # Errors from results() are shown by output$results
+      res <- tryCatch(results(), error = \(e) NULL)
+      req(res, !identical(res$settings, settings()))
       div(
         class = "alert alert-warning",
         "The settings have changed since these results were calculated. Press
