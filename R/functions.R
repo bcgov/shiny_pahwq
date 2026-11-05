@@ -188,7 +188,8 @@ read_concentrations <- function(path) {
     utils::read.csv(
       text = read_csv_text(path),
       colClasses = "character",
-      check.names = FALSE
+      check.names = FALSE,
+      blank.lines.skip = FALSE
     ),
     error = function(e) NULL,
     warning = function(w) NULL
@@ -249,6 +250,8 @@ read_concentrations <- function(path) {
   unknown <- is.na(pac) & has_value
   not_shown <- !is.na(pac) & !pac %in% pacs & has_value
   values <- value[match(pacs, pac)]
+  no_name <- is.na(name) | name == ""
+  name[no_name] <- paste0("row ", file_row[no_name], " (no name)")
   if (all(is.na(values)) && !any(unknown | not_shown)) {
     return(rejected("The file has no concentrations."))
   }

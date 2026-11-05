@@ -236,3 +236,30 @@ test_that("read_concentrations() gives notices for concentrations not counted", 
   expect_no_match(res$notices[1], "also not a PAC", fixed = TRUE)
   expect_match(res$notices[2], hidden, fixed = TRUE)
 })
+
+test_that("read_concentrations() gives the row of a concentration with no name", {
+  path <- withr::local_tempfile(fileext = ".csv")
+  writeLines(
+    c(
+      "pac,concentration_ug_L",
+      "Pyrene,1",
+      ",2",
+      "not a PAC,3",
+      "",
+      "NA,4",
+      ",",
+      "Anthracene,"
+    ),
+    path
+  )
+
+  res <- read_concentrations(path)
+  expect_equal(sum(!is.na(res$values)), 1)
+  expect_equal(
+    res$notices,
+    paste0(
+      "These names weren't recognized, so their concentrations aren't counted: ",
+      "row 3 (no name), not a PAC, row 6 (no name)."
+    )
+  )
+})
