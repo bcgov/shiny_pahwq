@@ -261,3 +261,39 @@ test_that("an uploaded file fills in the table, and Clear empties it", {
   expect_equal(app$get_value(input = conc_id("Benzo(a)pyrene")), NA)
   expect_equal(app$get_text("#tu_hi-upload_status"), "")
 })
+
+test_that("an upload removes results until Calculate is pressed", {
+  rejected <- withr::local_tempfile(fileext = ".csv")
+  writeLines(c("pac,concentration_ug_L", "Pyrene,-1"), rejected)
+  accepted <- withr::local_tempfile(fileext = ".csv")
+  writeLines(c("pac,concentration_ug_L", "Pyrene,0.2"), accepted)
+  heading <- "Hazard Index (HI) Results"
+
+  app <- local_app(tab = "Advanced")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 5)
+  show_tab(app, tu_hi_tab)
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  expect_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+
+  app$upload_file(`tu_hi-upload` = rejected)
+  app$wait_for_idle()
+  expect_match(app$get_text("#tu_hi-upload_status"), "can't be negative")
+  expect_no_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+  expect_equal(app$get_value(input = conc_id("Anthracene")), 0.1)
+  expect_equal(app$get_value(input = conc_id("Pyrene")), NA)
+
+  calculate(app)
+  expect_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+
+  app$upload_file(`tu_hi-upload` = accepted)
+  app$wait_for_idle()
+  expect_no_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), "have changed")
+  expect_equal(app$get_value(input = conc_id("Pyrene")), 0.2)
+
+  calculate(app)
+  expect_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), "have changed")
+})

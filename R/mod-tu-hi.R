@@ -80,7 +80,11 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
     upload_status <- reactiveVal()
     output$upload_status <- renderUI(upload_status())
 
+    show_results <- reactiveVal(FALSE)
+    observeEvent(input$calculate, show_results(TRUE))
+
     observeEvent(input$upload, {
+      show_results(FALSE)
       res <- read_concentrations(input$upload$datapath)
       if (!is.null(res$values)) {
         set_concentrations(res$values)
@@ -102,9 +106,6 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
         list(id = ns("upload"), clear = FALSE)
       )
     })
-
-    show_results <- reactiveVal(FALSE)
-    observeEvent(input$calculate, show_results(TRUE))
 
     observeEvent(input$clear, {
       show_results(FALSE)
