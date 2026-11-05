@@ -170,24 +170,41 @@ test_that("read_concentrations() rejects files it can't use", {
   expect_null(read_lines("pac,concentration_ug_L", "Pyrene,-1")$values)
 })
 
-test_that("read_concentrations() reads every row of a Windows-1252 file", {
-  path <- withr::local_tempfile(fileext = ".csv")
-  writeBin(
-    charToRaw(paste0(
-      "pac,concentration_ug_L,note\r\n",
-      "Anthracene,0.1,\r\n",
-      "Pyrene,0.2,5 \xb5g/L sample\r\n",
-      "Benzo(a)pyrene,0.3,\r\n"
-    )),
-    path
+test_that("read_concentrations() reads every row, whatever else is in the file", {
+  lines <- paste0(
+    "pac,concentration_ug_L,note\r\n",
+    "Anthracene,0.1,\r\n",
+    "Pyrene,0.2,%s\r\n",
+    "Benzo(a)pyrene,0.3,\r\n"
   )
-
-  res <- read_concentrations(path)
+  plain <- charToRaw(sprintf(lines, "x"))
+  files <- list(
+    windows_1252 = charToRaw(sprintf(lines, "5 \xb5g/L")),
+    undefined_byte = charToRaw(sprintf(lines, "\x81")),
+    utf8 = charToRaw(sprintf(lines, "5 \xc2\xb5g/L")),
+    utf8_bom = c(as.raw(c(0xef, 0xbb, 0xbf)), plain),
+    mac_line_endings = charToRaw(gsub("\r\n", "\r", sprintf(lines, "x"))),
+    null_byte_in_pac = c(plain[1:37], as.raw(0), plain[-(1:37)])
+  )
   pacs <- names(chemical_list())
+
+  for (bytes in files) {
+    path <- withr::local_tempfile(fileext = ".csv")
+    writeBin(bytes, path)
+    res <- read_concentrations(path)
+    expect_equal(res$errors, character())
+    expect_equal(res$values[match("Anthracene", pacs)], 0.1)
+    expect_equal(res$values[match("Pyrene", pacs)], 0.2)
+    expect_equal(res$values[match("Benzo(a)pyrene", pacs)], 0.3)
+  }
+})
+
+test_that("read_concentrations() reads a short file with no final line ending", {
+  path <- withr::local_tempfile(fileext = ".csv")
+  writeBin(charToRaw("pac,concentration_ug_L\nPyrene,1"), path)
+  res <- read_concentrations(path)
   expect_equal(res$errors, character())
-  expect_equal(res$values[match("Anthracene", pacs)], 0.1)
-  expect_equal(res$values[match("Pyrene", pacs)], 0.2)
-  expect_equal(res$values[match("Benzo(a)pyrene", pacs)], 0.3)
+  expect_equal(sum(!is.na(res$values)), 1)
 })
 
 test_that("read_concentrations() rejects files that can't be read in full", {
@@ -198,11 +215,14 @@ test_that("read_concentrations() rejects files that can't be read in full", {
   }
   message <- "The file could not be read as a CSV file."
 
-  undefined_byte <- charToRaw("pac,concentration_ug_L,note\nPyrene,1,\x81\n")
-  expect_equal(read_bytes(undefined_byte)$errors, message)
-
-  utf16 <- c(as.raw(c(0xff, 0xfe)), rbind(charToRaw("pac\n"), as.raw(0)))
-  expect_equal(read_bytes(utf16)$errors, message)
+  expect_equal(
+    read_bytes(charToRaw("pac,concentration_ug_L\nPyr\xb5ne,1\n"))$errors,
+    message
+  )
+  expect_equal(
+    read_bytes(charToRaw("pac,concentration_ug_L\nPyrene,1\xb5\n"))$errors,
+    message
+  )
 
   unclosed_quote <- charToRaw(paste0(
     "pac,concentration_ug_L,note\n",

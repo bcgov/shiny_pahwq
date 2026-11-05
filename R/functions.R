@@ -160,21 +160,6 @@ concentrations_template <- function() {
   data.frame(pac = names(chemical_list()), concentration_ug_L = NA_real_)
 }
 
-# The text of a CSV file saved as UTF-8 or as Windows-1252, the encoding of
-# Excel's ordinary CSV format on Windows.
-read_csv_text <- function(path) {
-  text <- rawToChar(readBin(path, "raw", file.size(path)))
-  if (validUTF8(text)) {
-    Encoding(text) <- "UTF-8"
-  } else {
-    text <- iconv(text, from = "windows-1252", to = "UTF-8")
-  }
-  if (is.na(text)) {
-    stop("The file's encoding isn't supported.")
-  }
-  sub("^\ufeff", "", text)
-}
-
 # Reads a CSV of concentrations for the TU/HI tab. Returns a list with `values`
 # (in `chemical_list()` order, or NULL if the file can't be used), and `errors`
 # and `notices` to show the user.
@@ -186,7 +171,8 @@ read_concentrations <- function(path) {
   # A warning can mean that rows were lost, such as with an unclosed quote
   dat <- tryCatch(
     utils::read.csv(
-      text = read_csv_text(path),
+      # Without skipNul, a line is cut off at a null byte
+      text = readLines(path, warn = FALSE, skipNul = TRUE),
       colClasses = "character",
       check.names = FALSE,
       blank.lines.skip = FALSE
@@ -205,6 +191,10 @@ read_concentrations <- function(path) {
       paste(missing_cols, collapse = ", "),
       "."
     )))
+  }
+
+  if (!all(validUTF8(c(dat$pac, dat$concentration_ug_L)))) {
+    return(rejected("The file could not be read as a CSV file."))
   }
 
   file_row <- seq_len(nrow(dat)) + 1
