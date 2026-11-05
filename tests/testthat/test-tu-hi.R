@@ -138,10 +138,16 @@ test_that("results hold until Calculate is pressed again after settings change",
   expect_no_match(app$get_text("#tu_hi-stale_notice"), "settings have changed")
 
   app$click("tu_hi-edit_settings")
-  expect_equal(app$get_value(input = "nav"), "Advanced")
+  expect_equal(
+    app$wait_for_value(input = "nav", ignore = list(tu_hi_tab)),
+    "Advanced"
+  )
   app$set_inputs(`advanced-date` = "2024-03-21")
   app$click("advanced-back_to_tu_hi")
-  expect_equal(app$get_value(input = "nav"), tu_hi_tab)
+  expect_equal(
+    app$wait_for_value(input = "nav", ignore = list("Advanced")),
+    tu_hi_tab
+  )
   app$wait_for_idle()
 
   expect_match(app$get_text("#tu_hi-settings"), "2024-03-21")
