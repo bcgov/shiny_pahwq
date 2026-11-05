@@ -155,6 +155,55 @@ test_that("results hold until Calculate is pressed again after settings change",
   expect_equal(unique(after$date), "2024-03-21")
 })
 
+test_that("results are marked out of date when concentrations change", {
+  app <- local_app(tab = "Advanced")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 5)
+  show_tab(app, tu_hi_tab)
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  stale <- "concentrations or settings have changed"
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), stale)
+
+  app$set_inputs(!!conc_id("Anthracene") := 0.2)
+  expect_match(app$get_text("#tu_hi-stale_notice"), stale)
+
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), stale)
+})
+
+test_that("Clear removes results and messages until Calculate is pressed", {
+  app <- local_app(tab = "Advanced")
+  set_site(app, "freshwater")
+  app$set_inputs(`advanced-doc` = 5)
+  show_tab(app, tu_hi_tab)
+  clear <- function() {
+    app$click("tu_hi-clear")
+    app$wait_for_idle()
+  }
+  heading <- "Hazard Index (HI) Results"
+
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  expect_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+
+  clear()
+  expect_no_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+  expect_no_match(app$get_text("#tu_hi-stale_notice"), "have changed")
+
+  calculate(app)
+  expect_equal(
+    output_error(app, "tu_hi-results"),
+    "Enter at least one concentration."
+  )
+  clear()
+  expect_no_match(app$get_text("#tu_hi-results"), "Enter at least one")
+
+  app$set_inputs(!!conc_id("Anthracene") := 0.1)
+  calculate(app)
+  expect_match(app$get_text("#tu_hi-results"), heading, fixed = TRUE)
+})
+
 test_that("Calculate shows messages for missing inputs", {
   app <- local_app(tab = tu_hi_tab)
   expect_match(app$get_text("#tu_hi-settings"), "Not set")

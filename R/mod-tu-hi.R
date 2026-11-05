@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-tu_hi_tab <- "Toxic Units (TUs) / Hazard Index (HI)"
+tu_hi_tab <- "Toxic Units (TU) / Hazard Index (HI)"
 
 tu_hi_ui <- function(id) {
   ns <- NS(id)
@@ -103,7 +103,11 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
       )
     })
 
+    show_results <- reactiveVal(FALSE)
+    observeEvent(input$calculate, show_results(TRUE))
+
     observeEvent(input$clear, {
+      show_results(FALSE)
       set_concentrations(rep(NA_real_, length(conc_ids)))
       upload_status(NULL)
       session$sendCustomMessage(
@@ -112,12 +116,14 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
       )
     })
 
+    concentrations <- reactive(vapply(
+      conc_ids,
+      \(id) as.numeric(input[[id]] %||% NA_real_),
+      numeric(1)
+    ))
+
     results <- eventReactive(input$calculate, {
-      values <- vapply(
-        conc_ids,
-        \(id) as.numeric(input[[id]] %||% NA_real_),
-        numeric(1)
-      )
+      values <- concentrations()
       validate(need(
         !any(values < 0, na.rm = TRUE),
         "Concentrations can't be negative."
@@ -143,6 +149,7 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
       tuv_res <- irrad()
       list(
         results = tu_hi_sample(unname(values), tuv_res, req(multiplier())),
+        concentrations = values,
         settings = saved,
         settings_used = settings_used(saved, tuv_run_params(tuv_res)),
         kd_model = attr(tuv_res, "kd_model")
@@ -150,23 +157,29 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
     })
 
     output$stale_notice <- renderUI({
+      req(show_results())
       # Errors from results() are shown by output$results
       res <- tryCatch(results(), error = \(e) NULL)
-      req(res, !identical(res$settings, settings()))
+      req(
+        res,
+        !identical(res$settings, settings()) ||
+          !identical(res$concentrations, concentrations())
+      )
       div(
         class = "alert alert-warning",
-        "The settings have changed since these results were calculated. Press
-        Calculate to update them."
+        "The concentrations or settings have changed since these results were
+        calculated. Press Calculate to update them."
       )
     })
 
     output$results <- renderUI({
+      req(show_results())
       res <- results()
       box <- function(title, column) {
         value_box(title = title, value = format_sum(res$results[[column]]))
       }
       tagList(
-        h4("TU/HI Results"),
+        h4("Toxic Units (TU) and Hazard Index (HI) Results"),
         layout_columns(
           fill = FALSE,
           col_widths = breakpoints(sm = 6, xxl = 3),

@@ -53,7 +53,7 @@ Narcotic results don't depend on the site, so they are the same in both tables.
 ## Steps
 
 1. Set the site settings on the Advanced tab.
-2. Open the Toxic Units (TUs) / Hazard Index (HI) tab and check that the settings card matches.
+2. Open the Toxic Units (TU) / Hazard Index (HI) tab and check that the settings card matches.
 3. Upload a sample file, check that it fills in the table, and press Calculate.
 4. Compare the four sums with the expected results.
 5. Download the results. The CSV should have one row per PAC in the sample and a `Total` row.

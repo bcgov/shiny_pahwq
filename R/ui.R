@@ -165,7 +165,7 @@ help_panel <- function() {
             that only exist in the Advanced tab do not affect the Simple tab."
         )
       ),
-      h3("Toxic Units (TUs) and Hazard Index (HI)"),
+      h3("Toxic Units (TU) and Hazard Index (HI)"),
       p(
         "This tab calculates narcotic and phototoxic TUs and HIs for a monitoring
           sample from one site. The site settings are shown at the top of the tab
