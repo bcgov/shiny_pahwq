@@ -99,3 +99,17 @@ test_that("guideline_table() formats pacwq's guideline tables", {
     expect_s3_class(guideline_table(path), "datatables")
   }
 })
+
+test_that("help_panel() renders the markdown, leaving equations for MathJax", {
+  help <- as.character(help_panel())
+  expect_match(help, "<h3[^>]*>References</h3>")
+  expect_match(help, "<code>concentration_ug_L</code>")
+  expect_match(help, "nm<sup>-1</sup>", fixed = TRUE)
+  expect_match(help, "\\(k_d(\\lambda_{ref})\\)", fixed = TRUE)
+  expect_match(
+    help,
+    "$$k_d(\\lambda) = k_d(\\lambda_{ref})\\,e^{",
+    fixed = TRUE
+  )
+  expect_match(help, "\\text{concentration}_i", fixed = TRUE)
+})
