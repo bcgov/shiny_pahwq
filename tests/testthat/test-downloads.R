@@ -1,4 +1,8 @@
 download_filename <- function(app, id) {
+  app$wait_for_js(sprintf(
+    "!!document.getElementById('%s').getAttribute('href')",
+    id
+  ))
   href <- app$get_js(sprintf(
     "document.getElementById('%s').getAttribute('href')",
     id
