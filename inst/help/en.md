@@ -2,11 +2,11 @@ This calculator implements the [Phototoxic Target Lipid Model](https://doi.org/1
 
 It relies on the [pacwq](https://bcgov.github.io/pahwq) R package, which uses the [Tropospheric Ultraviolet and Visible (TUV) Radiation Model](https://github.com/NCAR/TUV) (Madronich 2021) to calculate the light penetration through water of a given depth at a given location and date, with a specified attenuation coefficient.
 This coefficient can be calculated from a Dissolved Organic Carbon concentration.
-The light exposure is then used (along with the PAC-specific molar absorption across a range of wavelengths), to calculate the light absorption (Pabs) of the given PAC at that location.
+The light exposure is then used (along with the PAC-specific molar absorption across a range of wavelengths), to calculate the light absorption ($P_{abs}$) of the given PAC at that location.
 This is then used to determine the short-term phototoxic guideline of the PAC under those conditions.
 
 By default, the app will run the TUV model for 24 hours on the given day, with one irradiance calculation per hour at each wavelength.
-When calculating Pabs, total light absorption by the given chemical is multiplied by 2 as the standard exposure is 48h for determining the narcotic and phototoxic short-term guidelines.
+When calculating $P_{abs}$, total light absorption by the given chemical is multiplied by 2 as the standard exposure is 48h for determining the narcotic and phototoxic short-term guidelines.
 
 ### Simple and Advanced tabs
 
@@ -41,13 +41,16 @@ If the compounds in a homologue group, such as C1-Phenanthrenes/Anthracenes, wer
 For each PAC, a TU is the concentration divided by the short-term guideline, and an HI is the concentration divided by the long-term guideline.
 The results for the sample are the sums over all PACs:
 
-<!-- panache-ignore-format-start -->
-$$TU
-= \sum_{i=1}^{n} \frac{\text{concentration}_i}{\text{short-term guideline}_i}
-\qquad
-HI
-= \sum_{i=1}^{n} \frac{\text{concentration}_i}{\text{long-term guideline}_i}$$
-<!-- panache-ignore-format-end -->
+<!-- math in raw html blocks so panache markdown formatter doesn't mess them up -->
+
+```{=html}
+$$
+  TU
+  = \sum_{i=1}^{n}{\text{concentration}_i \over \text{short-term guideline}_i}
+  \qquad
+  HI = \sum_{i=1}^{n}{\text{concentration}_i \over \text{long-term guideline}_i}
+$$
+```
 
 ### Inputs
 
@@ -69,17 +72,22 @@ In marine water, elevation is set to 0 m.
 These determine the light attenuation through the water at a given depth.
 Light attenuation at each wavelength ($k_d(\lambda)$) is calculated from the attenuation coefficient at a reference wavelength ($k_d(\lambda_{ref})$) and the slope of its decrease with wavelength ($S_k$):
 
-<!-- panache-ignore-format-start -->
-$$k_d(\lambda) = k_d(\lambda_{ref})\,e^{-S_k(\lambda-\lambda_{ref})}$$
-<!-- panache-ignore-format-end -->
+```{=html}
+$$
+  k_d(\lambda) = k_d(\lambda_{ref})e^{-S_k(\lambda-\lambda_{ref})}
+$$
+```
 
 ##### Freshwater
 
 The attenuation coefficient at 305 nm is calculated from the Dissolved Organic Carbon (DOC) concentration using the following equation from [CCME (20XX)], with $S_k = 0.018$ nm<sup>-1</sup>:
 
-<!-- panache-ignore-format-start -->
-$$k_{d,305} = a_{305}[DOC]^{b_{305}} + 0.13; \,a_{305} = 1.28\text{ and }b_{305} = 1.31$$
-<!-- panache-ignore-format-end -->
+```{=html}
+$$
+  k_{d,305} = a_{305}[DOC]^{b_{305}} + 0.13;
+  a_{305} = 1.28 \text{ and } b_{305} = 1.31
+$$
+```
 
 DOC must be between 0.2 and 61.5 g/m<sup>3</sup>.
 A value outside this range is replaced by the nearest limit, and a notice is shown.
