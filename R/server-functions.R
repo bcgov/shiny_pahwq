@@ -24,7 +24,7 @@ run_sens <- function(input) {
 
   local_tuv_dir()
   out <- sens_kd_depth(
-    pah = req(input$chemical),
+    pac = req(input$chemical),
     lat = req(input$lat),
     lon = req(input$lon),
     elev_m = require_elevation(input$elev_m),
@@ -88,7 +88,7 @@ x_or_null <- function(x) {
 }
 
 # Runs tuv(), showing its messages and warnings (e.g., DOC clamped to the valid
-# range) as notifications. pahwq's errors (e.g., no marine Kd model for the
+# range) as notifications. pacwq's errors (e.g., no marine Kd model for the
 # location) are shown as validation messages, as Shiny hides error messages in
 # deployed apps. Errors from req() and validate() are passed through unchanged.
 run_tuv <- function(...) {
@@ -124,7 +124,7 @@ result_outputs <- function(input, output, session, irrad, multiplier) {
     paste(
       "<p>",
       round(pabs(), 3),
-      '</br><span class="small">mol photons/mol PAH</span></p>'
+      '</br><span class="small">mol photons/mol PAC</span></p>'
     )
   })
 
@@ -144,11 +144,11 @@ result_outputs <- function(input, output, session, irrad, multiplier) {
   output$narc_cwqg <- box_value(\() narcotic_cwqg(req(input$chemical)))
   output$photo_bench_title <- box_title("short-term PLC50<sub>(5)</sub>")
   output$photo_bench <- box_value(
-    \() phototoxic_benchmark(pabs(), pah = req(input$chemical))
+    \() phototoxic_benchmark(pabs(), pac = req(input$chemical))
   )
   output$photo_cwqg_title <- box_title("phototoxic CWQG")
   output$photo_cwqg <- box_value(
-    \() phototoxic_cwqg(pabs(), pah = req(input$chemical))
+    \() phototoxic_cwqg(pabs(), pac = req(input$chemical))
   )
 
   multi_tox <- reactive({

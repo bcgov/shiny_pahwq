@@ -1,4 +1,4 @@
-test_that("guidelines calculated from DOC match pahwq", {
+test_that("guidelines calculated from DOC match pacwq", {
   app <- local_app(tab = "Advanced")
   app$set_inputs(`advanced-chemical` = "anthracene")
   set_site(app, "freshwater")
@@ -27,7 +27,7 @@ test_that("the TUV results multiplier is applied to Pabs", {
   expect_equal(output_number(app, "advanced-photo_cwqg"), expected$photo_cwqg)
 })
 
-test_that("guidelines calculated from Kd(ref) match pahwq", {
+test_that("guidelines calculated from Kd(ref) match pacwq", {
   app <- local_app(tab = "Advanced")
   app$set_inputs(`advanced-chemical` = "anthracene")
   set_site(app, "freshwater")

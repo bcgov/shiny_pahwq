@@ -3,16 +3,19 @@
 # is used for the group.
 chemical_list <- function() {
   pacs <- pac_list(app_only = TRUE)
-  pacs <- pacs[!duplicated(pacs$pac), ]
-  pacs <- pacs[order(tolower(pacs$pac)), ]
-  stats::setNames(pacs$chemical, pacs$pac)
+  pacs <- pacs[!duplicated(pacs$pac_name), ]
+  pacs <- pacs[order(tolower(pacs$pac_name)), ]
+  stats::setNames(pacs$pac_id, pacs$pac_name)
 }
 
 multi_tox_table <- function(tuv_res, time_multiplier) {
-  chems <- chemical_list()
-  ret <- pb_multi(tuv_res, unname(chems), time_multiplier = time_multiplier)
-  ret$pah <- names(chems)[match(ret$pah, chems)]
-  names(ret)[names(ret) == "pah"] <- "pac"
+  ret <- pb_multi(
+    tuv_res,
+    unname(chemical_list()),
+    time_multiplier = time_multiplier
+  )
+  ret$pac_id <- NULL
+  names(ret)[names(ret) == "pac_name"] <- "pac"
   ret
 }
 
@@ -28,7 +31,7 @@ marine_areas <- local({
 
 # The marine area containing the location, as a one-row data frame, or NULL.
 # With `nearest = TRUE`, the nearest area within 25 km is used instead, as
-# pahwq does for the Kd model.
+# pacwq does for the Kd model.
 marine_area_at <- function(lat, lon, nearest = FALSE) {
   if (length(c(lat, lon)) != 2 || anyNA(c(lat, lon))) {
     return(NULL)
@@ -121,7 +124,7 @@ tu_hi_sample <- function(concentrations, tuv_res, time_multiplier) {
 }
 
 # Settings from `advanced_settings()`, with the values used in the TUV run for
-# those left blank and looked up or calculated by pahwq. `params` is from
+# those left blank and looked up or calculated by pacwq. `params` is from
 # `tuv_run_params()`.
 settings_used <- function(settings, params) {
   param <- function(name) params[[grep(name, names(params))[1]]]
@@ -138,6 +141,8 @@ settings_used <- function(settings, params) {
 # `settings_used()`) and marine Kd model, if any, as constant columns
 tu_hi_export <- function(results, settings, kd_model = NULL) {
   pacs <- attr(results, "pacs")
+  # `read_concentrations()` needs `pac`, so that the file can be uploaded again
+  names(pacs)[names(pacs) == "pac_name"] <- "pac"
   total <- pacs[1, ]
   total[] <- NA
   total$pac <- "Total"
@@ -271,9 +276,9 @@ read_concentrations <- function(path) {
 local_tuv_dir <- function(env = parent.frame()) {
   tdir <- file.path(
     withr::local_tempdir(.local_envir = env),
-    "pahwq",
+    "pacwq",
     "tuv_data"
   )
-  withr::local_options("pahwq.tuv_data_dir" = tdir, .local_envir = env)
-  pahwq:::setup_tuv_dir()
+  withr::local_options("pacwq.tuv_data_dir" = tdir, .local_envir = env)
+  pacwq:::setup_tuv_dir()
 }

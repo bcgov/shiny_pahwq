@@ -46,7 +46,7 @@ test_that("multi-chemical results cover every chemical and can be downloaded", {
 
   downloaded <- utils::read.csv(app$get_download("advanced-multi_tox_download"))
   expect_equal(downloaded$pac, names(chemical_list()))
-  expect_contains(
+  expect_setequal(
     names(downloaded),
     c(
       "pac",
@@ -64,29 +64,29 @@ test_that("representative guideline tables are downloaded unchanged", {
   show_tab(app, "Representative Guidelines")
 
   fw <- system.file(
-    "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv",
-    package = "pahwq"
+    "doc-guideline-lookup/PAC-DOC_freshwater-guidelines.csv",
+    package = "pacwq"
   )
   expect_equal(
-    download_filename(app, "multi_doc_pah_fw_dl"),
+    download_filename(app, "multi_doc_pac_fw_dl"),
     basename(fw)
   )
   expect_equal(
-    unname(tools::md5sum(app$get_download("multi_doc_pah_fw_dl"))),
+    unname(tools::md5sum(app$get_download("multi_doc_pac_fw_dl"))),
     unname(tools::md5sum(fw))
   )
 
   show_tab(app, "Marine")
   marine <- system.file(
-    "doc-guideline-lookup/PAH_marine-guidelines.csv",
-    package = "pahwq"
+    "doc-guideline-lookup/PAC_marine-guidelines.csv",
+    package = "pacwq"
   )
   expect_equal(
-    download_filename(app, "multi_pah_marine_dl"),
+    download_filename(app, "multi_pac_marine_dl"),
     basename(marine)
   )
   expect_equal(
-    unname(tools::md5sum(app$get_download("multi_pah_marine_dl"))),
+    unname(tools::md5sum(app$get_download("multi_pac_marine_dl"))),
     unname(tools::md5sum(marine))
   )
 })

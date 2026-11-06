@@ -194,7 +194,7 @@ multi_tox_panel <- function(ns) {
 }
 
 # Name, label and default of the settings shown on the TU/HI tab when they differ
-# from their defaults. Those with a NULL default are looked up by pahwq if blank,
+# from their defaults. Those with a NULL default are looked up by pacwq if blank,
 # and the rest are required.
 tu_hi_default_settings <- list(
   list("time_multiplier", "TUV results multiplier", 2),
@@ -281,7 +281,7 @@ format_sum <- function(x) {
 
 tu_hi_results_table <- function(pacs) {
   labels <- c(
-    pac = "PAC",
+    pac_name = "PAC",
     concentration_ug_L = "Concentration (\u00b5g/L)",
     narcotic_benchmark = "Short-term narcotic guideline (\u00b5g/L)",
     narcotic_cwqg = "Long-term narcotic guideline (\u00b5g/L)",
@@ -306,4 +306,20 @@ tu_hi_results_table <- function(pacs) {
     )
   ) |>
     DT::formatSignif(columns = unname(labels[-1]), digits = 3)
+}
+
+# A table of representative guidelines, from a CSV in pacwq's
+# `doc-guideline-lookup` directory
+guideline_table <- function(path) {
+  DT::datatable(utils::read.csv(path), filter = "top") |>
+    DT::formatRound(
+      columns = c(
+        "short_term_narcotic_guideline",
+        "long_term_narcotic_guideline",
+        "short_term_phototoxic_guideline",
+        "long_term_phototoxic_guideline"
+      ),
+      digits = 3
+    ) |>
+    DT::formatRound(columns = "pabs", digits = 5)
 }

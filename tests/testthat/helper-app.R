@@ -11,7 +11,7 @@ local_app <- function(
       Sys.setenv(PACWQ_USER = "user", PACWQ_PASSWORD = "password")
       library(pacwq.shiny)
       # shinytest2 sets warn = 2 when testing a dev package from its own
-      # directory, which turns pahwq's warnings into fatal app errors
+      # directory, which turns pacwq's warnings into fatal app errors
       options(warn = 1)
       # As in deployed apps, which hide unhandled error messages
       options(shiny.sanitize.errors = TRUE)
@@ -78,7 +78,7 @@ output_error <- function(app, id) {
   if (is.list(out)) out$message else NULL
 }
 
-# Independent calculation with pahwq, using the Advanced tab's default TUV
+# Independent calculation with pacwq, using the Advanced tab's default TUV
 # settings
 expected_results <- function(
   chemical,
@@ -98,7 +98,7 @@ expected_results <- function(
   }
   site <- sites[[aq_env]]
   local_tuv_dir()
-  irrad <- pahwq::tuv(
+  irrad <- pacwq::tuv(
     depth_m = depth_m,
     lat = site$lat,
     lon = site$lon,
@@ -117,11 +117,11 @@ expected_results <- function(
     wvl_end = 500,
     quiet = TRUE
   )
-  pabs <- pahwq::p_abs(irrad, chemical, time_multiplier = multiplier)
+  pabs <- pacwq::p_abs(irrad, chemical, time_multiplier = multiplier)
   list(
     irrad = irrad,
     pabs = round(pabs, 3),
-    photo_bench = round(pahwq::phototoxic_benchmark(pabs, pah = chemical), 3),
-    photo_cwqg = round(pahwq::phototoxic_cwqg(pabs, pah = chemical), 3)
+    photo_bench = round(pacwq::phototoxic_benchmark(pabs, pac = chemical), 3),
+    photo_cwqg = round(pacwq::phototoxic_cwqg(pabs, pac = chemical), 3)
   )
 }

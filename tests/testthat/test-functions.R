@@ -57,7 +57,7 @@ test_that("tuv_results_export() adds the marine Kd model as columns", {
 test_that("chemical_list() has one entry per PAC shown in the app", {
   chems <- chemical_list()
   expect_length(chems, 47)
-  expect_setequal(names(chems), pac_list(app_only = TRUE)$pac)
+  expect_setequal(names(chems), pac_list(app_only = TRUE)$pac_name)
   expect_equal(
     chems[["C1-Benz(a)anthracenes/Chrysenes"]],
     "c1-benzo(a)anthracenes"
@@ -67,7 +67,7 @@ test_that("chemical_list() has one entry per PAC shown in the app", {
 
 test_that("tu_hi_export() has each PAC, a total and the settings", {
   pacs <- data.frame(
-    pac = c("a", "b"),
+    pac_name = c("a", "b"),
     concentration_ug_L = c(1, 0),
     narcotic_benchmark = 1,
     tu_narcotic = c(1, 0)
@@ -236,7 +236,7 @@ test_that("read_concentrations() rejects files that can't be read in full", {
 })
 
 test_that("read_concentrations() gives notices for concentrations not counted", {
-  hidden <- setdiff(pac_list()$pac, pac_list(app_only = TRUE)$pac)[1]
+  hidden <- setdiff(pac_list()$pac_name, pac_list(app_only = TRUE)$pac_name)[1]
   path <- withr::local_tempfile(fileext = ".csv")
   writeLines(
     c(

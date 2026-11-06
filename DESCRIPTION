@@ -10,7 +10,6 @@ Description: What the package does (one paragraph).
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Depends:
     R (>= 4.5.0)
 Imports:
@@ -18,7 +17,7 @@ Imports:
     bslib (>= 0.9.0),
     htmlwidgets,
     leaflet,
-    pahwq (>= 0.6.1),
+    pacwq (>= 0.8.0),
     sf,
     pkgload,
     shiny,
@@ -29,10 +28,12 @@ Imports:
     shinymanager,
     DT
 Remotes:
-    bcgov/pahwq@d6e74e8956d5f16fe6fde17a7331dbf3782ab051
+    pacwq=bcgov/pahwq
 Suggests: 
     shinytest2,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    httr2
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Config/testthat/start-first: calc-marine, calc-freshwater, location
+Config/roxygen2/version: 8.1.1

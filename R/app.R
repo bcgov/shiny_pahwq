@@ -13,7 +13,7 @@
 ## usethis namespace: start
 #' @import shiny
 #' @import bslib
-#' @import pahwq
+#' @import pacwq
 ## usethis namespace: end
 NULL
 

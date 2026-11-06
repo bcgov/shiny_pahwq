@@ -55,8 +55,8 @@ rep_guidelines_panel <- function() {
         card(
           p(
             HTML(
-              "This is a static lookup table for short-term (benchmark) and
-          long-term (cwqg) guidelines at a representative freshwater site in
+              "This is a static lookup table for short-term and long-term
+          guidelines at a representative freshwater site in
           Canada on June 21, for a range of dissolved organic carbon (DOC)
           (g/m<sup>3</sup>) concentrations."
             )
@@ -70,19 +70,19 @@ rep_guidelines_panel <- function() {
             tags$li("Date: 2024-06-21"),
           ),
           downloadButton(
-            "multi_doc_pah_fw_dl",
+            "multi_doc_pac_fw_dl",
             "Download",
             style = "width:200px;"
           )
         ),
-        DT::DTOutput("multi_doc_pah_fw")
+        DT::DTOutput("multi_doc_pac_fw")
       ),
       nav_panel(
         "Marine",
         card(
           p(
-            "This is a static lookup table for short-term (benchmark) and
-          long-term (cwqg) guidelines at a representative marine site in
+            "This is a static lookup table for short-term and long-term
+          guidelines at a representative marine site in
           Canada on June 21."
           ),
           tags$ul(
@@ -94,12 +94,12 @@ rep_guidelines_panel <- function() {
             tags$li("Date: 2024-06-21"),
           ),
           downloadButton(
-            "multi_pah_marine_dl",
+            "multi_pac_marine_dl",
             "Download",
             style = "width:200px;"
           )
         ),
-        DT::DTOutput("multi_pah_marine")
+        DT::DTOutput("multi_pac_marine")
       )
     )
   )
@@ -120,7 +120,7 @@ help_panel <- function() {
       ),
       p(
         HTML(
-          "It relies on the <a href='https://bcgov.github.io/pahwq'>pahwq</a>
+          "It relies on the <a href='https://bcgov.github.io/pahwq'>pacwq</a>
             R package, which uses the <a href='https://github.com/NCAR/TUV'>
             Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
             to calculate the light penetration through water of a given depth

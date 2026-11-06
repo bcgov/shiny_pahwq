@@ -6,7 +6,7 @@ If you have bcgovr installed and you use RStudio, click the 'Insert BCDevex Badg
 # pacwq_shiny
 
 This repository contains code for a Shiny App for calculating water quality guidelines for phototoxic polycyclic aromatic compounds (PACs).
-It relies on the [pahwq](https://bcgov.github.io/pahwq) package for the calculations.
+It relies on the [pacwq](https://bcgov.github.io/pahwq) package for the calculations.
 
 ### Instructions
 
