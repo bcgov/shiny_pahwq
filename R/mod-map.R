@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 map_ui <- function(id) {
-  leaflet::leafletOutput(NS(id, "leaflet"), height = 600, width = 600)
+  leaflet::leafletOutput(NS(id, "leaflet"), height = 680, width = "100%")
 }
 
 # Shows the location and, in marine water, the marine areas. Returns a
@@ -41,7 +41,7 @@ map_server <- function(id, lat, lon, aq_env) {
           overlayGroups = "Marine areas",
           position = "bottomleft"
         ) |>
-        leaflet::setView(lng = -125.8178, lat = 54.1585, zoom = 5) |>
+        leaflet::fitBounds(lng1 = -141, lat1 = 41.7, lng2 = -52, lat2 = 83.1) |>
         htmlwidgets::onRender(
           "function(el, x) {
             L.control.zoom({position:'topright'}).addTo(this);
@@ -62,18 +62,26 @@ map_server <- function(id, lat, lon, aq_env) {
       }
     })
 
-    # Keep the user's zoom level when the location changes
+    # Zoom in from the view of Canada for the first location, then keep the
+    # user's zoom level when the location changes
     zoom <- reactiveVal(5)
     observeEvent(input$leaflet_zoom, zoom(input$leaflet_zoom))
+    located <- FALSE
 
     observe({
       lng <- req(lon())
       lat <- req(lat())
 
+      location_zoom <- isolate(zoom())
+      if (!located) {
+        location_zoom <- max(location_zoom, 5)
+        located <<- TRUE
+      }
+
       leaflet::leafletProxy("leaflet") |>
         leaflet::clearMarkers() |>
         leaflet::addMarkers(lng = lng, lat = lat) |>
-        leaflet::setView(lng = lng, lat = lat, zoom = isolate(zoom()))
+        leaflet::setView(lng = lng, lat = lat, zoom = location_zoom)
     })
 
     # Clicks on the marine area polygons are reported as shape clicks
