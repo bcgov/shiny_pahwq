@@ -64,8 +64,8 @@ test_that("representative guideline tables are downloaded unchanged", {
   show_tab(app, "Representative Guidelines")
 
   fw <- system.file(
-    "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv",
-    package = "pahwq"
+    "doc-guideline-lookup/PAC-DOC_freshwater-guidelines.csv",
+    package = "pacwq"
   )
   expect_equal(
     download_filename(app, "multi_doc_pah_fw_dl"),
@@ -78,8 +78,8 @@ test_that("representative guideline tables are downloaded unchanged", {
 
   show_tab(app, "Marine")
   marine <- system.file(
-    "doc-guideline-lookup/PAH_marine-guidelines.csv",
-    package = "pahwq"
+    "doc-guideline-lookup/PAC_marine-guidelines.csv",
+    package = "pacwq"
   )
   expect_equal(
     download_filename(app, "multi_pah_marine_dl"),

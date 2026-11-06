@@ -37,20 +37,20 @@ server <- function(input, output, session) {
 
   multi_doc_pah_fw_csv <- reactive(
     system.file(
-      "doc-guideline-lookup/PAH-DOC_freshwater-guidelines.csv",
-      package = "pahwq"
+      "doc-guideline-lookup/PAC-DOC_freshwater-guidelines.csv",
+      package = "pacwq"
     )
   )
 
   output$multi_doc_pah_fw_dl <- downloadHandler(
-    filename = "PAH-DOC_freshwater-guidelines.csv",
+    filename = "PAC-DOC_freshwater-guidelines.csv",
     content = function(file) file.copy(req(multi_doc_pah_fw_csv()), file)
   )
 
   multi_pah_marine_csv <- reactive(
     system.file(
-      "doc-guideline-lookup/PAH_marine-guidelines.csv",
-      package = "pahwq"
+      "doc-guideline-lookup/PAC_marine-guidelines.csv",
+      package = "pacwq"
     )
   )
 

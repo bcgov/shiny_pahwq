@@ -120,7 +120,7 @@ help_panel <- function() {
       ),
       p(
         HTML(
-          "It relies on the <a href='https://bcgov.github.io/pahwq'>pahwq</a>
+          "It relies on the <a href='https://bcgov.github.io/pahwq'>pacwq</a>
             R package, which uses the <a href='https://github.com/NCAR/TUV'>
             Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
             to calculate the light penetration through water of a given depth

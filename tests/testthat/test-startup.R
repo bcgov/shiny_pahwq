@@ -14,11 +14,11 @@ test_that("only narcotic guidelines appear without a location", {
 
   expect_equal(
     output_number(app, "advanced-narc_bench"),
-    round(pahwq::narcotic_benchmark("Anthracene"), 3)
+    round(pacwq::narcotic_benchmark("Anthracene"), 3)
   )
   expect_equal(
     output_number(app, "advanced-narc_cwqg"),
-    round(pahwq::narcotic_cwqg("Anthracene"), 3)
+    round(pacwq::narcotic_cwqg("Anthracene"), 3)
   )
   expect_equal(output_error(app, "advanced-pabs"), "")
   expect_equal(output_error(app, "advanced-photo_bench"), "")

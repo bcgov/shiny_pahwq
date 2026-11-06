@@ -1,5 +1,5 @@
 expected_tu_hi <- function(values, ...) {
-  pahwq::tu_hi(
+  pacwq::tu_hi(
     data.frame(pac = names(values), concentration_ug_L = unname(values)),
     expected_results("Anthracene", ...)$irrad
   )
@@ -44,7 +44,7 @@ test_that("TUs and HIs are calculated from entered concentrations", {
   expect_equal(total$hi_phototoxic, expected$hi_phototoxic)
   expect_equal(unique(downloaded$lat), sites$freshwater$lat)
   expect_equal(unique(downloaded$DOC), 5)
-  params <- pahwq::tuv_run_params(
+  params <- pacwq::tuv_run_params(
     expected_results("Anthracene", "freshwater", DOC = 5)$irrad
   )
   expect_equal(
