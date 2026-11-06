@@ -21,7 +21,7 @@ app_theme <- function() {
     primary = "#00817a",
     base_font = font_google("Noto Sans", wght = c(400, 700), local = FALSE),
     "body-color" = "#272c2b",
-    "font-size-base" = "0.9375rem",
+    "font-size-base" = "1rem",
     "h2-font-size" = "1.5 * $font-size-base",
     "h3-font-size" = "1.33 * $font-size-base",
     "h4-font-size" = "1.125 * $font-size-base",
