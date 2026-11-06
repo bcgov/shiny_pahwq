@@ -28,7 +28,7 @@ Imports:
     shinymanager,
     DT
 Remotes:
-    pacwq=bcgov/pahwq@pac-name-id
+    pacwq=bcgov/pahwq
 Suggests: 
     shinytest2,
     testthat (>= 3.0.0)
