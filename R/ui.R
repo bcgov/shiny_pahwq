@@ -10,6 +10,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+app_title <- "Water Quality Guideline Calculator for Polycyclic Aromatic Compounds"
+
 ui <- function() {
   page_navbar(
     id = "nav",
@@ -27,17 +29,24 @@ ui <- function() {
       ),
       tags$script(src = "www/app.js")
     ),
-    title = h1(
-      class = "bslib-page-title",
+    title = div(
+      class = "app-header",
       img(
         class = "img-logo",
-        src = "www/BCID_V_rgb_rev.png",
-        height = 80,
-        width = 80
+        src = "www/ccme_logo.png",
+        alt = "CCME",
+        height = 72,
+        width = 192
       ),
-      "Water Quality Calculator for Phototoxic PACs"
+      div(
+        h1(class = "bslib-page-title", app_title),
+        p(
+          class = "app-disclaimer",
+          "Draft for public review. Do not cite or distribute."
+        )
+      )
     ),
-    window_title = "Water Quality Calculator for Phototoxic PACs",
+    window_title = app_title,
     nav_panel("Simple", simple_ui("simple")),
     nav_panel("Advanced", advanced_ui("advanced")),
     nav_panel(tu_hi_tab, tu_hi_ui("tu_hi")),
@@ -112,10 +121,10 @@ help_panel <- function() {
       withMathJax(),
       p(
         HTML(
-          "This app implements the <a href='https://doi.org/10.1002/etc.3601'>
+          "This calculator implements the <a href='https://doi.org/10.1002/etc.3601'>
             Phototoxic Target Lipid Model</a> (PTLM) for
-            the calculation of Canadian Water Quality Guidelines for Polycyclic
-            Aromatic Hydrocarbons (PAH)."
+            the calculation of draft Canadian Water Quality Guidelines for Polycyclic
+            Aromatic Compounds (PAC)."
         )
       ),
       p(
@@ -123,13 +132,13 @@ help_panel <- function() {
           "It relies on the <a href='https://bcgov.github.io/pahwq'>pacwq</a>
             R package, which uses the <a href='https://github.com/NCAR/TUV'>
             Tropospheric Ultraviolet and Visible (TUV) Radiation Model</a>
-            to calculate the light penetration through water of a given depth
+            (Madronich 2021) to calculate the light penetration through water of a given depth
             at a given location and date, with a specified attenuation coefficient. This
             coefficient can be calculated from a Dissolved Organic Carbon concentration.
             The light exposure is then used (along with the PAC-specific molar
               absorption across a range of wavelengths), to calculate the light
               absorption (Pabs) of the given PAC at that location. This is then
-              used to determine the phototoxic benchmark of the PAC under those conditions."
+              used to determine the short-term phototoxic guideline of the PAC under those conditions."
         )
       ),
       p(
@@ -137,7 +146,7 @@ help_panel <- function() {
               given day, with one irradiance calculation per hour at each wavelength.
               When calculating Pabs, total light absorption by the given
               chemical is multiplied by 2 as the standard exposure is 48h for
-              determining the narcotic and phototoxic benchmarks."
+              determining the narcotic and phototoxic short-term guidelines."
       ),
       h3("Simple and Advanced tabs"),
       p(
@@ -207,10 +216,8 @@ help_panel <- function() {
           "Location is determined by entering latitude and longitude, or by
               clicking a location on the map.
               Elevation is looked up from the location using
-              Natural Resource Canada's <a href='https://natural-resources.canada.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/elevation-api/17328'>
-              Elevation API</a>, and if outside of Canada, using the
-              <a href='https://epqs.nationalmap.gov/v1/docs'>USGS Elevation
-              Point Query Service</a>. It can be entered manually in the
+              Natural Resources Canada's <a href='https://natural-resources.canada.ca/science-data/data-analysis/geospatial-data-tools-services/elevation-api'>
+              Elevation API</a>. It can be entered manually in the
               Advanced tab.
               "
         )
@@ -243,7 +250,7 @@ help_panel <- function() {
         HTML(
           "The attenuation coefficient at 305 nm is calculated from the
             Dissolved Organic Carbon (DOC) concentration using the
-            following equation from CCME (2025), with
+            following equation from [CCME (20XX)], with
             \\(S_k = 0.018\\) nm<sup>-1</sup>:"
         )
       ),
@@ -342,9 +349,17 @@ help_panel <- function() {
       ),
       h3("References"),
       p(
-        "CCME 2025. Scientific Criteria Document for the development of the 
-        Canadian Water Quality Guidelines for the protection of aquatic 
-        life: Polycyclic Aromatic Compounds (PACs) (DRAFT)"
+        "[CCME 20XX. Scientific Criteria Document for the development of the
+        Canadian Water Quality Guidelines for the protection of aquatic
+        life: Polycyclic Aromatic Compounds (PACs) (DRAFT)]"
+      ),
+      p(
+        "Madronich, S. 2021. Tropospheric Ultraviolet and Visible Radiation
+        Model (TUV). Retrieved from: ",
+        a(
+          "https://www2.acom.ucar.edu/modeling/tropospheric-ultraviolet-and-visible-tuv-radiation-model",
+          href = "https://www2.acom.ucar.edu/modeling/tropospheric-ultraviolet-and-visible-tuv-radiation-model"
+        )
       ),
       p(
         "Paul, J., F. Fortuin, and H. Kelder (1998), An ozone

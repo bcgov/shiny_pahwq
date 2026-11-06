@@ -40,7 +40,7 @@ advanced_ui <- function(id) {
             ns("elev_m"),
             input_tooltip(
               "Elevation (m)",
-              "Elevation in Canada and the USA is looked up based on latitude
+              "Elevation in Canada is looked up based on latitude
                 and longitude, but can be entered manually here."
             ),
             value = NA_real_,

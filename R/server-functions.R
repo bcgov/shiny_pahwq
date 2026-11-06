@@ -138,15 +138,15 @@ result_outputs <- function(input, output, session, irrad, multiplier) {
     renderText(glue::glue("<p>{round(value(), 3)} &mu;g/L</p>"))
   }
 
-  output$narc_bench_title <- box_title("short-term NLC50<sub>(5)</sub>")
+  output$narc_bench_title <- box_title("short-term narcotic guideline")
   output$narc_bench <- box_value(\() narcotic_benchmark(req(input$chemical)))
-  output$narc_cwqg_title <- box_title("narcotic CWQG")
+  output$narc_cwqg_title <- box_title("long-term narcotic guideline")
   output$narc_cwqg <- box_value(\() narcotic_cwqg(req(input$chemical)))
-  output$photo_bench_title <- box_title("short-term PLC50<sub>(5)</sub>")
+  output$photo_bench_title <- box_title("short-term phototoxic guideline")
   output$photo_bench <- box_value(
     \() phototoxic_benchmark(pabs(), pac = req(input$chemical))
   )
-  output$photo_cwqg_title <- box_title("phototoxic CWQG")
+  output$photo_cwqg_title <- box_title("long-term phototoxic guideline")
   output$photo_cwqg <- box_value(
     \() phototoxic_cwqg(pabs(), pac = req(input$chemical))
   )

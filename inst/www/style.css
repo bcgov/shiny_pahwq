@@ -10,10 +10,17 @@ body * {
   overflow: visible !important;
 }
 
-.img-logo {
-  margin-top: -16px;
-  margin-bottom: -16px;
-  margin-left: -16px;
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  white-space: normal;
+}
+
+.app-disclaimer {
+  margin: 0;
+  font-size: 0.9rem;
+  font-style: italic;
 }
 
 /* Put the navigation menu on its own line, under the title */
@@ -27,6 +34,25 @@ body * {
 
 .navbar .bslib-page-title {
   color: inherit;
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Logo above the title, and room for the menu button */
+@media (max-width: 575.98px) {
+  .navbar-header {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .app-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .navbar .bslib-page-title {
+    font-size: 1.25rem;
+  }
 }
 
 #advanced-sens_plot {
