@@ -19,7 +19,7 @@ tu_hi_ui <- function(id) {
     fillable = FALSE,
     sidebar = sidebar(
       width = 380,
-      h2(class = "h5", "Monitoring concentrations (µg/L)"),
+      h2(class = "h5", "Monitoring concentrations (\u00b5g/L)"),
       div(
         actionButton(ns("calculate"), "Calculate", class = "btn-primary"),
         actionButton(ns("clear"), "Clear")
