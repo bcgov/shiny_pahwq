@@ -124,7 +124,7 @@ result_outputs <- function(input, output, session, irrad, multiplier) {
     paste(
       "<p>",
       round(pabs(), 3),
-      '</br><span class="small">mol photons/mol PAH</span></p>'
+      '</br><span class="small">mol photons/mol PAC</span></p>'
     )
   })
 

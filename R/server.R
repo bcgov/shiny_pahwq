@@ -35,35 +35,35 @@ server <- function(input, output, session) {
   observeEvent(edit_settings(), nav_select("nav", "Advanced"))
   observeEvent(advanced$back_to_tu_hi(), nav_select("nav", tu_hi_tab))
 
-  multi_doc_pah_fw_csv <- reactive(
+  multi_doc_pac_fw_csv <- reactive(
     system.file(
       "doc-guideline-lookup/PAC-DOC_freshwater-guidelines.csv",
       package = "pacwq"
     )
   )
 
-  output$multi_doc_pah_fw_dl <- downloadHandler(
+  output$multi_doc_pac_fw_dl <- downloadHandler(
     filename = "PAC-DOC_freshwater-guidelines.csv",
-    content = function(file) file.copy(req(multi_doc_pah_fw_csv()), file)
+    content = function(file) file.copy(req(multi_doc_pac_fw_csv()), file)
   )
 
-  multi_pah_marine_csv <- reactive(
+  multi_pac_marine_csv <- reactive(
     system.file(
       "doc-guideline-lookup/PAC_marine-guidelines.csv",
       package = "pacwq"
     )
   )
 
-  output$multi_pah_marine_dl <- downloadHandler(
-    filename = basename(req(multi_pah_marine_csv())),
-    content = function(file) file.copy(req(multi_pah_marine_csv()), file)
+  output$multi_pac_marine_dl <- downloadHandler(
+    filename = basename(req(multi_pac_marine_csv())),
+    content = function(file) file.copy(req(multi_pac_marine_csv()), file)
   )
 
-  output$multi_doc_pah_fw <- DT::renderDT(
-    guideline_table(req(multi_doc_pah_fw_csv()))
+  output$multi_doc_pac_fw <- DT::renderDT(
+    guideline_table(req(multi_doc_pac_fw_csv()))
   )
 
-  output$multi_pah_marine <- DT::renderDT(
-    guideline_table(req(multi_pah_marine_csv()))
+  output$multi_pac_marine <- DT::renderDT(
+    guideline_table(req(multi_pac_marine_csv()))
   )
 }

@@ -70,12 +70,12 @@ rep_guidelines_panel <- function() {
             tags$li("Date: 2024-06-21"),
           ),
           downloadButton(
-            "multi_doc_pah_fw_dl",
+            "multi_doc_pac_fw_dl",
             "Download",
             style = "width:200px;"
           )
         ),
-        DT::DTOutput("multi_doc_pah_fw")
+        DT::DTOutput("multi_doc_pac_fw")
       ),
       nav_panel(
         "Marine",
@@ -94,12 +94,12 @@ rep_guidelines_panel <- function() {
             tags$li("Date: 2024-06-21"),
           ),
           downloadButton(
-            "multi_pah_marine_dl",
+            "multi_pac_marine_dl",
             "Download",
             style = "width:200px;"
           )
         ),
-        DT::DTOutput("multi_pah_marine")
+        DT::DTOutput("multi_pac_marine")
       )
     )
   )

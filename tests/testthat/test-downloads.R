@@ -68,11 +68,11 @@ test_that("representative guideline tables are downloaded unchanged", {
     package = "pacwq"
   )
   expect_equal(
-    download_filename(app, "multi_doc_pah_fw_dl"),
+    download_filename(app, "multi_doc_pac_fw_dl"),
     basename(fw)
   )
   expect_equal(
-    unname(tools::md5sum(app$get_download("multi_doc_pah_fw_dl"))),
+    unname(tools::md5sum(app$get_download("multi_doc_pac_fw_dl"))),
     unname(tools::md5sum(fw))
   )
 
@@ -82,11 +82,11 @@ test_that("representative guideline tables are downloaded unchanged", {
     package = "pacwq"
   )
   expect_equal(
-    download_filename(app, "multi_pah_marine_dl"),
+    download_filename(app, "multi_pac_marine_dl"),
     basename(marine)
   )
   expect_equal(
-    unname(tools::md5sum(app$get_download("multi_pah_marine_dl"))),
+    unname(tools::md5sum(app$get_download("multi_pac_marine_dl"))),
     unname(tools::md5sum(marine))
   )
 })
