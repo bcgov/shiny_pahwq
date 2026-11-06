@@ -46,7 +46,7 @@ test_that("multi-chemical results cover every chemical and can be downloaded", {
 
   downloaded <- utils::read.csv(app$get_download("advanced-multi_tox_download"))
   expect_equal(downloaded$pac, names(chemical_list()))
-  expect_contains(
+  expect_setequal(
     names(downloaded),
     c(
       "pac",

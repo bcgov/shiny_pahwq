@@ -9,10 +9,13 @@ chemical_list <- function() {
 }
 
 multi_tox_table <- function(tuv_res, time_multiplier) {
-  chems <- chemical_list()
-  ret <- pb_multi(tuv_res, unname(chems), time_multiplier = time_multiplier)
-  ret$pac_id <- names(chems)[match(ret$pac_id, chems)]
-  names(ret)[names(ret) == "pac_id"] <- "pac"
+  ret <- pb_multi(
+    tuv_res,
+    unname(chemical_list()),
+    time_multiplier = time_multiplier
+  )
+  ret$pac_id <- NULL
+  names(ret)[names(ret) == "pac_name"] <- "pac"
   ret
 }
 
