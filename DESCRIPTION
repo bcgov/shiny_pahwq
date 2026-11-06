@@ -29,7 +29,7 @@ Imports:
     shinymanager,
     DT
 Remotes:
-    bcgov/pahwq
+    bcgov/pahwq@d6e74e8956d5f16fe6fde17a7331dbf3782ab051
 Suggests: 
     shinytest2,
     testthat (>= 3.0.0)
