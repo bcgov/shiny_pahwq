@@ -52,7 +52,6 @@ The secrets can also be managed in the content settings on Connect Cloud.
 
 The text of the Help/About tab is in [`inst/help/en.md`](inst/help/en.md), written in Markdown.
 Write equations in LaTeX, between `$...$` for inline math and `$$...$$` for a displayed equation.
-Keep the `$$` of a displayed equation touching the equation, or it won't render correctly, and wrap it in `<!-- panache-ignore-format-start -->` and `<!-- panache-ignore-format-end -->` so that [panache](https://panache.bz) doesn't move them.
 Use `<sup>` and `<sub>` for superscripts and subscripts outside of equations.
 
 ### Project Status

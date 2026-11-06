@@ -17,6 +17,7 @@ Imports:
     bslib (>= 0.9.0),
     htmlwidgets,
     leaflet,
+    litedown (>= 1.0),
     markdown,
     pacwq (>= 0.9.0),
     sf,

@@ -41,16 +41,12 @@ If the compounds in a homologue group, such as C1-Phenanthrenes/Anthracenes, wer
 For each PAC, a TU is the concentration divided by the short-term guideline, and an HI is the concentration divided by the long-term guideline.
 The results for the sample are the sums over all PACs:
 
-<!-- math in raw html blocks so panache markdown formatter doesn't mess them up -->
-
-```{=html}
 $$
   TU
   = \sum_{i=1}^{n}{\text{concentration}_i \over \text{short-term guideline}_i}
   \qquad
   HI = \sum_{i=1}^{n}{\text{concentration}_i \over \text{long-term guideline}_i}
 $$
-```
 
 ### Inputs
 
@@ -72,22 +68,18 @@ In marine water, elevation is set to 0 m.
 These determine the light attenuation through the water at a given depth.
 Light attenuation at each wavelength ($k_d(\lambda)$) is calculated from the attenuation coefficient at a reference wavelength ($k_d(\lambda_{ref})$) and the slope of its decrease with wavelength ($S_k$):
 
-```{=html}
 $$
   k_d(\lambda) = k_d(\lambda_{ref})e^{-S_k(\lambda-\lambda_{ref})}
 $$
-```
 
 ##### Freshwater
 
 The attenuation coefficient at 305 nm is calculated from the Dissolved Organic Carbon (DOC) concentration using the following equation from [CCME (20XX)], with $S_k = 0.018$ nm<sup>-1</sup>:
 
-```{=html}
 $$
   k_{d,305} = a_{305}[DOC]^{b_{305}} + 0.13;
   a_{305} = 1.28 \text{ and } b_{305} = 1.31
 $$
-```
 
 DOC must be between 0.2 and 61.5 g/m<sup>3</sup>.
 A value outside this range is replaced by the nearest limit, and a notice is shown.

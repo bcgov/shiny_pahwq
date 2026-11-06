@@ -106,10 +106,6 @@ test_that("help_panel() renders the markdown, leaving equations for MathJax", {
   expect_match(help, "<code>concentration_ug_L</code>")
   expect_match(help, "nm<sup>-1</sup>", fixed = TRUE)
   expect_match(help, "\\(k_d(\\lambda_{ref})\\)", fixed = TRUE)
-  expect_match(
-    help,
-    "$$k_d(\\lambda) = k_d(\\lambda_{ref})\\,e^{",
-    fixed = TRUE
-  )
+  expect_match(help, "k_d(\\lambda) = k_d(\\lambda_{ref})e^{", fixed = TRUE)
   expect_match(help, "\\text{concentration}_i", fixed = TRUE)
 })
