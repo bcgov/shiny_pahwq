@@ -48,6 +48,12 @@ rsconnect sends the values to Connect Cloud as encrypted secrets, separately fro
 The variable names are saved in the deployment record, so subsequent deployments with `rsconnect::deployApp()` update them automatically.
 The secrets can also be managed in the content settings on Connect Cloud.
 
+#### Editing the Help/About page
+
+The text of the Help/About tab is in [`inst/help/en.md`](inst/help/en.md), written in Markdown.
+Write equations in LaTeX, between `$...$` for inline math and `$$...$$` for a displayed equation.
+Use `<sup>` and `<sub>` for superscripts and subscripts outside of equations.
+
 ### Project Status
 
 This project is currently under active development.
