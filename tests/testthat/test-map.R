@@ -72,3 +72,30 @@ test_that("the marine areas are shown on the map in marine water", {
   expect_equal(shown_marine_areas(), 0)
   expect_equal(legend_shown(), FALSE)
 })
+
+test_that("the map starts on Canada and zooms in for the first location", {
+  app <- local_app(width = 1400, height = 1000)
+  map <- "HTMLWidgets.find('#simple-map-leaflet').getMap()"
+  wait_for_zoom <- function(zoom) {
+    app$wait_for_js(sprintf("%s.getZoom() === %d", map, zoom))
+  }
+  wait_for_zoom(3)
+
+  app$set_inputs(
+    `simple-lat` = sites$freshwater$lat,
+    `simple-lon` = sites$freshwater$lon
+  )
+  wait_for_zoom(5)
+
+  app$run_js(sprintf("%s.setZoom(7);", map))
+  wait_for_zoom(7)
+  app$wait_for_idle()
+
+  app$set_inputs(`simple-lat` = sites$marine$lat)
+  app$wait_for_js(sprintf(
+    "Math.abs(%s.getCenter().lat - %f) < 0.01",
+    map,
+    sites$marine$lat
+  ))
+  expect_equal(app$get_js(sprintf("%s.getZoom()", map)), 7)
+})
