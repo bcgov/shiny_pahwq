@@ -307,3 +307,19 @@ tu_hi_results_table <- function(pacs) {
   ) |>
     DT::formatSignif(columns = unname(labels[-1]), digits = 3)
 }
+
+# A table of representative guidelines, from a CSV in pacwq's
+# `doc-guideline-lookup` directory
+guideline_table <- function(path) {
+  DT::datatable(utils::read.csv(path), filter = "top") |>
+    DT::formatRound(
+      columns = c(
+        "short_term_narcotic_guideline",
+        "long_term_narcotic_guideline",
+        "short_term_phototoxic_guideline",
+        "long_term_phototoxic_guideline"
+      ),
+      digits = 3
+    ) |>
+    DT::formatRound(columns = "pabs", digits = 5)
+}

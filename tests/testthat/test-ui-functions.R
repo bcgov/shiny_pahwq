@@ -89,3 +89,13 @@ test_that("format_sum() keeps small values readable", {
   expect_equal(format_sum(12.345), "12.3")
   expect_equal(format_sum(0), "0")
 })
+
+test_that("guideline_table() formats pacwq's guideline tables", {
+  for (file in c(
+    "PAC-DOC_freshwater-guidelines.csv",
+    "PAC_marine-guidelines.csv"
+  )) {
+    path <- system.file("doc-guideline-lookup", file, package = "pacwq")
+    expect_s3_class(guideline_table(path), "datatables")
+  }
+})

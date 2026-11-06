@@ -59,37 +59,11 @@ server <- function(input, output, session) {
     content = function(file) file.copy(req(multi_pah_marine_csv()), file)
   )
 
-  output$multi_doc_pah_fw <- DT::renderDT({
-    DT::datatable(
-      req(utils::read.csv(multi_doc_pah_fw_csv())),
-      filter = "top"
-    ) |>
-      DT::formatRound(
-        columns = c(
-          "narcotic_benchmark",
-          "narcotic_cwqg",
-          "phototoxic_benchmark",
-          "phototoxic_cwqg"
-        ),
-        digits = 3
-      ) |>
-      DT::formatRound(columns = "pabs", digits = 5)
-  })
+  output$multi_doc_pah_fw <- DT::renderDT(
+    guideline_table(req(multi_doc_pah_fw_csv()))
+  )
 
-  output$multi_pah_marine <- DT::renderDT({
-    DT::datatable(
-      req(utils::read.csv(multi_pah_marine_csv())),
-      filter = "top"
-    ) |>
-      DT::formatRound(
-        columns = c(
-          "narcotic_benchmark",
-          "narcotic_cwqg",
-          "phototoxic_benchmark",
-          "phototoxic_cwqg"
-        ),
-        digits = 3
-      ) |>
-      DT::formatRound(columns = "pabs", digits = 5)
-  })
+  output$multi_pah_marine <- DT::renderDT(
+    guideline_table(req(multi_pah_marine_csv()))
+  )
 }

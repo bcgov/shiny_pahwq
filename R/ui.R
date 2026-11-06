@@ -55,8 +55,8 @@ rep_guidelines_panel <- function() {
         card(
           p(
             HTML(
-              "This is a static lookup table for short-term (benchmark) and
-          long-term (cwqg) guidelines at a representative freshwater site in
+              "This is a static lookup table for short-term and long-term
+          guidelines at a representative freshwater site in
           Canada on June 21, for a range of dissolved organic carbon (DOC)
           (g/m<sup>3</sup>) concentrations."
             )
@@ -81,8 +81,8 @@ rep_guidelines_panel <- function() {
         "Marine",
         card(
           p(
-            "This is a static lookup table for short-term (benchmark) and
-          long-term (cwqg) guidelines at a representative marine site in
+            "This is a static lookup table for short-term and long-term
+          guidelines at a representative marine site in
           Canada on June 21."
           ),
           tags$ul(
