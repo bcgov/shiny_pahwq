@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 map_ui <- function(id) {
-  leaflet::leafletOutput(NS(id, "leaflet"), height = 680, width = "100%")
+  leaflet::leafletOutput(NS(id, "leaflet"), height = 680, width = "90%")
 }
 
 # Shows the location and, in marine water, the marine areas. Returns a
@@ -41,7 +41,7 @@ map_server <- function(id, lat, lon, aq_env) {
           overlayGroups = "Marine areas",
           position = "bottomleft"
         ) |>
-        leaflet::fitBounds(lng1 = -141, lat1 = 41.7, lng2 = -52, lat2 = 83.1) |>
+        leaflet::fitBounds(lng1 = -141, lat1 = 42, lng2 = -52, lat2 = 70) |>
         htmlwidgets::onRender(
           "function(el, x) {
             L.control.zoom({position:'topright'}).addTo(this);
