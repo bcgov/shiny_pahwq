@@ -12,15 +12,38 @@
 
 app_title <- "Water Quality Guideline Calculator for Polycyclic Aromatic Compounds"
 
+# Follows ccme.ca, apart from the headings: its greys don't meet WCAG AA on white
+app_theme <- function() {
+  bs_theme(
+    version = 5,
+    bg = "#ffffff",
+    fg = "#272c2b",
+    primary = "#00817a",
+    base_font = font_google("Noto Sans", wght = c(400, 700), local = FALSE),
+    "body-color" = "#272c2b",
+    "font-size-base" = "0.9375rem",
+    "h2-font-size" = "1.5 * $font-size-base",
+    "h3-font-size" = "1.33 * $font-size-base",
+    "h4-font-size" = "1.125 * $font-size-base",
+    "h5-font-size" = "$font-size-base",
+    "h6-font-size" = "$font-size-base",
+    "headings-color" = "#4f5957",
+    "headings-font-weight" = 700,
+    "link-color" = "#00817a",
+    "link-hover-color" = "#272c2b",
+    "navbar-light-brand-color" = "#272c2b",
+    "navbar-light-brand-hover-color" = "#272c2b",
+    "navbar-light-color" = "#272c2b",
+    "navbar-light-hover-color" = "#00817a",
+    "navbar-light-active-color" = "#00817a"
+  )
+}
+
 ui <- function() {
   page_navbar(
     id = "nav",
-    theme = bs_theme(version = 5, bootswatch = "cerulean"),
-    navbar_options = navbar_options(
-      # Darkened Cerulean primary: nav links are 80% white and must meet WCAG AA
-      bg = "#1a6699",
-      theme = "dark"
-    ),
+    theme = app_theme(),
+    navbar_options = navbar_options(bg = "#ffffff", theme = "light"),
     header = tags$head(
       tags$link(
         rel = "stylesheet",

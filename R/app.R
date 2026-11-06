@@ -37,7 +37,7 @@ run_app <- function(auth = TRUE, ...) {
 
   secure_ui <- shinymanager::secure_app(
     ui(),
-    theme = bs_theme(version = 5, bootswatch = "cerulean")
+    theme = app_theme()
   )
 
   secure_server <- function(input, output, session) {

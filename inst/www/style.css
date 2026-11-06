@@ -1,11 +1,3 @@
-/* Get a fancy font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-
-/* Change text to imported font */
-body * {
-  font-family: "Open Sans", sans-serif;
-}
-
 .select-overflowable {
   overflow: visible !important;
 }
@@ -79,7 +71,7 @@ body * {
 /* The PAC name beside its input, so the 47 rows take less space */
 .tu-hi-concentrations .shiny-input-container {
   display: grid;
-  grid-template-columns: 1fr 7rem;
+  grid-template-columns: minmax(0, 1fr) 7rem;
   align-items: center;
   column-gap: 0.5rem;
   margin-bottom: 0.25rem;
@@ -87,6 +79,7 @@ body * {
 
 .tu-hi-concentrations .control-label {
   margin-bottom: 0;
+  overflow-wrap: anywhere;
   font-size: 0.875rem;
 }
 
@@ -94,16 +87,17 @@ span.small {
   font-size: 0.7em;
 }
 
+/* Value box titles would otherwise use the bold heading weight */
+.bslib-value-box .value-box-title {
+  font-weight: 400;
+}
+
 /* Messages in value boxes, which would otherwise use the large value font */
 .bslib-value-box .shiny-output-error-validation {
   font-size: 1.1rem;
-  color: #666;
 }
 
-/* .bslib-value-box .value-box-value#narc_bench, .value-box-value#pabs, .value-box-value#photo_bench {
-  font-size: calc(0.8rem + .9vw);
-  margin-top: 0;
-  margin-bottom: .5rem;
-  font-weight: 500;
-  line-height: 01.2;
-} */
+/* Shiny's default #888 doesn't meet WCAG AA on white */
+.shiny-output-error-validation {
+  color: #4f5957;
+}
