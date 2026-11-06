@@ -19,11 +19,21 @@ server <- function(input, output, session) {
     shared,
     active = reactive(identical(input$nav, "Simple"))
   )
-  advanced_server(
+  # The TU/HI tab uses Advanced's inputs, so they have to be up to date when it
+  # is selected too
+  advanced <- advanced_server(
     "advanced",
     shared,
-    active = reactive(identical(input$nav, "Advanced"))
+    active = reactive(isTRUE(input$nav %in% c("Advanced", tu_hi_tab)))
   )
+  edit_settings <- tu_hi_server(
+    "tu_hi",
+    irrad = advanced$irrad,
+    multiplier = advanced$multiplier,
+    settings = advanced$settings
+  )
+  observeEvent(edit_settings(), nav_select("nav", "Advanced"))
+  observeEvent(advanced$back_to_tu_hi(), nav_select("nav", tu_hi_tab))
 
   multi_doc_pah_fw_csv <- reactive(
     system.file(

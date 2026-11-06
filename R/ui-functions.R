@@ -192,3 +192,118 @@ multi_tox_panel <- function(ns) {
     DT::DTOutput(ns("multi_tox"))
   )
 }
+
+# Name, label and default of the settings shown on the TU/HI tab when they differ
+# from their defaults. Those with a NULL default are looked up by pahwq if blank,
+# and the rest are required.
+tu_hi_default_settings <- list(
+  list("time_multiplier", "TUV results multiplier", 2),
+  list("tzone", "Timezone (hrs)", 0),
+  list("Sk", "S<sub>k</sub> (nm<sup>-1</sup>)", NULL),
+  list("tstart", "Start time (h)", 0),
+  list("tstop", "Stop time (h)", 23),
+  list("tsteps", "Time steps", 24),
+  list("wvl_start", "Start wavelength (nm)", 280),
+  list("wvl_end", "End wavelength (nm)", 500),
+  list("o3_tc", "Ozone column (DU)", NULL),
+  list("tauaer", "Aerosol optical depth", NULL)
+)
+
+# Labels (which can contain HTML) and values for the settings in use on the TU/HI
+# tab, from `advanced_settings()`. Anything required but missing is "Not set",
+# and other settings are only included if they differ from their defaults.
+tu_hi_settings_items <- function(settings) {
+  value <- function(x, unit = "") {
+    if (is.null(x)) "Not set" else paste0(format(x), unit)
+  }
+  location <- if (!is.null(settings$lat) && !is.null(settings$lon)) {
+    paste0(round(settings$lat, 4), ", ", round(settings$lon, 4))
+  }
+  marine <- identical(settings$aq_env, "marine")
+  kd_ref <- !is.null(settings$Kd_ref)
+
+  items <- c(
+    list(
+      "Location (latitude, longitude)" = value(location),
+      "Elevation" = value(settings$elev_m, " m"),
+      "Aquatic environment" = tools::toTitleCase(settings$aq_env),
+      "Date" = value(settings$date),
+      "Water depth" = value(settings$depth_m, " m")
+    ),
+    if (marine && !kd_ref) {
+      list("Light attenuation" = "Marine ecoregion model")
+    },
+    if (!marine && (!kd_ref || !is.null(settings$DOC))) {
+      list("DOC (g/m<sup>3</sup>)" = value(settings$DOC))
+    },
+    if (kd_ref) {
+      list(
+        "K<sub>d</sub>(ref) (m<sup>-1</sup>)" = value(settings$Kd_ref),
+        "K<sub>d</sub>(ref) wavelength" = value(settings$Kd_wvl, " nm")
+      )
+    }
+  )
+
+  for (x in tu_hi_default_settings) {
+    if (!identical(as.numeric(settings[[x[[1]]]]), as.numeric(x[[3]]))) {
+      items[[x[[2]]]] <- value(settings[[x[[1]]]])
+    }
+  }
+  items
+}
+
+# Labels of the required settings left blank, from `advanced_settings()`. This
+# excludes those with their own message when the TUV run is started.
+missing_tu_hi_settings <- function(settings) {
+  required <- Filter(\(x) !is.null(x[[3]]), tu_hi_default_settings)
+  blank <- Filter(\(x) is.null(settings[[x[[1]]]]), required)
+  c(
+    if (is.null(settings$date)) "Date",
+    vapply(blank, \(x) x[[2]], character(1))
+  )
+}
+
+tu_hi_settings_list <- function(items) {
+  tags$dl(
+    class = "tu-hi-settings",
+    unname(Map(
+      \(label, value) div(tags$dt(HTML(label)), tags$dd(value)),
+      names(items),
+      items
+    ))
+  )
+}
+
+# A sum on the TU/HI tab, to 3 significant figures without scientific notation
+format_sum <- function(x) {
+  format(signif(x, 3), scientific = FALSE, drop0trailing = TRUE, trim = TRUE)
+}
+
+tu_hi_results_table <- function(pacs) {
+  labels <- c(
+    pac = "PAC",
+    concentration_ug_L = "Concentration (\u00b5g/L)",
+    narcotic_benchmark = "Short-term narcotic guideline (\u00b5g/L)",
+    narcotic_cwqg = "Long-term narcotic guideline (\u00b5g/L)",
+    pabs = "Pabs",
+    phototoxic_benchmark = "Short-term phototoxic guideline (\u00b5g/L)",
+    phototoxic_cwqg = "Long-term phototoxic guideline (\u00b5g/L)",
+    tu_narcotic = "Narcotic TU",
+    tu_phototoxic = "Phototoxic TU",
+    hi_narcotic = "Narcotic HI",
+    hi_phototoxic = "Phototoxic HI"
+  )
+  pacs <- pacs[names(labels)]
+  names(pacs) <- labels
+  DT::datatable(
+    pacs,
+    rownames = FALSE,
+    options = list(
+      paging = FALSE,
+      searching = FALSE,
+      info = FALSE,
+      scrollX = TRUE
+    )
+  ) |>
+    DT::formatSignif(columns = unname(labels[-1]), digits = 3)
+}

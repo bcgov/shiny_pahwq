@@ -40,6 +40,7 @@ ui <- function() {
     window_title = "Water Quality Calculator for Phototoxic PACs",
     nav_panel("Simple", simple_ui("simple")),
     nav_panel("Advanced", advanced_ui("advanced")),
+    nav_panel(tu_hi_tab, tu_hi_ui("tu_hi")),
     rep_guidelines_panel(),
     help_panel()
   )
@@ -163,6 +164,36 @@ help_panel <- function() {
             depth sensitivity analysis, and the marine model used. Settings
             that only exist in the Advanced tab do not affect the Simple tab."
         )
+      ),
+      h3("Toxic Units (TU) and Hazard Index (HI)"),
+      p(
+        "This tab calculates narcotic and phototoxic TUs and HIs for a monitoring
+          sample from one site. The site settings are shown at the top of the tab
+          and should be set to match the sample. The location, aquatic
+          environment and DOC can be changed on the Simple or Advanced tab, and
+          all other settings on the Advanced tab."
+      ),
+      p(
+        HTML(
+          "Enter the concentrations (&mu;g/L) or upload them as a CSV file with
+            the columns <code>pac</code> and <code>concentration_ug_L</code>.
+            The template has a row for each PAC. An uploaded file replaces all of
+            the values in the table, which can then be edited. Blank cells count
+            as 0. If you substitute a value for non-detects, such as half the
+            detection limit, enter that value. If the compounds in a homologue
+            group, such as C1-Phenanthrenes/Anthracenes, were reported
+            separately, add their concentrations together and enter the total."
+        )
+      ),
+      p(
+        "For each PAC, a TU is the concentration divided by the short-term
+          guideline, and an HI is the concentration divided by the long-term
+          guideline. The results for the sample are the sums over all PACs:"
+      ),
+      p(
+        "\\[TU = \\sum_{i=1}^{n} \\frac{\\text{concentration}_i}{\\text{short-term guideline}_i}
+          \\qquad
+          HI = \\sum_{i=1}^{n} \\frac{\\text{concentration}_i}{\\text{long-term guideline}_i}\\]"
       ),
       h3("Inputs"),
       h4("Location and Date"),

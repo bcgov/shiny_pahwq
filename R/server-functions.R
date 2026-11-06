@@ -22,12 +22,6 @@ run_sens <- function(input) {
     length.out = input$depth_steps
   )
 
-  kd_wvl_reactive <- reactive(x_or_null(input$kd_wvl))
-
-  o3_tc_reactive <- reactive(x_or_null(input$o3_tc))
-
-  tauaer_reactive <- reactive(x_or_null(input$tauaer))
-
   local_tuv_dir()
   out <- sens_kd_depth(
     pah = req(input$chemical),
@@ -40,15 +34,15 @@ run_sens <- function(input) {
     Kd_ref = kd,
     depth_m = depth,
     tzone = req(input$tzone),
-    Kd_wvl = kd_wvl_reactive(),
+    Kd_wvl = x_or_null(input$kd_wvl),
     Sk = x_or_null(input$sk),
     tstart = req(input$tstart),
     tstop = req(input$tstop),
     tsteps = req(input$tsteps),
     wvl_start = req(input$wvl_start),
     wvl_end = req(input$wvl_end),
-    o3_tc = o3_tc_reactive(),
-    tauaer = tauaer_reactive()
+    o3_tc = x_or_null(input$o3_tc),
+    tauaer = x_or_null(input$tauaer)
   )
 
   plot_sens_kd_depth(
@@ -263,6 +257,44 @@ select_aq_env <- function(input, area) {
   freezeReactiveValue(input, "aq_env")
   updateRadioButtons(inputId = "aq_env", selected = aq_env)
   TRUE
+}
+
+# The Advanced calculator's inputs that apply to a TUV run, as arguments to
+# `run_tuv()`. `input` can be a list.
+tuv_inputs <- function(input) {
+  kd_ref <- x_or_null(input$kd_ref)
+  list(
+    lat = x_or_null(input$lat),
+    lon = x_or_null(input$lon),
+    elev_m = x_or_null(input$elev_m),
+    aq_env = input$aq_env,
+    date = x_or_null(input$date),
+    tzone = x_or_null(input$tzone),
+    depth_m = x_or_null(input$depth_m),
+    DOC = if (!identical(input$aq_env, "marine")) x_or_null(input$doc),
+    Kd_ref = kd_ref,
+    Kd_wvl = if (!is.null(kd_ref)) x_or_null(input$kd_wvl),
+    Sk = x_or_null(input$sk),
+    tstart = x_or_null(input$tstart),
+    tstop = x_or_null(input$tstop),
+    tsteps = x_or_null(input$tsteps),
+    wvl_start = x_or_null(input$wvl_start),
+    wvl_end = x_or_null(input$wvl_end),
+    o3_tc = x_or_null(input$o3_tc),
+    tauaer = x_or_null(input$tauaer)
+  )
+}
+
+# The settings of a TUV run from the Advanced calculator, and the multiplier of
+# its results. `input` can be a list.
+advanced_settings <- function(input) {
+  settings <- tuv_inputs(input)
+  # The DOC used in the run. `run_tuv()` shows the warning when it is limited.
+  if (!is.null(settings$DOC)) {
+    settings$DOC <- suppressWarnings(doc_range_check(settings$DOC))
+  }
+  settings$time_multiplier <- x_or_null(input$multiplier)
+  settings
 }
 
 # June 21 of the current year, the date of the Simple calculator
