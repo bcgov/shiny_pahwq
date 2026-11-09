@@ -323,3 +323,12 @@ guideline_table <- function(path) {
     ) |>
     DT::formatRound(columns = "pabs", digits = 5)
 }
+
+version_info <- function() {
+  tags$p(
+    class = "text-muted",
+    paste0("Calculator version: ", utils::packageVersion("pacwq.shiny")),
+    tags$br(),
+    paste0("pacwq package version: ", utils::packageVersion("pacwq"))
+  )
+}

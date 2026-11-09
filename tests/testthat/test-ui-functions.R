@@ -108,4 +108,5 @@ test_that("help_panel() renders the markdown, leaving equations for MathJax", {
   expect_match(help, "\\(K_d(\\lambda_{ref})\\)", fixed = TRUE)
   expect_match(help, "K_d(\\lambda) = K_d(\\lambda_{ref})e^{", fixed = TRUE)
   expect_match(help, "\\text{concentration}_i", fixed = TRUE)
+  expect_match(help, "Calculator version: ", fixed = TRUE)
 })
