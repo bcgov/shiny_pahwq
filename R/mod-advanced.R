@@ -289,7 +289,7 @@ advanced_server <- function(id, shared, active) {
 
       args <- tuv_inputs(input)
 
-      req(args$lat, args$lon)
+      req(args$lat, args$lon, args$aq_env)
 
       if (!is.null(args$Kd_ref)) {
         validate(need(args$Kd_wvl, label = "Kd_wvl"))
@@ -410,6 +410,7 @@ advanced_server <- function(id, shared, active) {
     observeEvent(
       c(input$lat, input$lon),
       {
+        req(input$aq_env)
         if (
           !isTruthy(input$lat) ||
             !isTruthy(input$lon) ||
