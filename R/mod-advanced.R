@@ -88,7 +88,8 @@ advanced_ui <- function(id) {
               HTML("S<sub>k</sub> (nm<sup>-1</sup>)"),
               "Spectral slope: how quickly light attenuation decreases with
                 wavelength. If empty, 0.018 in freshwater, and from the
-                ecoregion model in marine water."
+                ecoregion model in marine water. In marine water, it can only
+                be set together with Kd(ref)."
             ),
             value = NA_real_
           ),
@@ -383,8 +384,7 @@ advanced_server <- function(id, shared, active) {
       req(input$aq_env == "marine")
       kd_model_card(
         req(attr(irrad(), "kd_model")),
-        kd_ref_set = isTruthy(input$kd_ref),
-        sk_set = isTruthy(input$sk)
+        kd_ref_set = isTruthy(input$kd_ref)
       )
     })
 

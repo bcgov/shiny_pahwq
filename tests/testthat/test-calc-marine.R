@@ -71,6 +71,26 @@ test_that("a location far from a marine area shows a clear error", {
     output_error(app, "advanced-pabs"),
     "not within 25 km of an area with a marine Kd model"
   )
+
+  app$set_inputs(`advanced-kd_ref` = 10, `advanced-sk` = 0.02)
+  expect_null(output_error(app, "advanced-pabs"))
+  expect_gt(output_number(app, "advanced-pabs"), 0)
+  expect_equal(app$get_text("#advanced-kd_model_card"), "")
+})
+
+test_that("Sk can't be set without Kd(ref) in marine water", {
+  app <- local_app(tab = "Advanced")
+  app$set_inputs(
+    `advanced-chemical` = "anthracene",
+    `advanced-aq_env` = "marine"
+  )
+  set_site(app, "marine")
+  app$set_inputs(`advanced-sk` = 0.02)
+
+  expect_match(
+    output_error(app, "advanced-pabs"),
+    "`Sk` can only be set together with `Kd_ref`"
+  )
 })
 
 test_that("depth defaults to 1 cm and keeps a depth the user entered", {
