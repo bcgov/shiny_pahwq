@@ -167,9 +167,7 @@ advanced_ui <- function(id) {
             input_tooltip(
               "Ozone Column (DU)",
               "The ozone column, in Dobson Units. If empty, it is looked up
-                based on latitude and month, based on historic climatology. If
-                there is no historic value for the given month and location, a
-                default value of 300 is used."
+                based on latitude and month, based on historic climatology."
             ),
             value = NULL
           ),
