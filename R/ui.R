@@ -142,7 +142,8 @@ help_panel <- function() {
     "Help/About",
     card(
       withMathJax(),
-      includeMarkdown(system.file("help/en.md", package = "pacwq.shiny"))
+      includeMarkdown(system.file("help/en.md", package = "pacwq.shiny")),
+      version_info()
     )
   )
 }
