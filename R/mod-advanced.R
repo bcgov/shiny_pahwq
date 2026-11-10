@@ -51,16 +51,6 @@ advanced_ui <- function(id) {
             ns("date"),
             "Date",
             value = simple_date()
-          ),
-          numericInput(
-            ns("tzone"),
-            input_tooltip(
-              "Timezone (hrs)",
-              "timezone offset from UTC, in hours. Default 0"
-            ),
-            value = 0,
-            min = -14,
-            max = 12
           )
         ),
         accordion_panel(
@@ -97,7 +87,9 @@ advanced_ui <- function(id) {
             ns("tstart"),
             input_tooltip(
               "Start time (h)",
-              "Start time of the calculation, in hours (between 0 and 24)"
+              "Start time of the calculation, in hours (0 to 23), in the
+              timezone above. Set the timezone if the calculation covers less
+              than the full day."
             ),
             value = 0,
             min = 0,
@@ -107,18 +99,34 @@ advanced_ui <- function(id) {
             ns("tstop"),
             input_tooltip(
               "Stop time (h)",
-              "Stop time of the calculation, in hours (between 0 and 24)"
+              "Stop time of the calculation, in hours (0 to 23), in the
+              timezone above. Set the timezone if the calculation covers less
+              than the full day."
             ),
             value = 23,
             min = 0,
             max = 23
+          ),
+          numericInput(
+            ns("tzone"),
+            input_tooltip(
+              "Timezone (hrs)",
+              "The difference between local time and UTC, in whole hours (e.g.,
+                -7 for British Columbia in summer, -6 for Saskatchewan). Start
+                and stop times are in this timezone. Default 0 (UTC). This
+                matters when the calculation covers less than the full day; over
+                24 hours it has little effect on the results."
+            ),
+            value = 0,
+            min = -14,
+            max = 12
           ),
           sliderInput(
             ns("tsteps"),
             input_tooltip(
               "Time steps",
               "Number of time intervals between Start time and Stop time at
-                which irradiance is calculated."
+              which irradiance is calculated."
             ),
             min = 1,
             max = 24,
