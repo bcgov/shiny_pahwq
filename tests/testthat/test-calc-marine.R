@@ -69,7 +69,7 @@ test_that("a location far from a marine area shows a clear error", {
 
   expect_match(
     output_error(app, "advanced-pabs"),
-    "not within 25 km of an area with a marine Kd model"
+    "more than 25 km from a marine Kd model area. Enter Kd\\(ref\\) and Sk to"
   )
 
   app$set_inputs(`advanced-kd_ref` = 10, `advanced-sk` = 0.02)
@@ -89,7 +89,7 @@ test_that("Sk can't be set without Kd(ref) in marine water", {
 
   expect_match(
     output_error(app, "advanced-pabs"),
-    "`Sk` can only be set together with `Kd_ref`"
+    "Enter Kd\\(ref\\) to use your own Sk"
   )
 })
 

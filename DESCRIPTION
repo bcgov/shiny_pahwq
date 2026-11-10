@@ -19,7 +19,7 @@ Imports:
     leaflet,
     litedown (>= 1.0),
     markdown,
-    pacwq (>= 0.9.0),
+    pacwq (>= 0.9.1),
     sf,
     pkgload,
     shiny,

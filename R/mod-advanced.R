@@ -305,6 +305,8 @@ advanced_server <- function(id, shared, active) {
         if (!is.null(args$DOC) && !is.null(args$Kd_ref)) {
           validate("Only one of DOC or Kd(ref) may be chosen")
         }
+      } else {
+        validate(marine_kd_problem(args$lat, args$lon, args$Kd_ref, args$Sk))
       }
 
       validate(need(args$depth_m, "Enter a water depth"))

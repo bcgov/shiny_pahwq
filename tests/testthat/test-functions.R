@@ -1,3 +1,22 @@
+test_that("marine_kd_problem() explains when a marine run can't be done", {
+  far <- sites$freshwater
+  expect_null(marine_kd_problem(sites$marine$lat, sites$marine$lon))
+  expect_null(marine_kd_problem(sites$nearshore$lat, sites$nearshore$lon))
+  expect_null(marine_kd_problem(far$lat, far$lon, Kd_ref = 1, Sk = 0.02))
+  expect_match(
+    marine_kd_problem(sites$marine$lat, sites$marine$lon, Sk = 0.02),
+    "Enter Kd\\(ref\\) to use your own Sk"
+  )
+  expect_match(
+    marine_kd_problem(far$lat, far$lon, Kd_ref = 1),
+    "more than 25 km .* Enter Kd\\(ref\\) and Sk to calculate"
+  )
+  expect_match(
+    marine_kd_problem(far$lat, far$lon, tab = "Advanced"),
+    "Enter Kd\\(ref\\) and Sk on the Advanced tab to calculate"
+  )
+})
+
 test_that("marine_area_at() finds the containing or nearest marine area", {
   expect_equal(
     marine_area_at(sites$marine$lat, sites$marine$lon)$water_type,

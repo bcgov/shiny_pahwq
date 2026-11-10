@@ -45,6 +45,23 @@ test_that("Simple selects marine water from the location and disables DOC", {
   )
 })
 
+test_that("Simple points to the Advanced tab for marine sites without a model", {
+  app <- local_app()
+  app$set_inputs(
+    `simple-chemical` = "anthracene",
+    `simple-lat` = sites$freshwater$lat,
+    `simple-lon` = sites$freshwater$lon,
+    wait_ = FALSE
+  )
+  app$wait_for_idle()
+  app$set_inputs(`simple-aq_env` = "marine")
+
+  expect_match(
+    output_error(app, "simple-pabs"),
+    "Enter Kd\\(ref\\) and Sk on the Advanced tab"
+  )
+})
+
 test_that("location, DOC and chemical carry over between Simple and Advanced", {
   app <- local_app()
   app$set_inputs(

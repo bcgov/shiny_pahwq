@@ -6,10 +6,20 @@ local_app <- function(
   env = parent.frame()
 ) {
   force(elevation)
+  # The app process would otherwise load the installed package, not the source
+  # being tested (e.g., with devtools::test(); R CMD check has no source here)
+  src <- normalizePath(testthat::test_path("..", ".."), mustWork = FALSE)
+  if (!file.exists(file.path(src, "DESCRIPTION"))) {
+    src <- NULL
+  }
   app <- shinytest2::AppDriver$new(
     function() {
       Sys.setenv(PACWQ_USER = "user", PACWQ_PASSWORD = "password")
-      library(pacwq.shiny)
+      if (is.null(src)) {
+        library(pacwq.shiny)
+      } else {
+        pkgload::load_all(src, quiet = TRUE)
+      }
       # shinytest2 sets warn = 2 when testing a dev package from its own
       # directory, which turns pacwq's warnings into fatal app errors
       options(warn = 1)
