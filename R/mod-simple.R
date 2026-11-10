@@ -65,7 +65,9 @@ simple_server <- function(id, shared, active) {
       local_tuv_dir()
       marine <- input$aq_env == "marine"
       req(input$lat, input$lon)
-      if (!marine) {
+      if (marine) {
+        validate(marine_kd_problem(input$lat, input$lon, tab = "Advanced"))
+      } else {
         require_attenuation(isTruthy(input$doc), "DOC")
       }
 

@@ -103,7 +103,9 @@ They were fitted to visible wavelengths (up to 490 or 555 nm, depending on the a
 
 - A warning is shown when a model was derived from data with fewer than 10% valid pixels across the area or over time, to flag the lower reliability of these models.
 
-- $K_d(\lambda_{ref})$ and $S_k$ can each be set in the 'Other TUV parameters' section of the Advanced tab to override the marine $K_d(\lambda)$ model.
+- $K_d(\lambda_{ref})$ and $S_k$ can be set manually in the 'Other TUV parameters' section of the Advanced tab to override the marine $K_d(\lambda)$ model, or allow calculations for locations without a model including outside Canadian waters.
+  If only $K_d(\lambda_{ref})$ is set and not $S_k$, $S_k$ from the model is used.
+  Set the $K_d(\lambda_{ref})$ wavelength to the one at which $K_d(\lambda_{ref})$ was measured, as it is reset to 375 nm when marine water is selected.
 
 In the Advanced tab, the model used is shown with the results, and included in the TUV run parameters and the TUV results download.
 
@@ -114,8 +116,8 @@ Ozone column and aerosol optical depth are looked up from historic climatology b
 
 ##### Ozone column (DU)
 
-The app uses average monthly ozone column data from 1980-1991 from Fortuin and Kelder (1998), which is bundled with the TUV model.
-Based on latitude and longitude and month, the ozone column value is looked up and supplied to the TUV model.
+The app uses average monthly ozone column data from 1980-1991 from Fortuin and Kelder (1998), which is bundled with the TUV model, in 10 degree latitude bands.
+Based on latitude and month, the ozone column value is looked up and supplied to the TUV model.
 It can be supplied manually in the Advanced tab to override this behaviour.
 
 ##### Aerosol optical depth

@@ -51,6 +51,26 @@ marine_area_at <- function(lat, lon, nearest = FALSE) {
   sf::st_drop_geometry(areas[idx[1], ])
 }
 
+# Why a marine calculation can't run with the Kd(ref) and Sk entered, or NULL
+# if it can. Checked before calling pacwq, whose errors refer to its arguments.
+marine_kd_problem <- function(lat, lon, Kd_ref = NULL, Sk = NULL, tab = NULL) {
+  if (!is.null(Sk) && is.null(Kd_ref)) {
+    return("Enter Kd(ref) to use your own Sk.")
+  }
+  if (!is.null(Kd_ref) && !is.null(Sk)) {
+    return(NULL)
+  }
+  if (!is.null(marine_area_at(lat, lon, nearest = TRUE))) {
+    return(NULL)
+  }
+  paste0(
+    "This site is more than 25 km from a marine Kd model area. ",
+    "Enter Kd(ref) and Sk",
+    if (!is.null(tab)) paste(" on the", tab, "tab"),
+    " to calculate results here."
+  )
+}
+
 site_elevation <- function(lat, lon, marine) {
   if (marine) {
     return(0)

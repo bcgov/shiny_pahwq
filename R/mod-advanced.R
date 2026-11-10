@@ -51,16 +51,6 @@ advanced_ui <- function(id) {
             ns("date"),
             "Date",
             value = simple_date()
-          ),
-          numericInput(
-            ns("tzone"),
-            input_tooltip(
-              "Timezone (hrs)",
-              "timezone offset from UTC, in hours. Default 0"
-            ),
-            value = 0,
-            min = -14,
-            max = 12
           )
         ),
         accordion_panel(
@@ -88,7 +78,8 @@ advanced_ui <- function(id) {
               HTML("S<sub>k</sub> (nm<sup>-1</sup>)"),
               "Spectral slope: how quickly light attenuation decreases with
                 wavelength. If empty, 0.018 in freshwater, and from the
-                ecoregion model in marine water."
+                ecoregion model in marine water. In marine water, it can only
+                be set together with Kd(ref)."
             ),
             value = NA_real_
           ),
@@ -96,7 +87,9 @@ advanced_ui <- function(id) {
             ns("tstart"),
             input_tooltip(
               "Start time (h)",
-              "Start time of the calculation, in hours (between 0 and 24)"
+              "Start time of the calculation, in hours (0 to 23), in the
+              timezone above. Set the timezone if the calculation covers less
+              than the full day."
             ),
             value = 0,
             min = 0,
@@ -106,18 +99,34 @@ advanced_ui <- function(id) {
             ns("tstop"),
             input_tooltip(
               "Stop time (h)",
-              "Stop time of the calculation, in hours (between 0 and 24)"
+              "Stop time of the calculation, in hours (0 to 23), in the
+              timezone above. Set the timezone if the calculation covers less
+              than the full day."
             ),
             value = 23,
             min = 0,
             max = 23
+          ),
+          numericInput(
+            ns("tzone"),
+            input_tooltip(
+              "Timezone (hrs)",
+              "The difference between local time and UTC, in whole hours (e.g.,
+                -7 for British Columbia in summer, -6 for Saskatchewan). Start
+                and stop times are in this timezone. Default 0 (UTC). This
+                matters when the calculation covers less than the full day; over
+                24 hours it has little effect on the results."
+            ),
+            value = 0,
+            min = -14,
+            max = 12
           ),
           sliderInput(
             ns("tsteps"),
             input_tooltip(
               "Time steps",
               "Number of time intervals between Start time and Stop time at
-                which irradiance is calculated."
+              which irradiance is calculated."
             ),
             min = 1,
             max = 24,
@@ -288,7 +297,7 @@ advanced_server <- function(id, shared, active) {
 
       args <- tuv_inputs(input)
 
-      req(args$lat, args$lon)
+      req(args$lat, args$lon, args$aq_env)
 
       if (!is.null(args$Kd_ref)) {
         validate(need(args$Kd_wvl, label = "Kd_wvl"))
@@ -304,6 +313,8 @@ advanced_server <- function(id, shared, active) {
         if (!is.null(args$DOC) && !is.null(args$Kd_ref)) {
           validate("Only one of DOC or Kd(ref) may be chosen")
         }
+      } else {
+        validate(marine_kd_problem(args$lat, args$lon, args$Kd_ref, args$Sk))
       }
 
       validate(need(args$depth_m, "Enter a water depth"))
@@ -383,8 +394,7 @@ advanced_server <- function(id, shared, active) {
       req(input$aq_env == "marine")
       kd_model_card(
         req(attr(irrad(), "kd_model")),
-        kd_ref_set = isTruthy(input$kd_ref),
-        sk_set = isTruthy(input$sk)
+        kd_ref_set = isTruthy(input$kd_ref)
       )
     })
 
@@ -410,6 +420,7 @@ advanced_server <- function(id, shared, active) {
     observeEvent(
       c(input$lat, input$lon),
       {
+        req(input$aq_env)
         if (
           !isTruthy(input$lat) ||
             !isTruthy(input$lon) ||
