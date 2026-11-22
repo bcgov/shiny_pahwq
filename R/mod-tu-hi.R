@@ -26,7 +26,7 @@ tu_hi_ui <- function(id) {
       ),
       fileInput(ns("upload"), "Upload a CSV file", accept = ".csv"),
       downloadLink(ns("template"), "Download a template"),
-      uiOutput(ns("upload_status")),
+      uiOutput(ns("upload_status"), `aria-live` = "polite"),
       div(
         class = "tu-hi-concentrations",
         lapply(seq_along(pacs), function(i) {
@@ -56,8 +56,13 @@ tu_hi_ui <- function(id) {
         )
       )
     ),
-    uiOutput(ns("stale_notice")),
-    uiOutput(ns("results"))
+    uiOutput(ns("stale_notice"), `aria-live` = "polite"),
+    tagAppendAttributes(
+      textOutput(ns("calculation_error")),
+      class = "visually-hidden",
+      `aria-live` = "polite"
+    ),
+    uiOutput(ns("results"), `aria-live` = "off")
   )
 }
 
@@ -173,6 +178,13 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
       )
     })
 
+    output$calculation_error <- renderText({
+      req(show_results())
+      # Let Shiny render the same error as the visible output, including sanitization.
+      results()
+      ""
+    })
+
     output$results <- renderUI({
       req(show_results())
       res <- results()
@@ -194,7 +206,9 @@ tu_hi_server <- function(id, irrad, multiplier, settings) {
           "Download results to csv",
           class = "btn-primary mb-2"
         ),
-        DT::DTOutput(ns("results_tbl"))
+        htmltools::tagQuery(DT::DTOutput(ns("results_tbl")))$
+          addAttrs(`aria-live` = "off")$
+          allTags()
       )
     })
 
