@@ -27,6 +27,10 @@ test_that("TUs and HIs are calculated from entered concentrations", {
   )
   calculate(app)
 
+  expect_equal(app$get_text("#tu_hi-calculation_error"), "")
+  expect_true(app$get_js(
+    "document.getElementById('tu_hi-results_tbl').getAttribute('aria-live') === 'off'"
+  ))
   downloaded <- utils::read.csv(app$get_download("tu_hi-results_download"))
   expected <- expected_tu_hi(
     c(Anthracene = 0.1, Pyrene = 2),
@@ -203,6 +207,7 @@ test_that("Clear removes results and messages until Calculate is pressed", {
     "Enter at least one concentration."
   )
   clear()
+  expect_equal(app$get_text("#tu_hi-calculation_error"), "")
   expect_no_match(app$get_text("#tu_hi-results"), "Enter at least one")
 
   app$set_inputs(!!conc_id("Anthracene") := 0.1)
@@ -214,7 +219,21 @@ test_that("Calculate shows messages for missing inputs", {
   app <- local_app(tab = tu_hi_tab)
   expect_match(app$get_text("#tu_hi-settings"), "Not set")
 
+  for (id in c("upload_status", "stale_notice", "calculation_error")) {
+    expect_true(app$get_js(sprintf(
+      "document.getElementById('tu_hi-%s').closest('[aria-live=polite]') !== null",
+      id
+    )))
+  }
+  expect_true(app$get_js(
+    "document.getElementById('tu_hi-results').getAttribute('aria-live') === 'off'"
+  ))
+
   calculate(app)
+  expect_equal(
+    app$get_text("#tu_hi-calculation_error"),
+    app$get_text("#tu_hi-results")
+  )
   expect_equal(
     output_error(app, "tu_hi-results"),
     "Enter at least one concentration."
@@ -223,12 +242,20 @@ test_that("Calculate shows messages for missing inputs", {
   app$set_inputs(!!conc_id("Anthracene") := 0.1)
   calculate(app)
   expect_equal(
+    app$get_text("#tu_hi-calculation_error"),
+    app$get_text("#tu_hi-results")
+  )
+  expect_equal(
     output_error(app, "tu_hi-results"),
     "Set a location on the Simple or Advanced tab to calculate results."
   )
 
   app$set_inputs(!!conc_id("Anthracene") := -1)
   calculate(app)
+  expect_equal(
+    app$get_text("#tu_hi-calculation_error"),
+    app$get_text("#tu_hi-results")
+  )
   expect_equal(
     output_error(app, "tu_hi-results"),
     "Concentrations can't be negative."
